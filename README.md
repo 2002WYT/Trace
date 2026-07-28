@@ -2,9 +2,9 @@
 
 # WORD TRACE
 
-### Turn gray, yellow, and green clues into a smarter next guess.
+### Offline English Edition
 
-**A fast, privacy-friendly word puzzle solver for serious vocabulary players.**
+**Turn gray, yellow, and green clues into a smarter next guess.**
 
 <br>
 
@@ -19,9 +19,18 @@
 ![Offline](https://img.shields.io/badge/MODE-100%25%20OFFLINE-16392f?style=flat-square)
 ![Words](https://img.shields.io/badge/WORDS-16%2C533-c99b20?style=flat-square)
 ![Dictionaries](https://img.shields.io/badge/DICTIONARIES-6-68736d?style=flat-square)
-![Languages](https://img.shields.io/badge/UI-CHINESE%20%7C%20ENGLISH-16392f?style=flat-square)
-![Runtime](https://img.shields.io/badge/OFFLINE%20RUNTIME-ZERO%20DEPENDENCIES-68736d?style=flat-square)
+![Language](https://img.shields.io/badge/INTERFACE-ENGLISH-16392f?style=flat-square)
+![Runtime](https://img.shields.io/badge/RUNTIME-ZERO%20DEPENDENCIES-68736d?style=flat-square)
 
+<br>
+
+[**Open the HTML file**](./word-trace-offline-en.html)
+·
+[**Download the ZIP package**](./word-trace-offline-en.zip)
+·
+[**Read the short guide**](./README-EN.txt)
+
+<br>
 
 **by 2002WYT**
 
@@ -31,28 +40,27 @@
 
 ## What is Word Trace?
 
-Word Trace is a candidate-word solver for Wordle and other color-clue word games. Enter the gray, yellow, and green clues from your previous guesses, and it instantly finds every answer that is still possible.
+Word Trace is an offline candidate-word solver for Wordle and other color-clue word games. Enter the gray, yellow, and green clues from previous guesses, and it instantly finds every answer that is still possible.
 
-Its built-in vocabulary covers **CET4, CET6, IELTS, TOEFL, GMAT, and TEM8**. You can use the full web application or download a single-file offline edition that opens directly in any modern browser.
+The complete interface, solver, and vocabulary dataset are embedded in one HTML file. No installation, server, database, account, or internet connection is required.
 
 > No blind guessing. No uploaded input. Only words that actually match your clues.
 
-## Highlights
+## Features
 
 | | Feature | Description |
 |:--:|---|---|
 | Target | Exact candidate filtering | Combines correct positions, wrong positions, and absent letters |
-| Brain | Duplicate-letter aware | Correctly handles clues where one copy is colored and another is gray |
+| Brain | Duplicate-letter aware | Handles clues where one copy is colored and another is gray |
 | Books | Six exam dictionaries | CET4, CET6, IELTS, TOEFL, GMAT, and TEM8 |
 | Length | 2–18 letters | Supports short answers and unusually long vocabulary |
-| Clues | Multiple guess rows | Combine up to six previous guesses |
+| Clues | Multiple guess rows | Combines up to six previous guesses |
 | Input | Two input methods | Type a complete word or enter letters directly into individual tiles |
-| Exclude | Quick exclusions | Mark known-absent letters using the on-screen keyboard |
-| Sources | Dictionary labels | See every exam dictionary associated with each result |
-| Copy | One-click copy | Click a candidate to copy it back into your game |
-| Global | Two interface languages | Full-featured Chinese and English offline editions |
-| Private | Local processing | No uploads, analytics, database, or account required |
-| Package | Single-file edition | Dictionary, design, and solver are embedded in one HTML file |
+| Exclude | Quick exclusions | Mark known-absent letters with the on-screen keyboard |
+| Sources | Dictionary labels | Shows every exam dictionary associated with each result |
+| Copy | One-click copy | Click a candidate to copy it |
+| Private | Local processing | No uploads, analytics, cookies, or trackers |
+| Package | Single-file runtime | Dictionary, design, and solver are embedded in the HTML |
 
 ## How the colors work
 
@@ -73,35 +81,36 @@ Word Trace does not exclude `E` completely. It infers that the answer contains *
 
 ## Quick start
 
-### Option 1: use the offline edition
-
-No installation is required:
-
-1. Download or clone this repository.
-2. Open the [`local`](./local) directory.
+1. Download [`word-trace-offline-en.html`](./word-trace-offline-en.html) or the [ZIP package](./word-trace-offline-en.zip).
+2. If you downloaded the ZIP, extract it.
 3. Double-click `word-trace-offline-en.html`.
 4. Open it with Chrome, Edge, Firefox, or another modern browser.
-
-| Edition | HTML | Archive | Guide |
-|---|---|---|---|
-| English | [Open file](./local/word-trace-offline-en.html) | [Download ZIP](./local/word-trace-offline-en.zip) | [Read the guide](./local/README-EN.txt) |
-| Chinese | [Open file](./local/word-trace-offline.html) | [Download ZIP](./local/word-trace-offline.zip) | Included in the ZIP |
+5. Choose a word length and one or more dictionaries.
+6. Enter your clues and click **Find remaining words**.
 
 > GitHub normally displays HTML source instead of running it. Download the file and open it locally in your browser.
 
-### Option 2: run the full web project
+## Using the clue board
 
-Requirements:
+### Enter a full word
 
-- Node.js `>= 22.13.0`
-- pnpm
+Type a previous guess in the input above a clue row. Every new letter starts gray.
 
-```bash
-pnpm install
-pnpm dev
+### Enter one letter at a time
+
+Click any tile and type a single letter. Use the left and right arrow keys to move between adjacent tiles.
+
+### Change a tile color
+
+Click a filled tile to cycle through:
+
+```text
+gray -> yellow -> green -> gray
 ```
 
-Open the local address printed in your terminal.
+### Exclude letters quickly
+
+Use the on-screen keyboard to mark letters that cannot appear in the answer.
 
 ## Dictionary coverage
 
@@ -116,11 +125,11 @@ The merged dataset contains **16,533 unique words** with lengths from 2 to 18 le
 | GMAT | 3,254 |
 | TEM8 | 12,408 |
 
-Words may appear in more than one exam dictionary, so the sum of source counts is larger than the deduplicated total. Word Trace preserves all matching source labels for every candidate.
+Words may appear in more than one dictionary, so the sum of source counts is larger than the deduplicated total. Word Trace preserves all matching source labels for every candidate.
 
 ## Solver model
 
-Each clue row is compiled into four constraint types:
+Every clue row is compiled into four constraint types:
 
 ```text
 fixed positions        correct-position letters
@@ -129,59 +138,37 @@ minimum counts         the fewest required copies of a letter
 maximum counts         the most allowed copies of a letter
 ```
 
-These constraints are combined with quick exclusions and applied to the selected word length and dictionaries. All filtering happens locally in the browser.
-
-## Project structure
-
-```text
-word-trace/
-|-- app/
-|   |-- page.tsx                 # Main interface and interactions
-|   |-- globals.css              # Visual system and responsive layout
-|   |-- lib/solver.ts            # Color-clue and duplicate-letter logic
-|   `-- data/words.ts            # Embedded exam dictionaries
-|-- local/
-|   |-- word-trace-offline.html
-|   `-- word-trace-offline-en.html
-|-- scripts/
-|   `-- build-offline-html.mjs   # Generates both offline editions
-|-- tests/
-|   `-- solver-logic.test.ts     # Core solver tests
-`-- public/
-    `-- og.png                   # Social preview artwork
-```
-
-## Build and test
-
-Build the full web application:
-
-```bash
-pnpm build
-```
-
-Regenerate both offline editions:
-
-```bash
-node scripts/build-offline-html.mjs
-```
-
-Run the project test suite:
-
-```bash
-pnpm test
-```
+These constraints are combined with quick exclusions and applied to the selected word length and dictionaries.
 
 ## Privacy by design
 
-The offline editions:
+This offline edition:
 
-- make no network requests;
-- never upload user input;
-- use no cookies, analytics, or trackers;
-- load no remote fonts, styles, or scripts;
-- require no server, account, or database.
+- makes no network requests;
+- never uploads user input;
+- uses no cookies, analytics, or trackers;
+- loads no remote fonts, styles, or scripts;
+- requires no server, account, or database;
+- continues to work after the device is disconnected from the internet.
 
-They continue to work normally after the device is disconnected from the internet.
+## Browser support
+
+Use a current version of:
+
+- Google Chrome
+- Microsoft Edge
+- Mozilla Firefox
+- Safari
+
+Clipboard access may depend on browser permissions. If the modern Clipboard API is unavailable, Word Trace uses a local fallback.
+
+## Package contents
+
+```text
+word-trace-offline-en.html    complete English offline application
+README.md                     this project overview
+README-EN.txt                 short usage guide
+```
 
 ## Data and acknowledgements
 
@@ -193,7 +180,7 @@ Thanks to everyone contributing to open vocabulary resources and the wider word-
 
 <div align="center">
 
-### If Word Trace helped narrow the answer, consider leaving a star.
+### Make the next guess less about luck.
 
 **WORD TRACE · OFFLINE EDITION**
 
