@@ -22,17 +22,6 @@
 ![Languages](https://img.shields.io/badge/UI-CHINESE%20%7C%20ENGLISH-16392f?style=flat-square)
 ![Runtime](https://img.shields.io/badge/OFFLINE%20RUNTIME-ZERO%20DEPENDENCIES-68736d?style=flat-square)
 
-<br>
-
-[**Open English Edition**](./local/word-trace-offline-en.html)
-·
-[**Download English ZIP**](./local/word-trace-offline-en.zip)
-·
-[**Open Chinese Edition**](./local/word-trace-offline.html)
-·
-[**Download Chinese ZIP**](./local/word-trace-offline.zip)
-
-<br>
 
 **by 2002WYT**
 
