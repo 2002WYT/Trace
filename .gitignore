@@ -1,0 +1,17 @@
+# Android and Gradle
+**/.gradle/
+**/build/
+**/local.properties
+**/.idea/
+*.iml
+
+# Local Android tooling and test logs
+.android-tooling/
+**/mobile-test.*.log
+
+# Release binaries are attached to GitHub Releases
+*.apk
+
+# Operating-system files
+.DS_Store
+Thumbs.db
