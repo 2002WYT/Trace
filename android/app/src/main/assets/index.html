@@ -1,0 +1,354 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="color-scheme" content="light">
+  <title>词迹 Trace</title>
+  <style>
+    :root{
+      --ink:#102d25;--muted:#68736e;--paper:#f3efe4;--card:#fffdf7;
+      --line:#d6d0c1;--green:#176f4b;--lime:#cbe83c;--gold:#c3952f
+    }
+    *{box-sizing:border-box}
+    html,body{min-height:100%;margin:0}
+    body{
+      color:var(--ink);
+      background:
+        radial-gradient(circle at 90% 4%,rgba(203,232,60,.25),transparent 21rem),
+        linear-gradient(180deg,#faf7ee 0,var(--paper) 54%,#ece6d8 100%);
+      font-family:"PingFang SC","Microsoft YaHei",system-ui,sans-serif
+    }
+    a{color:inherit;text-decoration:none;-webkit-tap-highlight-color:transparent}
+    button{color:inherit;font:inherit}
+    [hidden]{display:none!important}
+    .shell{width:min(720px,calc(100% - 28px));margin:auto;padding:20px 0 34px}
+    .app-header{position:relative;display:flex;align-items:center;justify-content:space-between;padding-bottom:18px;border-bottom:1px solid rgba(16,45,37,.18)}
+    .brand{display:flex;align-items:center;gap:11px}
+    .mark{display:grid;width:45px;aspect-ratio:1;place-items:center;border-radius:13px 13px 13px 4px;color:var(--lime);background:var(--ink);font:700 26px/1 "Noto Serif SC","Songti SC",STSong,serif;text-rendering:geometricPrecision}
+    .brand-copy{display:flex;flex-direction:column}.brand-copy b{font-size:18px;letter-spacing:.15em}.brand-copy small{margin-top:2px;color:var(--muted);font:700 8px Georgia,serif;letter-spacing:.23em}
+    .offline{display:flex;align-items:center;gap:7px;color:#42534c;font-size:10px}.offline i{width:7px;height:7px;border-radius:50%;background:var(--lime);box-shadow:0 0 0 4px rgba(203,232,60,.2)}
+    .header-actions{display:flex;align-items:center;gap:9px}
+    .menu-button{display:grid;width:42px;height:42px;padding:0;place-items:center;border:1px solid rgba(16,45,37,.18);border-radius:12px;background:rgba(255,253,247,.72);font-size:24px;line-height:1;cursor:pointer}
+    .menu-button:active{background:#fff;transform:scale(.96)}
+    .app-menu{position:absolute;z-index:8;top:52px;right:0;width:190px;padding:7px;border:1px solid var(--line);border-radius:16px 16px 16px 5px;background:#fffdf7;box-shadow:0 18px 45px rgba(16,45,37,.2)}
+    .app-menu button{display:flex;width:100%;align-items:center;gap:12px;padding:13px 12px;border:0;border-radius:10px;background:transparent;text-align:left;cursor:pointer}
+    .app-menu button:active{background:#f0ecdf}
+    .menu-icon{display:grid;width:28px;height:28px;place-items:center;border-radius:9px;background:#e9edcd;color:var(--ink);font-size:15px;font-weight:800}
+    .menu-copy{display:flex;flex-direction:column;gap:2px}.menu-copy b{font-size:13px}.menu-copy small{color:var(--muted);font-size:9px}
+    .hero{padding:48px 0 32px}.eyebrow{margin:0;color:var(--green);font:700 9px Georgia,serif;letter-spacing:.22em}
+    h1{margin:14px 0 18px;font:500 clamp(48px,15vw,75px)/1.02 STKaiti,KaiTi,serif;letter-spacing:-.06em}
+    h1 em{color:var(--green);font-style:normal}
+    .intro{max-width:520px;margin:0;color:#3c4e47;font-size:14px;line-height:1.8}
+    .games{display:grid;gap:14px}
+    .card{position:relative;display:grid;min-height:255px;padding:24px;overflow:hidden;border:1px solid var(--line);background:rgba(255,253,247,.94);box-shadow:0 18px 45px rgba(16,45,37,.08)}
+    .card:active{transform:scale(.985);background:#fff}
+    .card-top{display:flex;justify-content:space-between;color:var(--green);font:700 9px Georgia,serif;letter-spacing:.2em}
+    .card h2{align-self:end;margin:32px 0 10px;font:500 42px/1 STKaiti,KaiTi,Georgia,serif;letter-spacing:-.04em}
+    .word h2{font-family:Georgia,"Songti SC",serif}
+    .card p{margin:0;color:var(--muted);font-size:12px;line-height:1.7}
+    .tiles{display:flex;gap:6px;margin:21px 0}.tile{display:grid;width:39px;aspect-ratio:1;place-items:center;border:1px solid #aeb4af;background:#faf8f1;color:#637069;font:700 16px Georgia,serif}
+    .tile.green{border-color:var(--green);color:#fff;background:var(--green)}.tile.gold{border-color:var(--gold);color:#fff;background:var(--gold)}
+    .action{display:flex;align-items:center;justify-content:space-between;padding-top:14px;border-top:1px solid var(--line);font-size:12px;font-weight:800}.action span{font-size:18px}
+    .tip{display:flex;align-items:flex-start;gap:11px;margin:22px 0 0;padding:15px;border-left:3px solid var(--lime);background:rgba(255,255,255,.48);color:#42534c;font-size:11px;line-height:1.65}
+    .tip b{color:var(--ink)}
+    footer{display:flex;justify-content:space-between;gap:18px;margin-top:34px;padding-top:19px;border-top:1px solid rgba(16,45,37,.18);color:var(--muted);font-size:10px}
+    .modal{position:fixed;z-index:20;inset:0;display:flex;align-items:flex-end;justify-content:center;padding:18px 12px;background:rgba(9,28,22,.54);backdrop-filter:blur(3px)}
+    .sheet{width:min(560px,100%);max-height:calc(100vh - 36px);overflow:auto;border:1px solid rgba(214,208,193,.95);border-radius:28px 28px 8px 8px;background:#fffdf7;box-shadow:0 28px 80px rgba(9,28,22,.32)}
+    .sheet-handle{width:42px;height:4px;margin:10px auto 4px;border-radius:9px;background:#cbc5b8}
+    .sheet-head{display:flex;align-items:center;justify-content:space-between;padding:15px 20px 17px;border-bottom:1px solid var(--line)}
+    .sheet-head div{display:flex;flex-direction:column;gap:4px}.sheet-head small{color:var(--green);font:700 8px Georgia,serif;letter-spacing:.2em}.sheet-head h2{margin:0;font:700 23px/1.2 "PingFang SC","Microsoft YaHei",sans-serif}
+    .close-button{display:grid;width:40px;height:40px;padding:0;place-items:center;border:1px solid var(--line);border-radius:50%;background:transparent;font-size:24px;cursor:pointer}
+    .sheet-body{padding:20px}
+    .setting-group{margin:0 0 14px;padding:17px;border:1px solid var(--line);border-radius:16px;background:#faf8f1}
+    .setting-group legend{padding:0 6px;font-size:13px;font-weight:800}
+    .setting-group p,.setting-row small{margin:9px 0 0;color:var(--muted);font-size:10px;line-height:1.6}
+    .segments{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+    .segments button{min-height:42px;border:1px solid var(--line);border-radius:10px;background:#fffdf7;font-size:12px;font-weight:700;cursor:pointer}
+    .segments button[aria-pressed="true"]{border-color:var(--ink);color:var(--lime);background:var(--ink)}
+    .setting-row{display:flex;align-items:center;justify-content:space-between;gap:18px;margin-bottom:14px;padding:17px;border:1px solid var(--line);border-radius:16px;background:#faf8f1}
+    .setting-row b{display:block;font-size:13px}.setting-row small{display:block}
+    .setting-row input{flex:0 0 auto;width:24px;height:24px;accent-color:var(--green)}
+    .reset-button{width:100%;min-height:44px;border:1px solid var(--line);border-radius:12px;background:transparent;font-size:12px;font-weight:800;cursor:pointer}
+    .about-hero{display:flex;align-items:center;gap:15px;margin-bottom:18px;padding:4px 2px 18px;border-bottom:1px solid var(--line)}
+    .about-mark{display:grid;width:62px;aspect-ratio:1;place-items:center;border-radius:18px 18px 18px 5px;color:var(--lime);background:var(--ink);font:700 35px/1 "Noto Serif SC","Songti SC",STSong,serif}
+    .about-hero h3{margin:0 0 5px;font-size:20px}.about-hero p{margin:0;color:var(--muted);font-size:11px;line-height:1.6}
+    .about-list{display:grid;grid-template-columns:auto 1fr;gap:13px 20px;margin:0 2px 21px;font-size:12px}
+    .about-list dt{color:var(--muted)}.about-list dd{margin:0;text-align:right;font-weight:800}
+    .repo-title{margin:0 2px 9px;color:var(--green);font:700 9px Georgia,serif;letter-spacing:.17em}
+    .repo-link{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:8px;padding:14px;border:1px solid var(--line);border-radius:14px;background:#faf8f1}
+    .repo-link b{display:block;font:700 12px Georgia,serif}.repo-link small{display:block;margin-top:4px;color:var(--muted);font-size:9px}.repo-link>span:last-child{font-size:18px}
+    .copyright{margin:20px 0 0;color:var(--muted);font-size:9px;text-align:center}
+    body.modal-open{overflow:hidden}
+    @media(min-width:680px){.games{grid-template-columns:1fr 1fr}.card{min-height:330px}.hero{padding-top:66px}}
+    @media(max-width:390px){.offline span{display:none}.header-actions{gap:6px}.menu-button{width:40px;height:40px}}
+  </style>
+</head>
+<body>
+  <main class="shell">
+    <header class="app-header">
+      <div class="brand">
+        <span class="mark" aria-hidden="true">迹</span>
+        <span class="brand-copy"><b>词迹</b><small>TRACE TOOLS</small></span>
+      </div>
+      <div class="header-actions">
+        <span class="offline"><i aria-hidden="true"></i><span>完全离线</span></span>
+        <button class="menu-button" id="menuButton" type="button" aria-label="打开应用菜单" aria-expanded="false" aria-controls="appMenu">⋮</button>
+      </div>
+      <nav class="app-menu" id="appMenu" aria-label="应用菜单" hidden>
+        <button type="button" data-open-dialog="settingsDialog">
+          <span class="menu-icon" aria-hidden="true">⚙</span>
+          <span class="menu-copy"><b>设置</b><small>显示与使用偏好</small></span>
+        </button>
+        <button type="button" data-open-dialog="aboutDialog">
+          <span class="menu-icon" aria-hidden="true">i</span>
+          <span class="menu-copy"><b>关于</b><small>版本与开源项目</small></span>
+        </button>
+      </nav>
+    </header>
+
+    <section class="hero">
+      <p class="eyebrow">ONE APP · TWO TOOLS</p>
+      <h1>两个工具，<br><em>一个入口。</em></h1>
+      <p class="intro">选择猜成语或猜单词。题库已经放在应用内部，不需要联网，也不需要登录。</p>
+    </section>
+
+    <section class="games" aria-label="选择工具">
+      <a class="card idiom" href="idiom-trace-offline.html">
+        <div class="card-top"><span>IDIOM TRACE</span><span>01</span></div>
+        <h2>猜成语</h2>
+        <p>按声母、韵母和声调筛选候选成语。</p>
+        <div class="tiles" aria-hidden="true">
+          <span class="tile green">一</span><span class="tile gold">举</span><span class="tile">成</span><span class="tile">名</span>
+        </div>
+        <span class="action">打开语迹 <span aria-hidden="true">↗</span></span>
+      </a>
+
+      <a class="card word" href="word-trace-offline-en.html">
+        <div class="card-top"><span>WORD TRACE</span><span>02</span></div>
+        <h2>猜单词</h2>
+        <p>根据绿色、黄色和灰色线索筛选英语单词。</p>
+        <div class="tiles" aria-hidden="true">
+          <span class="tile green">T</span><span class="tile gold">R</span><span class="tile">A</span><span class="tile">C</span><span class="tile">E</span>
+        </div>
+        <span class="action">Open Word Trace <span aria-hidden="true">↗</span></span>
+      </a>
+    </section>
+
+    <p class="tip"><b>返回首页：</b>进入工具后，按手机底部的系统返回键即可回到这个选择页。</p>
+
+    <footer><span>词迹 Trace · 2002WYT</span><span>本地 APK 版 · v<span data-version>1.0.2</span></span></footer>
+  </main>
+
+  <div class="modal" id="settingsDialog" hidden>
+    <section class="sheet" role="dialog" aria-modal="true" aria-labelledby="settingsTitle">
+      <div class="sheet-handle" aria-hidden="true"></div>
+      <div class="sheet-head">
+        <div><small>SETTINGS</small><h2 id="settingsTitle">设置</h2></div>
+        <button class="close-button" type="button" data-close-dialog aria-label="关闭设置">×</button>
+      </div>
+      <div class="sheet-body">
+        <fieldset class="setting-group">
+          <legend>文字大小</legend>
+          <div class="segments" id="zoomOptions">
+            <button type="button" data-text-zoom="100" aria-pressed="true">标准</button>
+            <button type="button" data-text-zoom="115" aria-pressed="false">较大</button>
+            <button type="button" data-text-zoom="130" aria-pressed="false">特大</button>
+          </div>
+          <p>同时应用到首页、猜成语和猜单词页面。</p>
+        </fieldset>
+
+        <label class="setting-row" for="keepScreenOn">
+          <span><b>解题时保持屏幕常亮</b><small>应用在前台时不自动熄屏。</small></span>
+          <input id="keepScreenOn" type="checkbox">
+        </label>
+
+        <button class="reset-button" id="resetSettings" type="button">恢复默认设置</button>
+      </div>
+    </section>
+  </div>
+
+  <div class="modal" id="aboutDialog" hidden>
+    <section class="sheet" role="dialog" aria-modal="true" aria-labelledby="aboutTitle">
+      <div class="sheet-handle" aria-hidden="true"></div>
+      <div class="sheet-head">
+        <div><small>ABOUT</small><h2 id="aboutTitle">关于词迹</h2></div>
+        <button class="close-button" type="button" data-close-dialog aria-label="关闭关于">×</button>
+      </div>
+      <div class="sheet-body">
+        <div class="about-hero">
+          <span class="about-mark" aria-hidden="true">迹</span>
+          <div><h3>词迹 Trace</h3><p>一个入口，两款完全离线的猜词辅助工具。</p></div>
+        </div>
+
+        <dl class="about-list">
+          <dt>版本</dt><dd>v<span data-version>1.0.2</span></dd>
+          <dt>作者</dt><dd>2002WYT</dd>
+          <dt>运行方式</dt><dd>完全离线</dd>
+        </dl>
+
+        <p class="repo-title">OPEN-SOURCE PROJECTS</p>
+        <a class="repo-link" href="https://github.com/2002WYT/Idiom-Trace">
+          <span><b>2002WYT / Idiom-Trace</b><small>猜成语 · GitHub 仓库</small></span>
+          <span aria-hidden="true">↗</span>
+        </a>
+        <a class="repo-link" href="https://github.com/2002WYT/Word-Trace">
+          <span><b>2002WYT / Word-Trace</b><small>猜英语单词 · GitHub 仓库</small></span>
+          <span aria-hidden="true">↗</span>
+        </a>
+
+        <p class="copyright">© 2002WYT · Made for word-game explorers</p>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    (function () {
+      var menuButton = document.getElementById("menuButton");
+      var appMenu = document.getElementById("appMenu");
+      var activeDialog = null;
+      var lastFocused = null;
+      var fallbackVersion = "1.0.2";
+
+      function callApp(method, value, fallback) {
+        try {
+          if (window.TraceApp && typeof window.TraceApp[method] === "function") {
+            return value === undefined
+              ? window.TraceApp[method]()
+              : window.TraceApp[method](value);
+          }
+        } catch (error) {}
+        return fallback;
+      }
+
+      function readFallback(key, fallback) {
+        try {
+          var saved = localStorage.getItem(key);
+          return saved === null ? fallback : saved;
+        } catch (error) {
+          return fallback;
+        }
+      }
+
+      function writeFallback(key, value) {
+        try {
+          localStorage.setItem(key, String(value));
+        } catch (error) {}
+      }
+
+      function setMenu(open) {
+        appMenu.hidden = !open;
+        menuButton.setAttribute("aria-expanded", String(open));
+      }
+
+      function hideDialog() {
+        if (!activeDialog) return;
+        activeDialog.hidden = true;
+        activeDialog = null;
+        document.body.classList.remove("modal-open");
+        if (lastFocused) lastFocused.focus();
+      }
+
+      function closeDialog(useHistory) {
+        var shouldGoBack = useHistory && history.state && history.state.traceDialog;
+        hideDialog();
+        if (shouldGoBack) history.back();
+      }
+
+      function openDialog(dialogId) {
+        var dialog = document.getElementById(dialogId);
+        if (!dialog) return;
+        lastFocused = document.activeElement;
+        setMenu(false);
+        activeDialog = dialog;
+        dialog.hidden = false;
+        document.body.classList.add("modal-open");
+        history.pushState({traceDialog: dialogId}, "");
+        dialog.querySelector(".close-button").focus();
+      }
+
+      menuButton.addEventListener("click", function (event) {
+        event.stopPropagation();
+        setMenu(appMenu.hidden);
+      });
+
+      appMenu.addEventListener("click", function (event) {
+        var button = event.target.closest("[data-open-dialog]");
+        if (button) openDialog(button.dataset.openDialog);
+      });
+
+      document.addEventListener("click", function (event) {
+        if (!appMenu.hidden && !appMenu.contains(event.target)) setMenu(false);
+      });
+
+      document.querySelectorAll("[data-close-dialog]").forEach(function (button) {
+        button.addEventListener("click", function () { closeDialog(true); });
+      });
+
+      document.querySelectorAll(".modal").forEach(function (modal) {
+        modal.addEventListener("click", function (event) {
+          if (event.target === modal) closeDialog(true);
+        });
+      });
+
+      window.addEventListener("popstate", hideDialog);
+      document.addEventListener("keydown", function (event) {
+        if (event.key === "Escape") {
+          if (activeDialog) closeDialog(true);
+          else setMenu(false);
+        }
+      });
+
+      var version = callApp("getVersionName", undefined, fallbackVersion) || fallbackVersion;
+      document.querySelectorAll("[data-version]").forEach(function (node) {
+        node.textContent = version;
+      });
+
+      var fallbackZoom = Number(readFallback("trace_text_zoom", "100"));
+      var currentZoom = Number(callApp("getTextZoom", undefined, fallbackZoom)) || 100;
+      var keepScreenOn = callApp(
+        "getKeepScreenOn",
+        undefined,
+        readFallback("trace_keep_screen_on", "false") === "true"
+      );
+
+      function updateZoomButtons(value) {
+        document.querySelectorAll("[data-text-zoom]").forEach(function (button) {
+          button.setAttribute("aria-pressed", String(Number(button.dataset.textZoom) === value));
+        });
+      }
+
+      function setTextZoom(value) {
+        currentZoom = value;
+        callApp("setTextZoom", value, undefined);
+        writeFallback("trace_text_zoom", value);
+        updateZoomButtons(value);
+      }
+
+      function setKeepScreenOn(value) {
+        keepScreenOn = value;
+        callApp("setKeepScreenOn", value, undefined);
+        writeFallback("trace_keep_screen_on", value);
+        document.getElementById("keepScreenOn").checked = value;
+      }
+
+      updateZoomButtons(currentZoom);
+      document.getElementById("keepScreenOn").checked = Boolean(keepScreenOn);
+
+      document.getElementById("zoomOptions").addEventListener("click", function (event) {
+        var button = event.target.closest("[data-text-zoom]");
+        if (button) setTextZoom(Number(button.dataset.textZoom));
+      });
+
+      document.getElementById("keepScreenOn").addEventListener("change", function (event) {
+        setKeepScreenOn(event.target.checked);
+      });
+
+      document.getElementById("resetSettings").addEventListener("click", function () {
+        setTextZoom(100);
+        setKeepScreenOn(false);
+      });
+    })();
+  </script>
+</body>
+</html>

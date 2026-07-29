@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="trace_ink">#102D25</color>
+    <color name="trace_paper">#F3EFE4</color>
+</resources>

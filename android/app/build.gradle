@@ -1,0 +1,28 @@
+plugins {
+    id "com.android.application"
+}
+
+android {
+    namespace "io.github.wyt2002.trace"
+    compileSdk 36
+
+    defaultConfig {
+        applicationId "io.github.wyt2002.trace"
+        minSdk 23
+        targetSdk 36
+        versionCode 3
+        versionName "1.0.2"
+    }
+
+    buildTypes {
+        debug {}
+        release {
+            minifyEnabled false
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+}

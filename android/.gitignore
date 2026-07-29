@@ -1,0 +1,8 @@
+.gradle/
+.idea/
+local.properties
+**/build/
+*.iml
+mobile-test.*.log
+tools/node_modules/
+app/src/main/assets/.vite/

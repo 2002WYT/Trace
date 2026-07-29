@@ -1,0 +1,11 @@
+{
+  "name": "trace-android-icon-tools",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "generate": "node generate-android-icons.mjs ../app/src/main/res"
+  },
+  "dependencies": {
+    "sharp": "0.35.3"
+  }
+}
