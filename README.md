@@ -23,7 +23,7 @@
 
 <br>
 
-<img src="./docs/images/trace-mobile-home.png" width="320" alt="词迹 Trace Android 手机竖屏首页">
+<img src="./docs/images/trace-mobile-home.jpg" width="320" alt="词迹 Trace Android 手机竖屏首页">
 
 <br>
 
