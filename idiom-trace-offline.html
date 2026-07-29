@@ -40,10 +40,11 @@
     .legend{display:flex;gap:10px;flex-wrap:wrap}.legend span{display:flex;align-items:center;gap:5px;white-space:nowrap}.legend i{width:9px;height:9px;border-radius:2px}
     .clues{display:grid;gap:16px}
     .clue{border:1px solid var(--line);background:#fbf8f0}
-    .clue-top{display:grid;grid-template-columns:auto minmax(180px,1fr) auto;gap:10px;align-items:center;padding:12px 14px;border-bottom:1px solid var(--line)}
+    .clue-top{display:grid;grid-template-columns:auto minmax(150px,1fr) 150px auto;gap:10px;align-items:center;padding:12px 14px;border-bottom:1px solid var(--line)}
     .clue-num{font:700 11px Georgia,serif;color:var(--green)}.whole{height:38px;border:1px solid #cbc6b9;background:#fffdf8;padding:0 12px;letter-spacing:.28em;font-size:15px}
+    .tone-sequence{height:38px;border:1px solid #cbc6b9;background:#fffdf8;padding:0 10px;text-align:center;font:700 13px Georgia,serif;letter-spacing:.12em}.tone-sequence:focus{outline:0;border-color:var(--green);box-shadow:0 0 0 2px rgba(21,118,75,.1)}.tone-sequence.complete{border-color:var(--green);background:#e7f1e9;color:var(--green)}
     .remove{width:32px;height:32px;border:0;background:transparent;color:#8b8e89;font-size:20px;cursor:pointer}.remove:hover{color:var(--red)}
-    .autofill{grid-column:2/3;margin-top:-5px;color:var(--green);font-size:9px}
+    .autofill{grid-column:2/4;margin-top:-5px;color:var(--green);font-size:9px}
     .slots{display:grid;grid-template-columns:repeat(4,minmax(140px,1fr));gap:8px;padding:12px;overflow:auto}
     .slot{min-width:140px;border:1px solid #d7d2c6;background:var(--card);padding:9px;transition:.18s}
     .slot.active{border-color:var(--green);box-shadow:0 0 0 2px rgba(21,118,75,.1)}
@@ -58,9 +59,13 @@
     .value.absent{background:var(--gray);border-color:var(--gray);color:#fff}.value.present{background:var(--yellow);border-color:var(--yellow);color:#fff}.value.correct{background:var(--green);border-color:var(--green);color:#fff}
     .value.absent small,.value.present small,.value.correct small{color:rgba(255,255,255,.78)}
     .tone-entry{display:block;text-align:center;font:700 15px Georgia,serif;letter-spacing:.08em;cursor:text}.tone-entry::placeholder{font:500 9px "Microsoft YaHei",sans-serif;letter-spacing:0;color:#8b918d}.tone-entry.absent::placeholder,.tone-entry.present::placeholder,.tone-entry.correct::placeholder{color:rgba(255,255,255,.7)}
+    .component-entry{display:block;text-align:center;font:700 13px Georgia,"Microsoft YaHei",sans-serif;cursor:text}.component-entry::placeholder{font:500 9px "Microsoft YaHei",sans-serif;color:#8b918d}.component-entry.absent::placeholder,.component-entry.present::placeholder,.component-entry.correct::placeholder{color:rgba(255,255,255,.7)}
     .add{margin-top:14px;width:100%;height:42px;border:1px dashed #aeb7b0;background:transparent;color:var(--green);cursor:pointer}.add:disabled{opacity:.4}
-    .exclude{display:grid;grid-template-columns:auto 1fr;gap:10px;align-items:center;margin-top:14px;padding:12px 14px;background:#f1ede2;border:1px solid var(--line)}
-    .exclude label{font-size:11px;font-weight:700}.exclude input{height:36px;border:1px solid #d1cdc2;background:#fffdf8;padding:0 10px;letter-spacing:.18em}
+    .quick-exclude{margin-top:14px;padding:14px;background:#f1ede2;border:1px solid var(--line)}
+    .exclude-head{display:flex;align-items:start;justify-content:space-between;gap:12px;margin-bottom:12px}.exclude-head strong{display:block;font-size:12px}.exclude-head small{display:block;margin-top:4px;color:var(--muted);font-size:9px;line-height:1.5}
+    .exclude-clear{height:30px;padding:0 10px;border:1px solid #c9c4b8;background:transparent;color:var(--red);font-size:9px;cursor:pointer;white-space:nowrap}.exclude-clear:disabled{opacity:.35;cursor:default}
+    .exclude-group{display:grid;grid-template-columns:42px 1fr;gap:9px;align-items:start;margin-top:8px}.exclude-label{padding-top:7px;color:var(--muted);font-size:10px;font-weight:700}
+    .exclude-options{display:flex;flex-wrap:wrap;gap:5px}.exclude-chip{min-width:34px;height:30px;padding:0 8px;border:1px solid #cbc6ba;background:#fffdf8;color:var(--ink);font:700 11px Georgia,"Microsoft YaHei",sans-serif;cursor:pointer}.exclude-chip:hover{border-color:var(--gray);background:#e7e3d9}.exclude-chip.selected{border-color:var(--gray);background:var(--gray);color:#fff;box-shadow:inset 0 -2px 0 rgba(0,0,0,.12)}
     .picker{padding:22px;min-width:0;background:rgba(240,237,226,.62)}
     .picker-sticky{position:sticky;top:16px}
     .picker h3{margin:0 0 5px;font-size:16px}.active-path{margin:0 0 14px;color:var(--muted);font-size:10px;line-height:1.5}
@@ -82,8 +87,8 @@
     .more-row{display:flex;justify-content:space-between;align-items:center;padding:14px 24px;color:var(--muted);font-size:10px}.more-row button{border:0;background:transparent;color:var(--green);cursor:pointer;font-weight:700}
     footer{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;padding:26px 4px 0;color:#727a75;font:9px Georgia,"Microsoft YaHei",sans-serif;letter-spacing:.12em}
     @media(max-width:1000px){.workspace{grid-template-columns:1fr}.board{border-right:0;border-bottom:1px solid var(--line)}.picker-sticky{position:static}.result-grid{grid-template-columns:repeat(3,1fr)}}
-    @media(max-width:720px){.shell{width:min(100% - 18px,1500px)}.offline{font-size:0}.offline i{margin:0}.hero{grid-template-columns:1fr;padding:36px 4px 30px;gap:18px}.section-head,.results-head{padding:19px 17px}.board,.picker{padding:16px}.board-note{display:block}.legend{margin-top:8px}.slots{grid-template-columns:repeat(4,132px)}.result-grid{grid-template-columns:repeat(2,1fr)}.actions{padding:14px}.actions button{padding:0 14px}.search{min-width:0;flex:1}}
-    @media(max-width:430px){.result-grid{grid-template-columns:1fr}.clue-top{grid-template-columns:auto 1fr auto}.options{grid-template-columns:repeat(4,1fr)}.option.tone{grid-column:span 4}}
+    @media(max-width:720px){.shell{width:min(100% - 18px,1500px)}.offline{font-size:0}.offline i{margin:0}.hero{grid-template-columns:1fr;padding:36px 4px 30px;gap:18px}.section-head,.results-head{padding:19px 17px}.board,.picker{padding:16px}.board-note{display:block}.legend{margin-top:8px}.slots{grid-template-columns:repeat(4,132px)}.exclude-group{grid-template-columns:1fr}.exclude-label{padding-top:0}.result-grid{grid-template-columns:repeat(2,1fr)}.actions{padding:14px}.actions button{padding:0 14px}.search{min-width:0;flex:1}}
+    @media(max-width:430px){.result-grid{grid-template-columns:1fr}.clue-top{grid-template-columns:auto 1fr auto}.clue-num{grid-column:1}.whole{grid-column:2}.remove{grid-column:3;grid-row:1}.tone-sequence{grid-column:2/4;grid-row:2}.autofill{grid-column:2/4}.options{grid-template-columns:repeat(4,1fr)}.option.tone{grid-column:span 4}}
   </style>
 </head>
 <body>
@@ -106,12 +111,16 @@
       <div class="workspace">
         <section class="board">
           <div class="board-note">
-            <span>输入完整成语可自动补全拼音；也可逐格点击声调、声母、韵母，用右侧按钮快速录入。</span>
+            <span>可直接输入完整成语或四个声调；声母、韵母既可手动键入，也可用右侧按钮快速录入。</span>
             <span class="legend"><span><i style="background:var(--gray)"></i>灰·不存在</span><span><i style="background:var(--yellow)"></i>黄·位置错</span><span><i style="background:var(--green)"></i>绿·位置对</span></span>
           </div>
           <div class="clues" id="clues"></div>
           <button class="add" id="addRow">＋ 添加一组猜测线索</button>
-          <div class="exclude"><label for="excludedChars">快速排除汉字</label><input id="excludedChars" placeholder="可连续输入多个确定不存在的汉字" maxlength="40"></div>
+          <section class="quick-exclude" aria-labelledby="quickExcludeTitle">
+            <div class="exclude-head"><div><strong id="quickExcludeTitle">快速排除声母 / 韵母</strong><small>点击确定不会出现的拼音成分，可多选；再次点击即可取消。</small></div><button class="exclude-clear" id="clearExclusions">清空排除</button></div>
+            <div class="exclude-group"><span class="exclude-label">声母</span><div class="exclude-options" id="initialExclusions"></div></div>
+            <div class="exclude-group"><span class="exclude-label">韵母</span><div class="exclude-options" id="finalExclusions"></div></div>
+          </section>
         </section>
         <aside class="picker">
           <div class="picker-sticky">
@@ -146,7 +155,7 @@
     var TYPE_LABELS={initial:"声母",final:"韵母",tone:"声调"};
     var STATUS_ORDER=["absent","present","correct"];
     var STATUS_LABELS={unset:"未设",absent:"灰",present:"黄",correct:"绿"};
-    var rowCounter=1,rows=[],active={rowId:0,pos:0,type:"tone"},excludedChars="",results=[],shown=120,searched=false;
+    var rowCounter=1,rows=[],active={rowId:0,pos:0,type:"tone"},excludedInitials=new Set(),excludedFinals=new Set(),results=[],shown=120,searched=false;
 
     var idioms=IDIOM_DATA.map(function(entry){
       var parts=entry[2].split("|").map(function(encoded){
@@ -235,6 +244,37 @@
       active={rowId:rowId,pos:pos,type:"initial"};renderClues();renderPicker();
     }
 
+    function setToneSequence(rowId,input){
+      var row=getRow(rowId);if(!row)return false;
+      var digits=(String(input).match(/[0-5]/g)||[]).slice(0,4);
+      if(digits.length!==4)return false;
+      row.tones=digits.map(function(digit){return digit==="5"?"0":digit});
+      row.toneStatuses=["correct","correct","correct","correct"];
+      searched=false;active={rowId:rowId,pos:0,type:"initial"};renderClues();renderPicker();return true;
+    }
+
+    function normalizeComponentInput(type,input){
+      var value=String(input).trim().toLowerCase().replace(/\s+/g,"");
+      if(type==="initial"&&(value==="0"||value==="ø"))return"Ø";
+      if(type==="final")value=value.replace(/v/g,"ü");
+      return value;
+    }
+
+    function updateComponentFromInput(rowId,pos,type,input,commit){
+      var row=getRow(rowId);if(!row)return{value:"",status:"unset",valid:false};
+      var key=valueKey(type),statuses=statusKey(type),options=type==="initial"?INITIAL_OPTIONS:FINAL_OPTIONS;
+      var oldValue=row[key][pos],oldStatus=row[statuses][pos],value=normalizeComponentInput(type,input),valid=options.includes(value);
+      if(valid){
+        row[key][pos]=value;
+        row[statuses][pos]=value===oldValue&&oldStatus!=="unset"?oldStatus:"absent";
+      }else{
+        row[key][pos]=commit?"":value;
+        row[statuses][pos]="unset";
+      }
+      searched=false;
+      return{value:row[key][pos],status:row[statuses][pos],valid:valid};
+    }
+
     function clearActiveValue(){
       var row=getRow(active.rowId);if(!row)return;
       row[valueKey(active.type)][active.pos]="";row[statusKey(active.type)][active.pos]="unset";searched=false;renderClues();renderPicker();
@@ -245,14 +285,24 @@
       rows.forEach(function(row,rowIndex){
         var node=document.createElement("article");node.className="clue";
         var top=document.createElement("div");top.className="clue-top";
-        top.innerHTML='<span class="clue-num">线索 '+String(rowIndex+1).padStart(2,"0")+'</span><input class="whole" placeholder="输入四字成语，自动补全拼音" value="'+row.chars.join("")+'"><button class="remove" aria-label="删除此线索">×</button>'+(row.autofilled?'<span class="autofill">✓ 已从词库自动补全四字拼音</span>':"");
-        var wholeInput=top.querySelector(".whole"),wholeComposing=false;
+        var hasFourTones=row.tones.every(Boolean),tonesAreCorrect=hasFourTones&&row.toneStatuses.every(function(status){return status==="correct"});
+        top.innerHTML='<span class="clue-num">线索 '+String(rowIndex+1).padStart(2,"0")+'</span><input class="whole" placeholder="输入四字成语，自动补全拼音" value="'+row.chars.join("")+'"><input class="tone-sequence '+(tonesAreCorrect?"complete":"")+'" inputmode="numeric" maxlength="7" placeholder="四声调，如 3214" aria-label="直接输入四个声调，0或5表示轻声，输入完成后自动标绿" value="'+(hasFourTones?row.tones.join(""):"")+'"><button class="remove" aria-label="删除此线索">×</button>'+(row.autofilled?'<span class="autofill">✓ 已从词库自动补全四字拼音</span>':"");
+        var wholeInput=top.querySelector(".whole"),toneSequence=top.querySelector(".tone-sequence"),wholeComposing=false;
         wholeInput.oncompositionstart=function(){wholeComposing=true};
         wholeInput.oncompositionend=function(event){wholeComposing=false;setWholeWord(row.id,event.target.value)};
         wholeInput.oninput=function(event){
           if(!wholeComposing&&!event.isComposing&&(event.target.value===""||/[\u3400-\u9fff]/u.test(event.target.value)))setWholeWord(row.id,event.target.value);
         };
         wholeInput.onblur=function(event){setWholeWord(row.id,event.target.value)};
+        toneSequence.onfocus=function(){setTimeout(function(){toneSequence.select()},0)};
+        toneSequence.oninput=function(event){
+          var digits=(String(event.target.value).match(/[0-5]/g)||[]).slice(0,4);
+          event.target.value=digits.map(function(digit){return digit==="5"?"0":digit}).join("");
+          if(digits.length===4)setToneSequence(row.id,digits.join(""));
+        };
+        toneSequence.onblur=function(event){
+          if((String(event.target.value).match(/[0-5]/g)||[]).length!==4)renderClues();
+        };
         top.querySelector(".remove").onclick=function(){
           if(rows.length===1){rows=[makeRow()]}else rows=rows.filter(function(item){return item.id!==row.id});
           if(!getRow(active.rowId))active={rowId:rows[0].id,pos:0,type:"tone"};
@@ -285,7 +335,9 @@
               valueButton.onfocus=function(){
                 active={rowId:row.id,pos:pos,type:"tone"};
                 document.querySelectorAll(".slot").forEach(function(item){item.classList.remove("active")});
+                document.querySelectorAll(".value.active").forEach(function(item){item.classList.remove("active")});
                 var parent=valueButton.closest(".slot");if(parent)parent.classList.add("active");
+                valueButton.classList.add("active");
                 renderPicker();setTimeout(function(){valueButton.select()},0);
               };
               valueButton.onkeydown=function(event){
@@ -294,9 +346,40 @@
               };
               valueButton.oninput=function(event){setToneFromInput(row.id,pos,event.target.value)};
             }else{
-              valueButton=document.createElement("button");valueButton.className="value "+status+" "+(active.rowId===row.id&&active.pos===pos&&active.type===type?"active":"");
-              valueButton.innerHTML="<small>"+TYPE_LABELS[type]+"</small><strong>"+displayValue(type,value)+"</strong>";
-              valueButton.onclick=function(){activate(row.id,pos,type)};
+              valueButton=document.createElement("input");valueButton.type="text";valueButton.spellcheck=false;valueButton.autocapitalize="none";valueButton.maxLength=type==="initial"?2:5;
+              valueButton.className="value component-entry "+status+" "+(active.rowId===row.id&&active.pos===pos&&active.type===type?"active":"");
+              valueButton.value=value;valueButton.placeholder=TYPE_LABELS[type];valueButton.title="可手动输入"+TYPE_LABELS[type]+"，或使用右侧快捷按钮";
+              valueButton.setAttribute("aria-label","第"+(pos+1)+"个字的"+TYPE_LABELS[type]+"，可手动输入");
+              valueButton.onfocus=function(){
+                active={rowId:row.id,pos:pos,type:type};
+                document.querySelectorAll(".slot").forEach(function(item){item.classList.remove("active")});
+                document.querySelectorAll(".value.active").forEach(function(item){item.classList.remove("active")});
+                var parent=valueButton.closest(".slot");if(parent)parent.classList.add("active");
+                valueButton.classList.add("active");
+                renderPicker();setTimeout(function(){valueButton.select()},0);
+              };
+              valueButton.oninput=function(event){
+                var state=updateComponentFromInput(row.id,pos,type,event.target.value,false);
+                event.target.value=state.value;
+                event.target.className="value component-entry "+state.status+" active";
+                var color=event.target.nextElementSibling;
+                if(color){color.className="color "+state.status;color.textContent=STATUS_LABELS[state.status];color.disabled=!state.valid}
+              };
+              valueButton.onkeydown=function(event){
+                if(event.key==="Enter"){
+                  event.preventDefault();var state=updateComponentFromInput(row.id,pos,type,event.target.value,true);
+                  if(state.valid)advanceActive(1);else{renderClues();renderPicker()}
+                }else if(event.key==="Escape"){
+                  event.preventDefault();updateComponentFromInput(row.id,pos,type,"",true);renderClues();renderPicker();
+                }
+              };
+              valueButton.onblur=function(event){
+                var state=updateComponentFromInput(row.id,pos,type,event.target.value,true);
+                event.target.value=state.value;
+                event.target.className="value component-entry "+state.status+" "+(active.rowId===row.id&&active.pos===pos&&active.type===type?"active":"");
+                var color=event.target.nextElementSibling;
+                if(color){color.className="color "+state.status;color.textContent=STATUS_LABELS[state.status];color.disabled=!state.valid}
+              };
             }
             var colorButton=document.createElement("button");colorButton.className="color "+status;colorButton.textContent=STATUS_LABELS[status];colorButton.disabled=!value;
             colorButton.onclick=function(){cycleOne(row.id,pos,type)};
@@ -326,6 +409,31 @@
         else button.textContent=option;
         button.onclick=function(){chooseOption(option)};box.appendChild(button);
       });
+    }
+
+    function toggleQuickExclusion(type,value){
+      var selected=type==="initial"?excludedInitials:excludedFinals;
+      if(selected.has(value))selected.delete(value);else selected.add(value);
+      searched=false;renderQuickExclusions();renderResults();
+    }
+
+    function renderQuickExclusions(){
+      function build(boxId,options,selected,typeLabel,type){
+        var box=document.getElementById(boxId);box.innerHTML="";
+        options.forEach(function(option){
+          var button=document.createElement("button"),isSelected=selected.has(option);
+          button.className="exclude-chip "+(isSelected?"selected":"");
+          button.textContent=option;
+          button.title=(isSelected?"取消排除":"排除")+typeLabel+" "+option;
+          button.setAttribute("aria-pressed",isSelected?"true":"false");
+          button.setAttribute("aria-label",button.title);
+          button.onclick=function(){toggleQuickExclusion(type,option)};
+          box.appendChild(button);
+        });
+      }
+      build("initialExclusions",INITIAL_OPTIONS,excludedInitials,"声母","initial");
+      build("finalExclusions",FINAL_OPTIONS,excludedFinals,"韵母","final");
+      document.getElementById("clearExclusions").disabled=excludedInitials.size===0&&excludedFinals.size===0;
     }
 
     function compileField(type){
@@ -360,9 +468,8 @@
 
     function doSearch(){
       var compiled={char:compileField("char"),initial:compileField("initial"),final:compileField("final"),tone:compileField("tone")};
-      var excluded=new Set([...excludedChars].filter(function(char){return/[\u3400-\u9fff]/u.test(char)}));
       results=idioms.filter(function(item){
-        if([...excluded].some(function(char){return item.word.includes(char)}))return false;
+        if(item.parts.some(function(part){return excludedInitials.has(part.initial)||excludedFinals.has(part.final)}))return false;
         return matchesCompiled([...item.word],compiled.char)&&
           matchesCompiled(item.parts.map(function(part){return part.initial}),compiled.initial)&&
           matchesCompiled(item.parts.map(function(part){return part.final}),compiled.final)&&
@@ -395,15 +502,15 @@
     function fallbackCopy(text){var area=document.createElement("textarea");area.value=text;area.style.position="fixed";area.style.opacity="0";document.body.appendChild(area);area.select();try{document.execCommand("copy")}catch(error){}area.remove()}
 
     function resetAll(){
-      rows=[makeRow()];active={rowId:rows[0].id,pos:0,type:"tone"};excludedChars="";results=[];searched=false;
-      document.getElementById("excludedChars").value="";renderAll();
+      rows=[makeRow()];active={rowId:rows[0].id,pos:0,type:"tone"};excludedInitials.clear();excludedFinals.clear();results=[];searched=false;
+      renderAll();
     }
-    function renderAll(){renderClues();renderPicker();renderResults()}
+    function renderAll(){renderClues();renderPicker();renderQuickExclusions();renderResults()}
 
     rows=[makeRow()];active.rowId=rows[0].id;
     document.getElementById("poolCount").textContent=idioms.length.toLocaleString("zh-CN");
     document.getElementById("addRow").onclick=function(){if(rows.length<6){var row=makeRow();rows.push(row);active={rowId:row.id,pos:0,type:"tone"};renderAll()}};
-    document.getElementById("excludedChars").oninput=function(event){excludedChars=event.target.value;searched=false};
+    document.getElementById("clearExclusions").onclick=function(){excludedInitials.clear();excludedFinals.clear();searched=false;renderQuickExclusions();renderResults()};
     document.getElementById("previousField").onclick=function(){advanceActive(-1)};
     document.getElementById("clearValue").onclick=clearActiveValue;
     document.getElementById("reset").onclick=resetAll;

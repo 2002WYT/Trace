@@ -27,8 +27,10 @@ There is no installation, server, account, or build step. The complete dictionar
 
 | Feature | What it gives you |
 | --- | --- |
+| **Four-tone shortcut** | Type a sequence such as `4212` to fill all four tones and mark them green instantly |
 | **Tone-first workflow** | Enter `1`–`4` directly; use `0` or `5` for the neutral tone |
-| **Quick pinyin panel** | Initials and finals are available as large, convenient buttons |
+| **Type or click pinyin** | Enter initials and finals manually, or use the large quick-input buttons |
+| **Global pinyin exclusion** | Eliminate one or more initials and finals from every position with a single click |
 | **Direct tile input** | Click a tile and enter an individual Chinese character |
 | **Automatic pinyin fill** | Enter a known four-character idiom to populate all pinyin clues |
 | **Gray / yellow / green clues** | Mark a component as absent, present in another position, or exactly correct |
@@ -54,25 +56,29 @@ Gray  →  Yellow  →  Green  →  Gray
 
 1. Download [`idiom-trace-offline.html`](./idiom-trace-offline.html).
 2. Open it with a modern browser such as Chrome, Edge, or Firefox.
-3. Start with the first tone field:
+3. If all four tones are known, enter a sequence such as `4212` in the row-level tone box. All four tones are filled and marked green automatically.
+4. Otherwise, use the individual tone fields:
    - `1` = level tone
    - `2` = rising tone
    - `3` = dipping tone
    - `4` = falling tone
    - `0` or `5` = neutral tone
-4. Add initials, finals, characters, and their color states.
-5. Select **搜索剩余成语** to calculate every remaining candidate.
+5. Type initials and finals directly in their tiles, or select them from the quick-input panel. Press Enter to advance.
+6. Use the global initial/final exclusion buttons for pinyin components that cannot appear anywhere.
+7. Add characters and color states as needed, then select **搜索剩余成语**.
 
-> Tip: If you already know a complete idiom, type it into the row input. Idiom Trace will automatically fill its four initials, finals, and tones.
+> Tip: Type `v` for `ü` when entering finals. For example, `ve` is normalized to `üe`.
 
 ## 中文快速上手
 
 1. 下载并双击打开 [`idiom-trace-offline.html`](./idiom-trace-offline.html)。
-2. 每个字按照 **声调 → 声母 → 韵母** 的顺序快速录入。
-3. 声调栏支持直接输入数字 `1`、`2`、`3`、`4`，输入 `0` 或 `5` 代表轻声。
-4. 新线索默认显示为灰色；点击颜色按钮可按 **灰 → 黄 → 绿** 循环。
-5. 也可以直接点击汉字方块输入单个汉字，或输入完整四字成语自动补全拼音。
-6. 点击 **搜索剩余成语**，查看所有符合当前线索的候选结果。
+2. 若已确定四个声调，在顶部“四声调”框直接输入如 `4212`；四格会一次填入并自动标绿。
+3. 单个声调仍支持直接输入 `1`、`2`、`3`、`4`，输入 `0` 或 `5` 代表轻声。
+4. 声母、韵母既可点击右侧按钮，也可在格内手动输入；按 Enter 自动进入下一项，输入 `v` 可代替 `ü`。
+5. “快速排除声母 / 韵母”支持多选，可从所有位置统一排除确定不会出现的拼音成分。
+6. 新线索默认显示为灰色；点击颜色按钮可按 **灰 → 黄 → 绿** 循环。
+7. 也可以直接点击汉字方块输入单个汉字，或输入完整四字成语自动补全拼音。
+8. 点击 **搜索剩余成语**，查看所有符合当前线索的候选结果。
 
 ## Download options
 
@@ -101,7 +107,7 @@ Once downloaded, it continues to work without an internet connection.
 - **29,474** deduplicated four-character idioms
 - Idiom data derived from the open-source [`pwxcoo/chinese-xinhua`](https://github.com/pwxcoo/chinese-xinhua) dataset
 - Embedded pinyin is split into initial, final, and tone components
-- The release was checked with automated interaction tests covering numeric tone input, neutral tone shortcuts, color cycling, per-position updates, idiom autofill, and candidate filtering
+- The release was checked with automated interaction tests covering four-tone sequences, automatic green states, manual initial/final entry, `v` → `ü` normalization, pinyin exclusions, color cycling, idiom autofill, and candidate filtering
 
 ## Project philosophy
 
