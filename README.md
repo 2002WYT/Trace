@@ -6,12 +6,12 @@
 
 猜成语，或根据灰、黄、绿线索筛选英语单词。网页版本可以直接下载使用，Android 版本将两个工具收进同一个应用。
 
-[![Version](https://img.shields.io/badge/version-v1.0.2-176f4b?style=for-the-badge)](https://github.com/2002WYT/Trace/releases/latest)
+[![Version](https://img.shields.io/badge/version-v1.1.2-176f4b?style=for-the-badge)](https://github.com/2002WYT/Trace/releases/latest)
 [![Android](https://img.shields.io/badge/Android-6.0%2B-cbe83c?style=for-the-badge&logo=android&logoColor=102d25)](https://github.com/2002WYT/Trace/releases/latest)
 [![Offline](https://img.shields.io/badge/works-100%25_offline-102d25?style=for-the-badge)](#隐私与离线运行)
 [![License](https://img.shields.io/badge/license-MIT-c3952f?style=for-the-badge)](./LICENSE)
 
-[**下载 Android APK**](https://github.com/2002WYT/Trace/releases/download/v1.0.2/Trace-v1.0.2.apk)
+[**下载 Android APK**](https://github.com/2002WYT/Trace/releases/download/v1.1.2/Trace-v1.1.2.apk)
 ·
 [**查看版本记录**](./CHANGELOG.md)
 ·
@@ -47,7 +47,7 @@ Android 应用名为 **词迹 Trace**，主要功能包括：
 
 ### 安装
 
-1. 从 [Releases](https://github.com/2002WYT/Trace/releases/latest) 下载 `Trace-v1.0.2.apk`。
+1. 从 [Releases](https://github.com/2002WYT/Trace/releases/latest) 下载 `Trace-v1.1.2.apk`。
 2. 将 APK 保存到 Android 手机并点击打开。
 3. 如果系统询问，允许当前文件管理器或浏览器“安装未知应用”。
 4. 选择“安装”；已安装旧版本时选择“更新”。

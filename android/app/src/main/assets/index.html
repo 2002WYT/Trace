@@ -82,17 +82,108 @@
     body.modal-open{overflow:hidden}
     @media(min-width:680px){.games{grid-template-columns:1fr 1fr}.card{min-height:330px}.hero{padding-top:66px}}
     @media(max-width:390px){.offline span{display:none}.header-actions{gap:6px}.menu-button{width:40px;height:40px}}
+
+    /* Compact app-style home */
+    body{
+      min-height:100vh;
+      background:
+        radial-gradient(circle at 88% 5%,rgba(203,232,60,.2),transparent 15rem),
+        linear-gradient(180deg,#faf8f1 0,#f2eee3 100%)
+    }
+    .home-shell{display:flex;flex-direction:column;width:min(600px,calc(100% - 28px));min-height:calc(100vh - 8px);margin:auto;padding:14px 0 22px}
+    .app-header{padding:0 0 14px;border-bottom:0}
+    .app-header>.brand{margin-right:auto;margin-left:10px}
+    .app-back,.dialog-back{
+      display:grid;flex:0 0 auto;width:42px;height:42px;padding:0;place-items:center;
+      border:1px solid rgba(16,45,37,.13);border-radius:14px;background:rgba(255,253,247,.78);
+      box-shadow:0 5px 14px rgba(16,45,37,.06);font-size:22px;line-height:1;cursor:pointer
+    }
+    .app-back:active,.dialog-back:active{background:#fff;transform:scale(.96)}
+    .mark{width:42px;border-radius:13px 13px 13px 5px;font-size:24px}
+    .brand-copy b{font-size:17px;letter-spacing:.12em}.brand-copy small{font-size:7px}
+    .menu-button{width:42px;height:42px;border-color:rgba(16,45,37,.13);border-radius:14px;background:rgba(255,253,247,.78);box-shadow:0 5px 14px rgba(16,45,37,.06)}
+    .app-menu{top:50px;width:184px;border-color:rgba(16,45,37,.12);border-radius:16px;background:#fffdf8;box-shadow:0 18px 40px rgba(16,45,37,.17);transform-origin:top right;animation:menu-in .16s ease-out}
+    .app-menu button{padding:12px 11px}.menu-icon{background:#eef0dc}
+    .home-intro{padding:20px 2px 16px}
+    .home-intro .section-kicker{margin:0 0 7px;color:var(--green);font:700 8px Georgia,serif;letter-spacing:.22em}
+    .home-intro h1{margin:0;font:750 27px/1.25 "PingFang SC","Microsoft YaHei",system-ui,sans-serif;letter-spacing:0}
+    .home-intro p:last-child{margin:7px 0 0;color:var(--muted);font-size:12px}
+    .tool-list{display:grid;gap:12px}
+    .tool-card{
+      position:relative;display:grid;grid-template-columns:74px minmax(0,1fr) 28px;
+      min-height:132px;align-items:center;gap:15px;padding:17px;overflow:hidden;
+      border:1px solid rgba(16,45,37,.12);border-radius:23px 23px 23px 8px;
+      background:rgba(255,253,248,.92);box-shadow:0 9px 25px rgba(16,45,37,.07);
+      transition:transform .16s ease,box-shadow .16s ease,background .16s ease;
+      animation:card-in .28s both cubic-bezier(.2,.8,.2,1)
+    }
+    .tool-card:nth-child(2){animation-delay:.05s}
+    .tool-card::before{content:"";position:absolute;inset:0 auto 0 0;width:4px;background:var(--lime)}
+    .tool-card.word-tool::before{background:var(--gold)}
+    .tool-card:active{transform:scale(.985);background:#fff;box-shadow:0 4px 12px rgba(16,45,37,.08)}
+    .tool-preview{display:grid;width:74px;height:74px;gap:4px;padding:7px;border-radius:18px 18px 18px 7px;background:#edf0df}
+    .idiom-preview{grid-template-columns:repeat(2,1fr)}
+    .word-preview{grid-template-columns:repeat(3,1fr);align-content:center;background:#eee9dc}
+    .tool-preview span{display:grid;min-width:0;place-items:center;border:1px solid rgba(16,45,37,.14);border-radius:7px;background:#fffdf7;color:#5d6964;font:700 13px/1 Georgia,"Songti SC",serif}
+    .tool-preview .correct{border-color:var(--green);color:#fff;background:var(--green)}
+    .tool-preview .present{border-color:var(--gold);color:#fff;background:var(--gold)}
+    .word-preview span{height:25px;font-size:10px}
+    .tool-copy{min-width:0}.tool-label{color:var(--green);font:700 8px Georgia,serif;letter-spacing:.16em}
+    .word-tool .tool-label{color:#88691e}
+    .tool-copy h2{margin:6px 0 7px;font:750 23px/1.15 "PingFang SC","Microsoft YaHei",system-ui,sans-serif;letter-spacing:0}
+    .tool-copy p{margin:0;color:var(--muted);font-size:11px;white-space:nowrap}
+    .chevron{display:grid;width:28px;height:28px;place-items:center;border-radius:50%;background:#f0eddf;font-size:22px;line-height:1}
+    .home-footer{display:flex;justify-content:space-between;margin-top:auto;padding:13px 2px 0;border-top:1px solid rgba(16,45,37,.12);color:#7b827e;font-size:9px}
+
+    /* Lightweight menus and sheets */
+    .modal{padding:12px;background:rgba(9,28,22,.48);backdrop-filter:none;animation:modal-in .18s ease-out}
+    .sheet{width:min(540px,100%);max-height:calc(100vh - 24px);border-color:rgba(16,45,37,.12);border-radius:27px 27px 9px 9px;background:#fffdf8;box-shadow:0 24px 60px rgba(9,28,22,.25);animation:sheet-in .22s cubic-bezier(.2,.8,.2,1)}
+    .modal.is-closing{animation:modal-out .16s ease-in both}.modal.is-closing .sheet{animation:sheet-out .16s ease-in both}
+    .sheet-head{display:grid;grid-template-columns:38px minmax(0,1fr) 38px;gap:12px;padding:13px 18px 15px}.sheet-head small{font-size:7px}.sheet-head h2{font-size:21px}
+    .dialog-back{width:38px;height:38px;border-radius:50%;box-shadow:none}
+    .close-button{width:38px;height:38px;border-color:rgba(16,45,37,.13);font-size:22px}
+    .sheet-body{padding:16px 18px 18px}
+    .setting-section-title{margin:2px 2px 9px;color:#7a837e;font-size:10px;font-weight:800;letter-spacing:.12em}
+    .setting-group{margin:0 0 13px;padding:15px;border-color:rgba(16,45,37,.11);border-radius:17px;background:#f8f6ee}
+    .setting-group legend{font-size:12px}
+    .setting-group p{margin-top:8px}
+    .setting-row{min-height:65px;margin-bottom:9px;padding:13px 14px;border-color:rgba(16,45,37,.11);border-radius:17px;background:#f8f6ee}
+    .setting-row b{font-size:12px}.setting-row small{margin-top:4px;font-size:9px}
+    .toggle-control{position:relative;display:block;flex:0 0 auto;width:44px;height:26px}
+    .toggle-input{position:absolute!important;width:1px!important;height:1px!important;opacity:0}
+    .toggle-track{position:absolute;inset:0;border-radius:999px;background:#c9cbc4;transition:background .16s ease}
+    .toggle-track::after{content:"";position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:50%;background:#fff;box-shadow:0 2px 5px rgba(0,0,0,.18);transition:transform .16s ease}
+    .toggle-input:checked+.toggle-track{background:var(--green)}
+    .toggle-input:checked+.toggle-track::after{transform:translateX(18px)}
+    .toggle-input:focus-visible+.toggle-track{outline:2px solid var(--gold);outline-offset:2px}
+    .reset-button{margin-top:4px;border-color:rgba(16,45,37,.13);background:#fffdf8}
+    .about-hero{margin-bottom:16px;padding-bottom:16px}.about-mark{width:58px;border-radius:17px 17px 17px 6px;font-size:32px}
+    .about-hero h3{font-size:19px}.about-hero p{font-size:10px}
+    .about-list{margin-bottom:18px}.repo-link{background:#f8f6ee}
+
+    @keyframes home-in{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+    @keyframes card-in{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+    @keyframes menu-in{from{opacity:0;transform:translateY(-5px) scale(.97)}to{opacity:1;transform:none}}
+    @keyframes modal-in{from{opacity:0}to{opacity:1}}
+    @keyframes modal-out{from{opacity:1}to{opacity:0}}
+    @keyframes sheet-in{from{opacity:.5;transform:translateY(18px)}to{opacity:1;transform:none}}
+    @keyframes sheet-out{from{opacity:1;transform:none}to{opacity:0;transform:translateY(14px)}}
+    .home-shell{animation:home-in .25s ease-out}
+    body.page-leaving .home-shell{opacity:0;transform:translateY(5px);transition:opacity .16s ease,transform .16s ease}
+    html.reduce-motion *,html.trace-reduce-motion *{animation:none!important;transition:none!important;scroll-behavior:auto!important}
+    @media(min-width:680px){.tool-list{grid-template-columns:1fr 1fr}.tool-card{grid-template-columns:70px minmax(0,1fr) 28px}.home-intro{padding-top:36px}}
+    @media(max-height:660px){.home-intro{padding-top:12px;padding-bottom:12px}.tool-card{min-height:116px}.tool-preview{width:66px;height:66px}.tool-card{grid-template-columns:66px minmax(0,1fr) 26px}.home-footer{margin-top:14px}}
   </style>
 </head>
 <body>
-  <main class="shell">
+  <main class="shell home-shell">
     <header class="app-header">
+      <button class="app-back" id="appBack" type="button" aria-label="退出词迹">←</button>
       <div class="brand">
         <span class="mark" aria-hidden="true">迹</span>
-        <span class="brand-copy"><b>词迹</b><small>TRACE TOOLS</small></span>
+        <span class="brand-copy"><b>词迹</b><small>TRACE</small></span>
       </div>
       <div class="header-actions">
-        <span class="offline"><i aria-hidden="true"></i><span>完全离线</span></span>
         <button class="menu-button" id="menuButton" type="button" aria-label="打开应用菜单" aria-expanded="false" aria-controls="appMenu">⋮</button>
       </div>
       <nav class="app-menu" id="appMenu" aria-label="应用菜单" hidden>
@@ -107,47 +198,51 @@
       </nav>
     </header>
 
-    <section class="hero">
-      <p class="eyebrow">ONE APP · TWO TOOLS</p>
-      <h1>两个工具，<br><em>一个入口。</em></h1>
-      <p class="intro">选择猜成语或猜单词。题库已经放在应用内部，不需要联网，也不需要登录。</p>
+    <section class="home-intro">
+      <p class="section-kicker">WORD TOOLS</p>
+      <h1>选择工具</h1>
+      <p>从已有线索开始筛选。</p>
     </section>
 
-    <section class="games" aria-label="选择工具">
-      <a class="card idiom" href="idiom-trace-offline.html">
-        <div class="card-top"><span>IDIOM TRACE</span><span>01</span></div>
-        <h2>猜成语</h2>
-        <p>按声母、韵母和声调筛选候选成语。</p>
-        <div class="tiles" aria-hidden="true">
-          <span class="tile green">一</span><span class="tile gold">举</span><span class="tile">成</span><span class="tile">名</span>
+    <section class="tool-list" aria-label="选择工具">
+      <a class="tool-card" href="idiom-trace-offline.html" data-tool="idiom">
+        <div class="tool-preview idiom-preview" aria-hidden="true">
+          <span class="correct">一</span><span class="present">举</span><span>成</span><span>名</span>
         </div>
-        <span class="action">打开语迹 <span aria-hidden="true">↗</span></span>
+        <div class="tool-copy">
+          <span class="tool-label">IDIOM TRACE</span>
+          <h2>猜成语</h2>
+          <p>汉字 · 声韵 · 声调</p>
+        </div>
+        <span class="chevron" aria-hidden="true">›</span>
       </a>
 
-      <a class="card word" href="word-trace-offline-en.html">
-        <div class="card-top"><span>WORD TRACE</span><span>02</span></div>
-        <h2>猜单词</h2>
-        <p>根据绿色、黄色和灰色线索筛选英语单词。</p>
-        <div class="tiles" aria-hidden="true">
-          <span class="tile green">T</span><span class="tile gold">R</span><span class="tile">A</span><span class="tile">C</span><span class="tile">E</span>
+      <a class="tool-card word-tool" href="word-trace-offline-en.html" data-tool="word">
+        <div class="tool-preview word-preview" aria-hidden="true">
+          <span class="correct">T</span><span class="present">R</span><span>A</span><span>C</span><span>E</span>
         </div>
-        <span class="action">Open Word Trace <span aria-hidden="true">↗</span></span>
+        <div class="tool-copy">
+          <span class="tool-label">WORD TRACE</span>
+          <h2>猜单词</h2>
+          <p>字母 · 位置 · 词表</p>
+        </div>
+        <span class="chevron" aria-hidden="true">›</span>
       </a>
     </section>
 
-    <p class="tip"><b>返回首页：</b>进入工具后，按手机底部的系统返回键即可回到这个选择页。</p>
-
-    <footer><span>词迹 Trace · 2002WYT</span><span>本地 APK 版 · v<span data-version>1.0.2</span></span></footer>
+    <footer class="home-footer"><span>2002WYT</span><span>v<span data-version>1.1.2</span></span></footer>
   </main>
 
   <div class="modal" id="settingsDialog" hidden>
     <section class="sheet" role="dialog" aria-modal="true" aria-labelledby="settingsTitle">
       <div class="sheet-handle" aria-hidden="true"></div>
       <div class="sheet-head">
+        <button class="dialog-back" type="button" data-close-dialog aria-label="返回首页">←</button>
         <div><small>SETTINGS</small><h2 id="settingsTitle">设置</h2></div>
         <button class="close-button" type="button" data-close-dialog aria-label="关闭设置">×</button>
       </div>
       <div class="sheet-body">
+        <p class="setting-section-title">显示</p>
         <fieldset class="setting-group">
           <legend>文字大小</legend>
           <div class="segments" id="zoomOptions">
@@ -158,9 +253,37 @@
           <p>同时应用到首页、猜成语和猜单词页面。</p>
         </fieldset>
 
+        <label class="setting-row" for="animationsEnabled">
+          <span><b>过渡动画</b><small>让页面和弹窗切换更自然。</small></span>
+          <span class="toggle-control">
+            <input class="toggle-input" id="animationsEnabled" type="checkbox">
+            <span class="toggle-track" aria-hidden="true"></span>
+          </span>
+        </label>
+
+        <p class="setting-section-title">使用</p>
+        <label class="setting-row" for="hapticsEnabled">
+          <span><b>触感反馈</b><small>点击主要按钮时轻微振动。</small></span>
+          <span class="toggle-control">
+            <input class="toggle-input" id="hapticsEnabled" type="checkbox">
+            <span class="toggle-track" aria-hidden="true"></span>
+          </span>
+        </label>
+
         <label class="setting-row" for="keepScreenOn">
           <span><b>解题时保持屏幕常亮</b><small>应用在前台时不自动熄屏。</small></span>
-          <input id="keepScreenOn" type="checkbox">
+          <span class="toggle-control">
+            <input class="toggle-input" id="keepScreenOn" type="checkbox">
+            <span class="toggle-track" aria-hidden="true"></span>
+          </span>
+        </label>
+
+        <label class="setting-row" for="resumeLastTool">
+          <span><b>启动时继续上次工具</b><small>下次打开应用时跳过首页。</small></span>
+          <span class="toggle-control">
+            <input class="toggle-input" id="resumeLastTool" type="checkbox">
+            <span class="toggle-track" aria-hidden="true"></span>
+          </span>
         </label>
 
         <button class="reset-button" id="resetSettings" type="button">恢复默认设置</button>
@@ -172,28 +295,24 @@
     <section class="sheet" role="dialog" aria-modal="true" aria-labelledby="aboutTitle">
       <div class="sheet-handle" aria-hidden="true"></div>
       <div class="sheet-head">
+        <button class="dialog-back" type="button" data-close-dialog aria-label="返回首页">←</button>
         <div><small>ABOUT</small><h2 id="aboutTitle">关于词迹</h2></div>
         <button class="close-button" type="button" data-close-dialog aria-label="关闭关于">×</button>
       </div>
       <div class="sheet-body">
         <div class="about-hero">
           <span class="about-mark" aria-hidden="true">迹</span>
-          <div><h3>词迹 Trace</h3><p>一个入口，两款完全离线的猜词辅助工具。</p></div>
+          <div><h3>词迹 Trace</h3><p>成语与英语单词猜词助手</p></div>
         </div>
 
         <dl class="about-list">
-          <dt>版本</dt><dd>v<span data-version>1.0.2</span></dd>
+          <dt>版本</dt><dd>v<span data-version>1.1.2</span></dd>
           <dt>作者</dt><dd>2002WYT</dd>
-          <dt>运行方式</dt><dd>完全离线</dd>
         </dl>
 
-        <p class="repo-title">OPEN-SOURCE PROJECTS</p>
-        <a class="repo-link" href="https://github.com/2002WYT/Idiom-Trace">
-          <span><b>2002WYT / Idiom-Trace</b><small>猜成语 · GitHub 仓库</small></span>
-          <span aria-hidden="true">↗</span>
-        </a>
-        <a class="repo-link" href="https://github.com/2002WYT/Word-Trace">
-          <span><b>2002WYT / Word-Trace</b><small>猜英语单词 · GitHub 仓库</small></span>
+        <p class="repo-title">GITHUB</p>
+        <a class="repo-link" href="https://github.com/2002WYT/Trace">
+          <span><b>2002WYT / Trace</b><small>源码、版本记录与下载</small></span>
           <span aria-hidden="true">↗</span>
         </a>
 
@@ -205,10 +324,12 @@
   <script>
     (function () {
       var menuButton = document.getElementById("menuButton");
+      var appBack = document.getElementById("appBack");
       var appMenu = document.getElementById("appMenu");
       var activeDialog = null;
       var lastFocused = null;
-      var fallbackVersion = "1.0.2";
+      var closeTimer = null;
+      var fallbackVersion = "1.1.2";
 
       function callApp(method, value, fallback) {
         try {
@@ -241,12 +362,24 @@
         menuButton.setAttribute("aria-expanded", String(open));
       }
 
+      function haptic() {
+        callApp("performHaptic", undefined, undefined);
+      }
+
       function hideDialog() {
         if (!activeDialog) return;
-        activeDialog.hidden = true;
+        var closingDialog = activeDialog;
         activeDialog = null;
-        document.body.classList.remove("modal-open");
-        if (lastFocused) lastFocused.focus();
+        closingDialog.classList.add("is-closing");
+        var finish = function () {
+          closingDialog.hidden = true;
+          closingDialog.classList.remove("is-closing");
+          document.body.classList.remove("modal-open");
+          if (lastFocused) lastFocused.focus();
+        };
+        clearTimeout(closeTimer);
+        if (animationsEnabled) closeTimer = setTimeout(finish, 170);
+        else finish();
       }
 
       function closeDialog(useHistory) {
@@ -261,20 +394,34 @@
         lastFocused = document.activeElement;
         setMenu(false);
         activeDialog = dialog;
+        dialog.classList.remove("is-closing");
         dialog.hidden = false;
         document.body.classList.add("modal-open");
         history.pushState({traceDialog: dialogId}, "");
-        dialog.querySelector(".close-button").focus();
+        dialog.querySelector(".dialog-back").focus();
       }
+
+      appBack.addEventListener("click", function () {
+        haptic();
+        if (window.TraceApp && typeof window.TraceApp.exitApp === "function") {
+          window.TraceApp.exitApp();
+        } else if (history.length > 1) {
+          history.back();
+        }
+      });
 
       menuButton.addEventListener("click", function (event) {
         event.stopPropagation();
+        haptic();
         setMenu(appMenu.hidden);
       });
 
       appMenu.addEventListener("click", function (event) {
         var button = event.target.closest("[data-open-dialog]");
-        if (button) openDialog(button.dataset.openDialog);
+        if (button) {
+          haptic();
+          openDialog(button.dataset.openDialog);
+        }
       });
 
       document.addEventListener("click", function (event) {
@@ -282,7 +429,10 @@
       });
 
       document.querySelectorAll("[data-close-dialog]").forEach(function (button) {
-        button.addEventListener("click", function () { closeDialog(true); });
+        button.addEventListener("click", function () {
+          haptic();
+          closeDialog(true);
+        });
       });
 
       document.querySelectorAll(".modal").forEach(function (modal) {
@@ -311,6 +461,21 @@
         undefined,
         readFallback("trace_keep_screen_on", "false") === "true"
       );
+      var animationsEnabled = callApp(
+        "getAnimationsEnabled",
+        undefined,
+        readFallback("trace_animations_enabled", "true") === "true"
+      );
+      var hapticsEnabled = callApp(
+        "getHapticsEnabled",
+        undefined,
+        readFallback("trace_haptics_enabled", "true") === "true"
+      );
+      var resumeLastTool = callApp(
+        "getResumeLastTool",
+        undefined,
+        readFallback("trace_resume_last_tool", "false") === "true"
+      );
 
       function updateZoomButtons(value) {
         document.querySelectorAll("[data-text-zoom]").forEach(function (button) {
@@ -332,21 +497,84 @@
         document.getElementById("keepScreenOn").checked = value;
       }
 
+      function setAnimationsEnabled(value) {
+        animationsEnabled = value;
+        callApp("setAnimationsEnabled", value, undefined);
+        writeFallback("trace_animations_enabled", value);
+        document.getElementById("animationsEnabled").checked = value;
+        document.documentElement.classList.toggle("reduce-motion", !value);
+      }
+
+      function setHapticsEnabled(value) {
+        hapticsEnabled = value;
+        callApp("setHapticsEnabled", value, undefined);
+        writeFallback("trace_haptics_enabled", value);
+        document.getElementById("hapticsEnabled").checked = value;
+      }
+
+      function setResumeLastTool(value) {
+        resumeLastTool = value;
+        callApp("setResumeLastTool", value, undefined);
+        writeFallback("trace_resume_last_tool", value);
+        document.getElementById("resumeLastTool").checked = value;
+      }
+
       updateZoomButtons(currentZoom);
       document.getElementById("keepScreenOn").checked = Boolean(keepScreenOn);
+      document.getElementById("animationsEnabled").checked = Boolean(animationsEnabled);
+      document.getElementById("hapticsEnabled").checked = Boolean(hapticsEnabled);
+      document.getElementById("resumeLastTool").checked = Boolean(resumeLastTool);
+      document.documentElement.classList.toggle("reduce-motion", !animationsEnabled);
 
       document.getElementById("zoomOptions").addEventListener("click", function (event) {
         var button = event.target.closest("[data-text-zoom]");
-        if (button) setTextZoom(Number(button.dataset.textZoom));
+        if (button) {
+          haptic();
+          setTextZoom(Number(button.dataset.textZoom));
+        }
+      });
+
+      document.getElementById("animationsEnabled").addEventListener("change", function (event) {
+        setAnimationsEnabled(event.target.checked);
+        haptic();
+      });
+
+      document.getElementById("hapticsEnabled").addEventListener("change", function (event) {
+        setHapticsEnabled(event.target.checked);
+        if (event.target.checked) haptic();
       });
 
       document.getElementById("keepScreenOn").addEventListener("change", function (event) {
         setKeepScreenOn(event.target.checked);
+        haptic();
+      });
+
+      document.getElementById("resumeLastTool").addEventListener("change", function (event) {
+        setResumeLastTool(event.target.checked);
+        haptic();
       });
 
       document.getElementById("resetSettings").addEventListener("click", function () {
+        haptic();
         setTextZoom(100);
+        setAnimationsEnabled(true);
+        setHapticsEnabled(true);
         setKeepScreenOn(false);
+        setResumeLastTool(false);
+      });
+
+      document.querySelectorAll("[data-tool]").forEach(function (link) {
+        link.addEventListener("click", function (event) {
+          callApp("setLastTool", link.dataset.tool, undefined);
+          writeFallback("trace_last_tool", link.dataset.tool);
+          haptic();
+          if (!animationsEnabled) return;
+          event.preventDefault();
+          document.body.classList.add("page-leaving");
+          setTimeout(function () {
+            window.location.href = link.href;
+          }, 165);
+        });
       });
     })();
   </script>

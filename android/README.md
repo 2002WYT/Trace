@@ -15,7 +15,7 @@
 .\gradlew.bat assembleDebug
 ```
 
-生成的调试 APK 位于 `app/build/outputs/apk/debug/app-debug.apk`。当前版本为 1.0.2。
+生成的调试 APK 位于 `app/build/outputs/apk/debug/app-debug.apk`。当前测试版本为 1.1.2。
 
 ## 重新生成图标
 
