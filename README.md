@@ -11,6 +11,8 @@
 [![Offline](https://img.shields.io/badge/works-100%25_offline-102d25?style=for-the-badge)](#隐私与离线运行)
 [![License](https://img.shields.io/badge/license-MIT-c3952f?style=for-the-badge)](./LICENSE)
 
+[**在线试玩**](https://2002wyt.github.io/Trace/)
+·
 [**下载 Android APK**](https://github.com/2002WYT/Trace/releases/download/v1.1.2/Trace-v1.1.2.apk)
 ·
 [**查看版本记录**](./CHANGELOG.md)
@@ -19,9 +21,23 @@
 
 **by 2002WYT**
 
+<br>
+
+<img src="./docs/images/trace-mobile-home.png" width="320" alt="词迹 Trace Android 手机竖屏首页">
+
+<br>
+
+<sub>Android 手机竖屏界面</sub>
+
 </div>
 
 ---
+
+## 在线试玩
+
+打开 [**词迹 Trace 在线版**](https://2002wyt.github.io/Trace/)，无需安装即可在手机或电脑浏览器中使用猜成语和猜单词工具。
+
+在线版与 Android 应用共用同一套页面源码；每次 `main` 分支更新后，GitHub Pages 会自动发布最新页面。
 
 ## 包含的工具
 
@@ -61,7 +77,9 @@ Trace/
 ├─ idiom-trace/       语迹独立网页版及原仓库历史
 ├─ word-trace/        Word Trace 独立网页版及原仓库历史
 ├─ android/           Android Studio 工程
+├─ .github/workflows/ GitHub Pages 自动发布配置
 ├─ docs/releases/     GitHub Release 更新说明
+├─ docs/images/       项目截图
 ├─ CHANGELOG.md       完整版本记录
 ├─ LICENSE            MIT 许可证
 └─ README.md          项目总览

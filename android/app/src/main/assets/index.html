@@ -4,6 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
   <meta name="color-scheme" content="light">
+  <meta name="description" content="词迹 Trace：猜成语与猜英语单词的在线筛选工具。">
   <title>词迹 Trace</title>
   <style>
     :root{
@@ -330,6 +331,14 @@
       var lastFocused = null;
       var closeTimer = null;
       var fallbackVersion = "1.1.2";
+      var runningInAndroidApp = Boolean(
+        window.TraceApp && typeof window.TraceApp.exitApp === "function"
+      );
+
+      if (!runningInAndroidApp) {
+        appBack.setAttribute("aria-label", "返回 GitHub 项目");
+        appBack.setAttribute("title", "返回 GitHub 项目");
+      }
 
       function callApp(method, value, fallback) {
         try {
@@ -407,6 +416,8 @@
           window.TraceApp.exitApp();
         } else if (history.length > 1) {
           history.back();
+        } else {
+          window.location.href = "https://github.com/2002WYT/Trace";
         }
       });
 
