@@ -4,6 +4,46 @@ Important changes to the Trace Android app and its bundled web tools are documen
 
 本文件记录词迹 Android 应用及其内置网页工具的重要变更。每个版本均为英文在前、中文翻译在后。
 
+## [1.2.0] - 2026-07-30
+
+### Added
+
+- Added Equation Trace, a fully offline arithmetic-expression solver for gray, yellow, and green clues.
+- Added user-selectable expression lengths from 3 to 8 characters and whole-number target results from −9999 to 9999.
+- Added candidate generation for the digits `0–9` and the operators `+`, `−`, `×`, and `÷`.
+- Added exact rational evaluation with standard operator precedence, left-to-right same-level evaluation, leading-zero rejection, and division-by-zero protection.
+- Added duplicate-aware two-pass clue scoring for repeated digits and operators.
+- Added English, Simplified Chinese, and Traditional Chinese interfaces, light and dark appearance support, an offline standalone page, a quick-start guide, and a downloadable ZIP for Equation Trace.
+
+### Changed
+
+- Expanded the home screen, Android last-tool restoration, GitHub Pages deployment, documentation, and offline packaging from two tools to three.
+- Updated the Android version to 1.2.0 (`versionCode 8`).
+
+### Fixed
+
+- Audited all 29,474 bundled idiom pronunciations and corrected 1,049 entries in both the standalone offline page and the Android asset.
+- Fixed incorrect syllables and tones, malformed pinyin, and nonstandard tone-mark placement while retaining verified contextual and historical readings.
+
+### 新增
+
+- 新增“猜算式”，可根据灰、黄、绿线索完全离线筛选四则运算算式。
+- 支持用户选择 3～8 个字符的算式长度，以及 −9999 到 9999 的整数计算结果。
+- 候选算式可使用数字 `0～9` 和算子 `+`、`−`、`×`、`÷`。
+- 使用精确分数进行计算，遵循标准四则运算优先级和同级从左到右规则，并排除前导零和除以零。
+- 对重复数字和算子使用两轮颜色判定，正确处理灰、黄、绿线索。
+- 猜算式支持英语、简体中文和繁体中文、浅色与深色外观，并提供独立离线网页、简明指南和 ZIP 下载包。
+
+### 改进
+
+- 首页、Android 上次工具恢复、GitHub Pages、项目文档和离线包从两款工具扩展为三款。
+- Android 版本更新为 1.2.0（`versionCode 8`）。
+
+### 修复
+
+- 全量复核 29,474 条内置成语拼音，并在独立离线页和 Android 资源中同步修正 1,049 条。
+- 修复错误音节、声调、异常拼音和不规范声调符号位置，同时保留经词典核实的语境读音与古音。
+
 ## [1.1.3] - 2026-07-30
 
 ### Added
@@ -134,6 +174,7 @@ Important changes to the Trace Android app and its bundled web tools are documen
 - 内置语迹、Word Trace、完整题库与筛选逻辑。
 - 增加统一首页，并支持无需账号和网络权限的完全离线运行。
 
+[1.2.0]: https://github.com/2002WYT/Trace/releases/tag/v1.2.0
 [1.1.3]: https://github.com/2002WYT/Trace/releases/tag/v1.1.3
 [1.1.2]: https://github.com/2002WYT/Trace/releases/tag/v1.1.2
 [1.0.2]: https://github.com/2002WYT/Trace/releases/tag/v1.0.2

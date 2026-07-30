@@ -34,6 +34,7 @@ jobs:
           cp android/app/src/main/assets/index.html _site/index.html
           cp android/app/src/main/assets/idiom-trace-offline.html _site/idiom-trace-offline.html
           cp android/app/src/main/assets/word-trace-offline-en.html _site/word-trace-offline-en.html
+          cp android/app/src/main/assets/equation-trace-offline.html _site/equation-trace-offline.html
           touch _site/.nojekyll
 
       - name: Configure GitHub Pages / 配置 GitHub Pages

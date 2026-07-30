@@ -31,6 +31,8 @@ public final class MainActivity extends Activity {
             "file:///android_asset/idiom-trace-offline.html";
     private static final String WORD_URL =
             "file:///android_asset/word-trace-offline-en.html";
+    private static final String EQUATION_URL =
+            "file:///android_asset/equation-trace-offline.html";
     private static final String PREFERENCES_NAME = "trace_settings";
     private static final String KEY_TEXT_ZOOM = "text_zoom";
     private static final String KEY_KEEP_SCREEN_ON = "keep_screen_on";
@@ -165,11 +167,16 @@ public final class MainActivity extends Activity {
         if ("word".equals(lastTool)) {
             return WORD_URL;
         }
+        if ("equation".equals(lastTool)) {
+            return EQUATION_URL;
+        }
         return HOME_URL;
     }
 
     private boolean isToolUrl(String url) {
-        return IDIOM_URL.equals(url) || WORD_URL.equals(url);
+        return IDIOM_URL.equals(url)
+                || WORD_URL.equals(url)
+                || EQUATION_URL.equals(url);
     }
 
     private void navigateHome() {
@@ -217,7 +224,9 @@ public final class MainActivity extends Activity {
     }
 
     private boolean isKnownTool(String tool) {
-        return "idiom".equals(tool) || "word".equals(tool);
+        return "idiom".equals(tool)
+                || "word".equals(tool)
+                || "equation".equals(tool);
     }
 
     private String getDefaultLanguage() {
@@ -292,7 +301,7 @@ public final class MainActivity extends Activity {
                     .getPackageInfo(getPackageName(), 0)
                     .versionName;
         } catch (android.content.pm.PackageManager.NameNotFoundException exception) {
-            return "1.1.3";
+            return "1.2.0";
         }
     }
 

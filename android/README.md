@@ -4,8 +4,9 @@ Trace is a fully offline Android WebView app containing:
 
 - Idiom Trace, a four-character Chinese idiom solver
 - Word Trace, an English word solver
+- Equation Trace, an arithmetic-expression solver for gray, yellow, and green clues
 
-Version 1.1.3 supports English, Simplified Chinese, and Traditional Chinese, plus System, Light, and Dark appearance modes. It requires Android 6.0 (API 23) or later and requests no network permission.
+Version 1.2.0 supports English, Simplified Chinese, and Traditional Chinese, plus System, Light, and Dark appearance modes. Equation Trace accepts expression lengths from 3 to 8, whole-number target results, and the operators `+`, `−`, `×`, and `÷`. The app requires Android 6.0 (API 23) or later and requests no network permission.
 
 ## Local build
 
@@ -39,8 +40,9 @@ Generated launcher and splash assets are written to `app/src/main/res`.
 
 - 语迹 Idiom Trace：四字成语筛选工具
 - Word Trace：英语单词筛选工具
+- 猜算式 Equation Trace：根据灰、黄、绿线索筛选四则运算算式
 
-1.1.3 版支持英语、简体中文和繁体中文，并提供跟随系统、浅色和深色三种外观模式。最低支持 Android 6.0（API 23），且不申请网络权限。
+1.2.0 版支持英语、简体中文和繁体中文，并提供跟随系统、浅色和深色三种外观模式。猜算式支持 3～8 个字符的算式、整数目标结果，以及 `+`、`−`、`×`、`÷` 四种算子。最低支持 Android 6.0（API 23），且不申请网络权限。
 
 ## 本地构建
 

@@ -144,16 +144,20 @@
       animation:card-in .28s both cubic-bezier(.2,.8,.2,1)
     }
     .tool-card:nth-child(2){animation-delay:.05s}
+    .tool-card:nth-child(3){animation-delay:.1s}
     .tool-card::before{content:"";position:absolute;inset:0 auto 0 0;width:4px;background:var(--lime)}
     .tool-card.word-tool::before{background:var(--gold)}
+    .tool-card.equation-tool::before{background:var(--green)}
     .tool-card:active{transform:scale(.985);background:#fff;box-shadow:0 4px 12px rgba(16,45,37,.08)}
     .tool-preview{display:grid;width:74px;height:74px;gap:4px;padding:7px;border-radius:18px 18px 18px 7px;background:#edf0df}
     .idiom-preview{grid-template-columns:repeat(2,1fr)}
     .word-preview{grid-template-columns:repeat(3,1fr);align-content:center;background:#eee9dc}
+    .equation-preview{grid-template-columns:repeat(3,1fr);align-content:center;background:#e8ece9}
     .tool-preview span{display:grid;min-width:0;place-items:center;border:1px solid rgba(16,45,37,.14);border-radius:7px;background:#fffdf7;color:#5d6964;font:700 13px/1 Georgia,"Songti SC",serif}
     .tool-preview .correct{border-color:var(--green);color:#fff;background:var(--green)}
     .tool-preview .present{border-color:var(--gold);color:#fff;background:var(--gold)}
     .word-preview span{height:25px;font-size:10px}
+    .equation-preview span{height:25px;font-size:10px}
     .tool-copy{min-width:0}.tool-label{color:var(--green);font:700 8px Georgia,serif;letter-spacing:.16em}
     .word-tool .tool-label{color:#88691e}
     .tool-copy h2{margin:6px 0 7px;font:750 23px/1.15 "PingFang SC","Microsoft YaHei",system-ui,sans-serif;letter-spacing:0}
@@ -197,7 +201,7 @@
     .home-shell{animation:home-in .25s ease-out}
     body.page-leaving .home-shell{opacity:0;transform:translateY(5px);transition:opacity .16s ease,transform .16s ease}
     html.reduce-motion *,html.trace-reduce-motion *{animation:none!important;transition:none!important;scroll-behavior:auto!important}
-    @media(min-width:680px){.tool-list{grid-template-columns:1fr 1fr}.tool-card{grid-template-columns:70px minmax(0,1fr) 28px}.home-intro{padding-top:36px}}
+    @media(min-width:680px){.tool-list{grid-template-columns:1fr 1fr}.tool-card{grid-template-columns:70px minmax(0,1fr) 28px}.equation-tool{grid-column:1/-1}.home-intro{padding-top:36px}}
     @media(max-height:660px){.home-intro{padding-top:12px;padding-bottom:12px}.tool-card{min-height:116px}.tool-preview{width:66px;height:66px}.tool-card{grid-template-columns:66px minmax(0,1fr) 26px}.home-footer{margin-top:14px}}
 
     /* Mature tool UI: compact, neutral, and consistent with UI.md. */
@@ -253,16 +257,17 @@
     .tool-card:active{transform:none;background:var(--surface-muted);box-shadow:none}
     .tool-preview{width:54px;height:54px;gap:3px;padding:5px;border-radius:6px;background:var(--surface-muted)}
     .word-preview{background:var(--surface-muted)}
+    .equation-preview{background:var(--surface-muted)}
     .tool-preview span{border-color:var(--border);border-radius:3px;color:var(--text-muted);background:var(--surface);font-size:11px}
     .tool-preview .correct{border-color:var(--accent);background:var(--accent)}
     .tool-preview .present{border-color:#8a6d1f;background:#8a6d1f}
-    .word-preview span{height:19px;font-size:8px}
+    .word-preview span,.equation-preview span{height:19px;font-size:8px}
     .tool-label{color:var(--text-muted);font-size:8px;letter-spacing:.12em}
     .word-tool .tool-label{color:var(--text-muted)}
     .tool-copy h2{margin:4px 0;font-size:17px;line-height:1.35;font-weight:650}
     .tool-copy p{color:var(--text-muted);font-size:11px}
     .chevron{width:24px;height:24px;border-radius:6px;color:var(--text-muted);background:transparent;font-size:19px}
-    .home-footer{margin-top:24px;padding-top:12px;border-color:var(--border);color:var(--text-muted)}
+    .home-footer{margin-top:auto;padding-top:12px;border-color:var(--border);color:var(--text-muted)}
     .app-menu{
       top:43px;width:220px;padding:5px;border:1px solid var(--border);border-radius:8px;
       background:var(--surface);box-shadow:0 8px 24px rgba(0,0,0,.18);animation:none
@@ -322,6 +327,7 @@
     @media(min-width:680px){
       .tool-list{grid-template-columns:1fr 1fr}
       .tool-card{grid-template-columns:54px minmax(0,1fr) 24px}
+      .equation-tool{grid-column:1/-1}
       .home-intro{padding-top:28px}
       .modal{align-items:center}
     }
@@ -385,9 +391,21 @@
         </div>
         <span class="chevron" aria-hidden="true">›</span>
       </a>
+
+      <a class="tool-card equation-tool" href="equation-trace-offline.html" data-tool="equation">
+        <div class="tool-preview equation-preview" aria-hidden="true">
+          <span class="correct">6</span><span class="present">+</span><span>2</span><span>×</span><span>2</span>
+        </div>
+        <div class="tool-copy">
+          <span class="tool-label">EQUATION TRACE</span>
+          <h2 data-i18n="equationTool">Arithmetic equations</h2>
+          <p data-i18n="equationToolSummary">Digits · Operators · Target result</p>
+        </div>
+        <span class="chevron" aria-hidden="true">›</span>
+      </a>
     </section>
 
-    <footer class="home-footer"><span>2002WYT</span><span>v<span data-version>1.1.3</span></span></footer>
+    <footer class="home-footer"><span>2002WYT</span><span>v<span data-version>1.2.0</span></span></footer>
   </main>
 
   <div class="modal" id="settingsDialog" hidden>
@@ -407,7 +425,7 @@
             <button type="button" data-language="zh-CN" aria-pressed="false">简体中文</button>
             <button type="button" data-language="zh-TW" aria-pressed="false">繁體中文</button>
           </div>
-          <p data-i18n="languageHelp">Applies to the home screen, settings, and both tools.</p>
+          <p data-i18n="languageHelp">Applies to the home screen, settings, and all three tools.</p>
         </fieldset>
 
         <p class="setting-section-title" data-i18n="appearanceSection">APPEARANCE</p>
@@ -429,7 +447,7 @@
             <button type="button" data-text-zoom="115" data-i18n="textLarge" aria-pressed="false">Large</button>
             <button type="button" data-text-zoom="130" data-i18n="textLargest" aria-pressed="false">Largest</button>
           </div>
-          <p data-i18n="textSizeHelp">Applies to the home screen and both tools.</p>
+          <p data-i18n="textSizeHelp">Applies to the home screen and all three tools.</p>
         </fieldset>
 
         <label class="setting-row" for="animationsEnabled">
@@ -481,11 +499,11 @@
       <div class="sheet-body">
         <div class="about-hero">
           <span class="about-mark" data-i18n="brandMark" aria-hidden="true">T</span>
-          <div><h3 data-i18n="aboutName">Trace</h3><p data-i18n="aboutDescription">Chinese idiom and English word solver</p></div>
+          <div><h3 data-i18n="aboutName">Trace</h3><p data-i18n="aboutDescription">Idiom, word, and equation puzzle solver</p></div>
         </div>
 
         <dl class="about-list">
-          <dt data-i18n="version">Version</dt><dd>v<span data-version>1.1.3</span></dd>
+          <dt data-i18n="version">Version</dt><dd>v<span data-version>1.2.0</span></dd>
           <dt data-i18n="author">Author</dt><dd>2002WYT</dd>
         </dl>
 
@@ -495,7 +513,7 @@
           <span aria-hidden="true">↗</span>
         </a>
 
-        <p class="copyright">© 2002WYT · Made for word-game explorers</p>
+        <p class="copyright" data-i18n="copyright">© 2002WYT · Made for puzzle-game players</p>
       </div>
     </section>
   </div>
@@ -508,14 +526,14 @@
       var activeDialog = null;
       var lastFocused = null;
       var closeTimer = null;
-      var fallbackVersion = "1.1.3";
+      var fallbackVersion = "1.2.0";
       var runningInAndroidApp = Boolean(
         window.TraceApp && typeof window.TraceApp.exitApp === "function"
       );
       var I18N = {
         en: {
           pageTitle: "Trace",
-          metaDescription: "Trace: a fully offline Chinese idiom and English word solver.",
+          metaDescription: "Trace: fully offline solvers for Chinese idioms, English words, and arithmetic equations.",
           exitApp: "Exit Trace",
           backProject: "Back to the GitHub project",
           brandMark: "T",
@@ -526,7 +544,7 @@
           settingsSummary: "Language, display, and usage",
           about: "About",
           aboutSummary: "Version and open-source project",
-          toolSection: "WORD TOOLS",
+          toolSection: "PUZZLE TOOLS",
           chooseTool: "Choose a tool",
           startFromClues: "Start filtering from the clues you already have.",
           sampleIdiomSecond: "举",
@@ -534,12 +552,14 @@
           idiomToolSummary: "Characters · Pinyin · Tones",
           wordTool: "English words",
           wordToolSummary: "Letters · Positions · Dictionaries",
+          equationTool: "Arithmetic equations",
+          equationToolSummary: "Digits · Operators · Target result",
           backHome: "Back to home",
           closeSettings: "Close settings",
           settingsLabel: "SETTINGS",
           languageSection: "LANGUAGE",
           appLanguage: "App language",
-          languageHelp: "Applies to the home screen, settings, and both tools.",
+          languageHelp: "Applies to the home screen, settings, and all three tools.",
           appearanceSection: "APPEARANCE",
           theme: "Theme",
           themeSystem: "System",
@@ -551,7 +571,7 @@
           textStandard: "Standard",
           textLarge: "Large",
           textLargest: "Largest",
-          textSizeHelp: "Applies to the home screen and both tools.",
+          textSizeHelp: "Applies to the home screen and all three tools.",
           animations: "Transitions",
           animationsHelp: "Animate page and dialog changes.",
           usageSection: "USAGE",
@@ -566,14 +586,15 @@
           closeAbout: "Close about",
           aboutLabel: "ABOUT",
           aboutName: "Trace",
-          aboutDescription: "Chinese idiom and English word solver",
+          aboutDescription: "Idiom, word, and equation puzzle solver",
           version: "Version",
           author: "Author",
-          repoDescription: "Source, changelog, and downloads"
+          repoDescription: "Source, changelog, and downloads",
+          copyright: "© 2002WYT · Made for puzzle-game players"
         },
         "zh-CN": {
           pageTitle: "词迹 Trace",
-          metaDescription: "词迹 Trace：完全离线的成语与英语单词猜词工具。",
+          metaDescription: "词迹 Trace：完全离线的猜成语、猜单词与猜算式工具。",
           exitApp: "退出词迹",
           backProject: "返回 GitHub 项目",
           brandMark: "迹",
@@ -584,7 +605,7 @@
           settingsSummary: "语言、显示与使用偏好",
           about: "关于",
           aboutSummary: "版本与开源项目",
-          toolSection: "猜词工具",
+          toolSection: "解谜工具",
           chooseTool: "选择工具",
           startFromClues: "从已有线索开始筛选。",
           sampleIdiomSecond: "举",
@@ -592,12 +613,14 @@
           idiomToolSummary: "汉字 · 声韵 · 声调",
           wordTool: "猜单词",
           wordToolSummary: "字母 · 位置 · 词表",
+          equationTool: "猜算式",
+          equationToolSummary: "数字 · 算子 · 计算结果",
           backHome: "返回首页",
           closeSettings: "关闭设置",
           settingsLabel: "设置",
           languageSection: "语言",
           appLanguage: "应用语言",
-          languageHelp: "同时应用到首页、设置和两个猜词工具。",
+          languageHelp: "同时应用到首页、设置和三个解谜工具。",
           appearanceSection: "外观",
           theme: "主题",
           themeSystem: "跟随系统",
@@ -609,7 +632,7 @@
           textStandard: "标准",
           textLarge: "较大",
           textLargest: "特大",
-          textSizeHelp: "同时应用到首页、猜成语和猜单词页面。",
+          textSizeHelp: "同时应用到首页和三个工具页面。",
           animations: "过渡动画",
           animationsHelp: "让页面和弹窗切换更自然。",
           usageSection: "使用",
@@ -624,14 +647,15 @@
           closeAbout: "关闭关于",
           aboutLabel: "关于",
           aboutName: "词迹 Trace",
-          aboutDescription: "成语与英语单词猜词助手",
+          aboutDescription: "猜成语、猜单词与猜算式助手",
           version: "版本",
           author: "作者",
-          repoDescription: "源码、版本记录与下载"
+          repoDescription: "源码、版本记录与下载",
+          copyright: "© 2002WYT · 为文字与算式游戏玩家制作"
         },
         "zh-TW": {
           pageTitle: "詞跡 Trace",
-          metaDescription: "詞跡 Trace：完全離線的成語與英語單字猜詞工具。",
+          metaDescription: "詞跡 Trace：完全離線的猜成語、猜單字與猜算式工具。",
           exitApp: "退出詞跡",
           backProject: "返回 GitHub 專案",
           brandMark: "跡",
@@ -642,7 +666,7 @@
           settingsSummary: "語言、顯示與使用偏好",
           about: "關於",
           aboutSummary: "版本與開源專案",
-          toolSection: "猜詞工具",
+          toolSection: "解謎工具",
           chooseTool: "選擇工具",
           startFromClues: "從已有線索開始篩選。",
           sampleIdiomSecond: "舉",
@@ -650,12 +674,14 @@
           idiomToolSummary: "漢字 · 聲韻 · 聲調",
           wordTool: "猜單字",
           wordToolSummary: "字母 · 位置 · 詞表",
+          equationTool: "猜算式",
+          equationToolSummary: "數字 · 運算子 · 計算結果",
           backHome: "返回首頁",
           closeSettings: "關閉設定",
           settingsLabel: "設定",
           languageSection: "語言",
           appLanguage: "應用程式語言",
-          languageHelp: "同時套用到首頁、設定和兩個猜詞工具。",
+          languageHelp: "同時套用到首頁、設定和三個解謎工具。",
           appearanceSection: "外觀",
           theme: "主題",
           themeSystem: "跟隨系統",
@@ -667,7 +693,7 @@
           textStandard: "標準",
           textLarge: "較大",
           textLargest: "特大",
-          textSizeHelp: "同時套用到首頁、猜成語和猜單字頁面。",
+          textSizeHelp: "同時套用到首頁和三個工具頁面。",
           animations: "轉場動畫",
           animationsHelp: "讓頁面和彈出視窗切換更自然。",
           usageSection: "使用",
@@ -682,10 +708,11 @@
           closeAbout: "關閉關於",
           aboutLabel: "關於",
           aboutName: "詞跡 Trace",
-          aboutDescription: "成語與英語單字猜詞助手",
+          aboutDescription: "猜成語、猜單字與猜算式助手",
           version: "版本",
           author: "作者",
-          repoDescription: "原始碼、版本記錄與下載"
+          repoDescription: "原始碼、版本記錄與下載",
+          copyright: "© 2002WYT · 為文字與算式遊戲玩家製作"
         }
       };
       var currentLanguage = "en";

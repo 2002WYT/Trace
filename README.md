@@ -2,9 +2,9 @@
 
 # Trace · 词迹
 
-### Two fully offline word-solving tools in one app
+### Three fully offline puzzle-solving tools in one app
 
-Solve four-character Chinese idioms or filter English words from gray, yellow, and green clues. Use the tools in a browser or install the unified Android app.
+Solve four-character Chinese idioms, filter English words, or find arithmetic expressions from gray, yellow, and green clues. Use the tools in a browser or install the unified Android app.
 
 [![GitHub Release](https://img.shields.io/github/v/release/2002WYT/Trace?style=flat-square)](https://github.com/2002WYT/Trace/releases/latest)
 [![Android](https://img.shields.io/badge/Android-6.0%2B-2f6f55?style=flat-square&logo=android&logoColor=white)](https://github.com/2002WYT/Trace/releases/latest)
@@ -14,7 +14,7 @@ Solve four-character Chinese idioms or filter English words from gray, yellow, a
 
 [**Try online**](https://2002wyt.github.io/Trace/)
 ·
-[**Download Android APK**](https://github.com/2002WYT/Trace/releases/download/v1.1.3/Trace-v1.1.3.apk)
+[**Download Android APK**](https://github.com/2002WYT/Trace/releases/download/v1.2.0/Trace-v1.2.0.apk)
 ·
 [**Changelog**](./CHANGELOG.md)
 ·
@@ -24,7 +24,8 @@ Solve four-character Chinese idioms or filter English words from gray, yellow, a
 
 <br>
 
-<img src="./docs/images/trace-mobile-home-v1.1.3.png" width="200" alt="Trace 1.1.3 Android home screen">
+<img src="./docs/images/trace-mobile-home-v1.2.0.png" width="200" alt="Trace 1.2.0 Android home screen">
+<img src="./docs/images/equation-trace-mobile-v1.2.0.png" width="200" alt="Equation Trace 1.2.0 arithmetic clue screen">
 
 </div>
 
@@ -38,16 +39,17 @@ Open the [Trace online version](https://2002wyt.github.io/Trace/) on a phone or 
 | --- | --- | --- |
 | **Idiom Trace** | Filter four-character Chinese idioms by character, initial, final, and tone clues | [`idiom-trace/idiom-trace-offline.html`](./idiom-trace/idiom-trace-offline.html) |
 | **Word Trace** | Filter 2–18 letter English words by gray, yellow, and green clues | [`word-trace/word-trace-offline-en.html`](./word-trace/word-trace-offline-en.html) |
+| **Equation Trace** | Find 3–8 character arithmetic expressions for a target result using gray, yellow, and green clues | [`equation-trace/equation-trace-offline.html`](./equation-trace/equation-trace-offline.html) |
 
-Both standalone pages contain their data and filtering logic in a single file and continue to work without a network connection.
+All three standalone pages contain their data and filtering logic in a single file and continue to work without a network connection.
 
 ## Android app
 
-Trace 1.1.3 provides:
+Trace 1.2.0 provides:
 
 - English, Simplified Chinese, and Traditional Chinese interfaces;
 - System, Light, and Dark appearance modes;
-- both solvers and their dictionaries inside one app;
+- all three solvers, including the new arithmetic-expression generator, inside one app;
 - compact phone layouts based on familiar productivity-tool patterns;
 - three text-size options, optional transitions and haptic feedback;
 - optional screen wake lock and resume-last-tool behavior;
@@ -87,6 +89,7 @@ For the exact commit, push, tag, release, APK upload, checksum, GitHub Pages, an
 Trace/
 ├─ idiom-trace/          standalone Idiom Trace page and documentation
 ├─ word-trace/           standalone Word Trace page and documentation
+├─ equation-trace/       standalone Equation Trace page and documentation
 ├─ android/              Android Studio project
 ├─ .github/workflows/    GitHub Pages publishing workflow
 ├─ docs/releases/        bilingual release notes
@@ -122,13 +125,13 @@ Trace is released under the [MIT License](./LICENSE).
 
 # 词迹 · Trace
 
-### 一个应用，两款完全离线的猜词辅助工具
+### 一个应用，三款完全离线的解谜辅助工具
 
-根据汉字、拼音和声调线索筛选四字成语，或根据灰、黄、绿线索筛选英语单词。既可直接在浏览器中使用，也可安装统一的 Android 应用。
+根据汉字、拼音和声调线索筛选四字成语，根据灰、黄、绿线索筛选英语单词，或按字符长度和计算结果寻找四则运算算式。既可直接在浏览器中使用，也可安装统一的 Android 应用。
 
 [**在线试玩**](https://2002wyt.github.io/Trace/)
 ·
-[**下载 Android APK**](https://github.com/2002WYT/Trace/releases/download/v1.1.3/Trace-v1.1.3.apk)
+[**下载 Android APK**](https://github.com/2002WYT/Trace/releases/download/v1.2.0/Trace-v1.2.0.apk)
 ·
 [**查看更新日志**](./CHANGELOG.md)
 ·
@@ -144,16 +147,17 @@ Trace is released under the [MIT License](./LICENSE).
 | --- | --- | --- |
 | **语迹 · Idiom Trace** | 根据汉字、声母、韵母和声调线索筛选四字成语 | [`idiom-trace/idiom-trace-offline.html`](./idiom-trace/idiom-trace-offline.html) |
 | **Word Trace** | 根据灰色、黄色和绿色线索筛选 2～18 个字母的英语单词 | [`word-trace/word-trace-offline-en.html`](./word-trace/word-trace-offline-en.html) |
+| **猜算式 · Equation Trace** | 按 3～8 个字符的长度、整数结果和灰黄绿线索筛选四则运算算式 | [`equation-trace/equation-trace-offline.html`](./equation-trace/equation-trace-offline.html) |
 
-两份独立网页均把数据和筛选逻辑装在单个文件中，下载后可断网运行。
+三份独立网页均把数据和筛选逻辑装在单个文件中，下载后可断网运行。
 
 ## Android 应用
 
-词迹 1.1.3 提供：
+词迹 1.2.0 提供：
 
 - 英语、简体中文和繁体中文界面；
 - 跟随系统、浅色和深色三种外观模式；
-- 一个应用内的两款工具及完整题库；
+- 一个应用内的三款工具，包括新增的四则运算算式生成与筛选功能；
 - 参考成熟效率工具整理的紧凑手机布局；
 - 三档文字大小，以及可选的过渡动画和触感反馈；
 - 可选的解题时保持屏幕常亮和启动时继续上次工具；
@@ -193,6 +197,7 @@ android/app/build/outputs/apk/debug/app-debug.apk
 Trace/
 ├─ idiom-trace/          语迹独立网页与说明
 ├─ word-trace/           Word Trace 独立网页与说明
+├─ equation-trace/       猜算式独立网页与说明
 ├─ android/              Android Studio 工程
 ├─ .github/workflows/    GitHub Pages 发布流程
 ├─ docs/releases/        中英双语发布说明
@@ -228,7 +233,7 @@ Trace/
 
 <div align="center">
 
-Made for language learners and word-game solvers. / 为语言学习者与猜词玩家制作。
+Made for language learners and puzzle-game solvers. / 为语言学习者与解谜游戏玩家制作。
 
 **© 2026 2002WYT**
 

@@ -1,0 +1,816 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <script>
+    (function () {
+      var mode = "";
+      try {
+        if (window.TraceApp && typeof window.TraceApp.getTheme === "function") {
+          mode = window.TraceApp.getTheme();
+        }
+      } catch (error) {}
+      if (!mode) {
+        try {
+          mode = localStorage.getItem("trace_theme") || "system";
+        } catch (error) {
+          mode = "system";
+        }
+      }
+      if (mode !== "light" && mode !== "dark") mode = "system";
+      var systemDark = window.matchMedia
+        && window.matchMedia("(prefers-color-scheme: dark)").matches;
+      var theme = mode === "dark" || (mode === "system" && systemDark)
+        ? "dark"
+        : "light";
+      document.documentElement.dataset.theme = theme;
+      document.documentElement.style.colorScheme = theme;
+    })();
+  </script>
+  <meta name="description" content="Equation Trace: an offline arithmetic-expression solver with gray, yellow, and green clues.">
+  <title>Equation Trace</title>
+  <style>
+    :root{
+      --bg:#f6f7f8;--surface:#fff;--surface-muted:#f0f2f3;
+      --text:#24292f;--muted:#656d76;--line:#d0d7de;
+      --accent:#2f6f55;--accent-hover:#285f49;
+      --gray:#6e7781;--yellow:#9a6700;--green:#2f6f55;
+      --danger:#cf222e;--focus:rgba(47,111,85,.3)
+    }
+    :root[data-theme="dark"]{
+      --bg:#0d1117;--surface:#161b22;--surface-muted:#21262d;
+      --text:#e6edf3;--muted:#8b949e;--line:#30363d;
+      --accent:#4a9b73;--accent-hover:#5bac82;
+      --gray:#768390;--yellow:#bb8009;--green:#347d55;
+      --danger:#ff7b72;--focus:rgba(74,155,115,.35)
+    }
+    *{box-sizing:border-box}
+    html{background:var(--bg);scroll-behavior:smooth}
+    body{
+      margin:0;background:var(--bg);color:var(--text);
+      font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Microsoft YaHei",
+        "PingFang SC","Hiragino Sans GB",Arial,sans-serif;
+      font-size:14px;line-height:1.55
+    }
+    button,input{font:inherit;color:inherit}
+    button{cursor:pointer}
+    button:disabled{cursor:not-allowed;opacity:.55}
+    :focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+    .shell{width:min(1080px,calc(100% - 24px));margin:auto}
+    .app-header{
+      height:60px;display:flex;align-items:center;justify-content:space-between;
+      border-bottom:1px solid var(--line)
+    }
+    .header-leading{display:flex;align-items:center;gap:10px;min-width:0}
+    .back{
+      width:36px;height:36px;padding:0;border:1px solid var(--line);
+      border-radius:6px;background:var(--surface);font-size:19px
+    }
+    .back:hover{background:var(--surface-muted)}
+    .brand{display:flex;align-items:center;gap:9px;min-width:0}
+    .brand-mark{
+      width:36px;height:36px;display:grid;place-items:center;border-radius:6px;
+      background:var(--accent);color:#fff;font-weight:750
+    }
+    .brand-copy{display:flex;flex-direction:column;min-width:0}
+    .brand-copy b{font-size:15px;line-height:1.25}
+    .brand-copy small{color:var(--muted);font-size:9px;letter-spacing:.08em}
+    .offline{
+      display:flex;align-items:center;gap:7px;padding:6px 9px;
+      border:1px solid var(--line);border-radius:6px;background:var(--surface);
+      color:var(--muted);font-size:10px
+    }
+    .offline i{width:7px;height:7px;border-radius:50%;background:var(--accent)}
+    .page-head{padding:22px 0 18px}
+    .eyebrow{margin:0 0 4px;color:var(--muted);font-size:10px;font-weight:700;letter-spacing:.09em}
+    h1{margin:0;font-size:25px;line-height:1.35}
+    .lead{max-width:720px;margin:5px 0 0;color:var(--muted)}
+    .workspace{
+      display:grid;grid-template-columns:290px minmax(0,1fr);
+      border:1px solid var(--line);border-radius:8px;background:var(--surface);
+      overflow:hidden
+    }
+    .setup{padding:18px;border-right:1px solid var(--line);background:var(--surface-muted)}
+    .section-label{
+      margin:0 0 12px;color:var(--muted);font-size:10px;
+      font-weight:750;letter-spacing:.08em
+    }
+    .field{margin-bottom:18px}
+    .field label{display:block;margin-bottom:6px;font-size:12px;font-weight:650}
+    .field-help{display:block;margin-top:6px;color:var(--muted);font-size:11px}
+    .length-control{
+      height:40px;display:grid;grid-template-columns:40px 1fr 40px;
+      border:1px solid var(--line);border-radius:6px;overflow:hidden;background:var(--surface)
+    }
+    .length-control button{border:0;background:var(--surface);font-size:18px}
+    .length-control button:hover{background:var(--surface-muted)}
+    .length-control input{
+      min-width:0;border:0;border-left:1px solid var(--line);
+      border-right:1px solid var(--line);background:var(--surface);
+      text-align:center;font-weight:650;appearance:textfield
+    }
+    .target-input{
+      width:100%;height:40px;padding:0 11px;border:1px solid var(--line);
+      border-radius:6px;background:var(--surface)
+    }
+    .rules{margin:0;padding:12px 0 0;border-top:1px solid var(--line);color:var(--muted);font-size:11px}
+    .rules b{display:block;margin-bottom:4px;color:var(--text);font-size:12px}
+    .rules ul{margin:0;padding-left:17px}
+    .clue-area{min-width:0;padding:18px;display:flex;flex-direction:column}
+    .clue-head{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin-bottom:12px}
+    .clue-head h2,.results-head h2{margin:0;font-size:18px;line-height:1.4}
+    .clue-head p{margin:3px 0 0;color:var(--muted);font-size:11px}
+    .legend{display:flex;gap:9px;flex-wrap:wrap;color:var(--muted);font-size:10px}
+    .legend span{display:flex;align-items:center;gap:5px}
+    .legend i{width:10px;height:10px;border-radius:2px}
+    .legend .gray{background:var(--gray)}.legend .yellow{background:var(--yellow)}.legend .green{background:var(--green)}
+    .clues{display:flex;flex-direction:column;gap:9px}
+    .clue{border:1px solid var(--line);border-radius:6px;background:var(--surface)}
+    .clue-top{display:grid;grid-template-columns:28px minmax(0,1fr) 32px;align-items:center}
+    .clue-number{color:var(--muted);text-align:center;font-size:10px;font-variant-numeric:tabular-nums}
+    .guess-input{
+      width:100%;height:38px;padding:0 10px;border:0;border-left:1px solid var(--line);
+      border-right:1px solid var(--line);background:var(--surface);
+      font:650 15px ui-monospace,SFMono-Regular,Consolas,monospace;letter-spacing:.08em
+    }
+    .remove-row{height:38px;border:0;background:transparent;color:var(--muted);font-size:18px}
+    .remove-row:hover{color:var(--danger);background:var(--surface-muted)}
+    .tiles{
+      display:grid;grid-template-columns:repeat(var(--length),minmax(28px,44px));
+      gap:6px;padding:10px;border-top:1px solid var(--line)
+    }
+    .tile{
+      aspect-ratio:1;padding:0;border:1px solid var(--line);border-radius:4px;
+      background:var(--surface-muted);font:700 17px ui-monospace,SFMono-Regular,Consolas,monospace
+    }
+    .tile:empty::after{content:"·";color:var(--muted)}
+    .tile.absent{border-color:var(--gray);background:var(--gray);color:#fff}
+    .tile.present{border-color:var(--yellow);background:var(--yellow);color:#fff}
+    .tile.correct{border-color:var(--green);background:var(--green);color:#fff}
+    .clue-tools{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:10px}
+    .add-row{
+      height:36px;padding:0 12px;border:1px solid var(--line);border-radius:5px;
+      background:var(--surface);color:var(--accent);font-size:12px;font-weight:650
+    }
+    .add-row:hover{border-color:var(--accent);background:var(--surface-muted)}
+    .row-limit{color:var(--muted);font-size:10px}
+    .keypad{
+      display:grid;grid-template-columns:repeat(8,1fr);gap:5px;
+      margin-top:14px;padding-top:14px;border-top:1px solid var(--line)
+    }
+    .key{
+      height:38px;padding:0;border:1px solid var(--line);border-radius:5px;
+      background:var(--surface);font:700 14px ui-monospace,SFMono-Regular,Consolas,monospace
+    }
+    .key:hover{background:var(--surface-muted)}
+    .key.absent{border-color:var(--gray);background:var(--gray);color:#fff}
+    .key.present{border-color:var(--yellow);background:var(--yellow);color:#fff}
+    .key.correct{border-color:var(--green);background:var(--green);color:#fff}
+    .key.erase{grid-column:span 2;font-family:inherit}
+    .form-error{min-height:20px;margin:9px 0 0;color:var(--danger);font-size:11px}
+    .actions{
+      display:flex;justify-content:flex-end;gap:8px;padding-top:12px;border-top:1px solid var(--line)
+    }
+    .button{
+      min-height:40px;padding:0 16px;border:1px solid var(--line);
+      border-radius:6px;background:var(--surface);font-weight:650
+    }
+    .button:hover{background:var(--surface-muted)}
+    .button.primary{min-width:150px;border-color:var(--accent);background:var(--accent);color:#fff}
+    .button.primary:hover{background:var(--accent-hover)}
+    .results{padding:24px 0 36px;scroll-margin-top:12px}
+    .results-head{
+      display:flex;align-items:flex-end;justify-content:space-between;gap:16px;
+      padding-bottom:11px;border-bottom:1px solid var(--line)
+    }
+    .result-summary{text-align:right}
+    .result-summary b{font-size:25px;font-variant-numeric:tabular-nums}
+    .result-summary span{color:var(--muted);font-size:10px}
+    .result-note{margin:10px 0;color:var(--muted);font-size:11px}
+    .result-empty{
+      min-height:120px;display:grid;place-items:center;padding:20px;
+      color:var(--muted);text-align:center
+    }
+    .result-list{
+      display:grid;grid-template-columns:repeat(3,minmax(0,1fr));
+      border-top:1px solid var(--line);border-left:1px solid var(--line)
+    }
+    .candidate{
+      min-height:58px;display:flex;align-items:center;justify-content:space-between;
+      gap:8px;padding:10px 12px;border:0;border-right:1px solid var(--line);
+      border-bottom:1px solid var(--line);background:var(--surface);text-align:left
+    }
+    .candidate:hover{background:var(--surface-muted)}
+    .candidate code{font:650 15px ui-monospace,SFMono-Regular,Consolas,monospace;color:var(--text)}
+    .candidate small{color:var(--muted);font-size:9px}
+    .more-row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 0}
+    .more-row span{color:var(--muted);font-size:11px}
+    .more-row button{
+      height:34px;padding:0 12px;border:1px solid var(--line);
+      border-radius:5px;background:var(--surface);font-weight:650
+    }
+    footer{
+      min-height:68px;display:flex;align-items:center;justify-content:space-between;
+      border-top:1px solid var(--line);color:var(--muted);font-size:10px
+    }
+    @media(max-width:780px){
+      .workspace{grid-template-columns:1fr}
+      .setup{border-right:0;border-bottom:1px solid var(--line)}
+      .setup-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+      .field{margin-bottom:0}.rules{margin-top:16px}
+      .result-list{grid-template-columns:repeat(2,minmax(0,1fr))}
+    }
+    @media(max-width:520px){
+      .shell{width:calc(100% - 16px)}
+      .app-header{height:52px}.back,.brand-mark{width:34px;height:34px}
+      .offline{padding:5px 7px}.offline span{display:none}
+      .page-head{padding:16px 0 13px}h1{font-size:21px}
+      .setup,.clue-area{padding:12px}.setup-grid{grid-template-columns:1fr 1fr;gap:10px}
+      .clue-head{display:block}.legend{margin-top:8px}
+      .tiles{grid-template-columns:repeat(var(--length),minmax(0,1fr));gap:4px;padding:8px}
+      .tile{font-size:clamp(13px,4vw,17px)}
+      .actions{order:1}
+      .keypad{order:2;grid-template-columns:repeat(4,1fr)}
+      .key.erase{grid-column:span 2}
+      .actions{justify-content:stretch}.button{flex:1;padding:0 10px}.button.primary{min-width:0;flex:1.5}
+      .result-list{grid-template-columns:1fr}
+      .candidate{min-height:52px}.results-head h2{font-size:17px}
+    }
+    @media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important}}
+    html.trace-reduce-motion *{animation:none!important;transition:none!important;scroll-behavior:auto!important}
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <header class="app-header">
+      <div class="header-leading">
+        <button class="back" type="button" onclick="traceReturnHome()" data-i18n-aria="backHome" aria-label="Back to Trace home">←</button>
+        <div class="brand">
+          <span class="brand-mark">=</span>
+          <span class="brand-copy"><b data-i18n="appName">Equation Trace</b><small>EQUATION TRACE</small></span>
+        </div>
+      </div>
+      <span class="offline"><i></i><span data-i18n="offline">Offline · calculated on this device</span></span>
+    </header>
+
+    <section class="page-head">
+      <p class="eyebrow" data-i18n="eyebrow">ARITHMETIC CLUE SOLVER</p>
+      <h1 data-i18n="title">Find possible equations</h1>
+      <p class="lead" data-i18n="intro">Set the expression length and result, then enter the gray, yellow, and green clues from your game.</p>
+    </section>
+
+    <main class="workspace">
+      <aside class="setup">
+        <p class="section-label" data-i18n="rangeLabel">SEARCH RANGE</p>
+        <div class="setup-grid">
+          <div class="field">
+            <label for="lengthInput" data-i18n="expressionLength">Expression length</label>
+            <div class="length-control">
+              <button id="lengthMinus" type="button" data-i18n-aria="decreaseLength" aria-label="Decrease length">−</button>
+              <input id="lengthInput" type="number" min="3" max="8" value="5">
+              <button id="lengthPlus" type="button" data-i18n-aria="increaseLength" aria-label="Increase length">+</button>
+            </div>
+            <small class="field-help" data-i18n="lengthHelp">3–8 characters, excluding “= result”.</small>
+          </div>
+          <div class="field">
+            <label for="targetInput" data-i18n="targetResult">Target result</label>
+            <input class="target-input" id="targetInput" type="number" min="-9999" max="9999" step="1" value="10" inputmode="numeric">
+            <small class="field-help" data-i18n="targetHelp">Whole numbers from −9999 to 9999.</small>
+          </div>
+        </div>
+        <div class="rules">
+          <b data-i18n="rulesTitle">Calculation rules</b>
+          <ul>
+            <li data-i18n="rulePrecedence">Multiplication and division come first.</li>
+            <li data-i18n="ruleZero">No leading zeros or division by zero.</li>
+            <li data-i18n="ruleOperators">Available operators: +, −, ×, ÷.</li>
+          </ul>
+        </div>
+      </aside>
+
+      <section class="clue-area">
+        <div class="clue-head">
+          <div>
+            <h2 data-i18n="cluesTitle">Enter clues</h2>
+            <p data-i18n="cluesHelp">Enter a full guess, then tap each tile to change its color.</p>
+          </div>
+          <div class="legend" aria-label="Clue colors">
+            <span><i class="gray"></i><span data-i18n="gray">Gray</span></span>
+            <span><i class="yellow"></i><span data-i18n="yellow">Yellow</span></span>
+            <span><i class="green"></i><span data-i18n="green">Green</span></span>
+          </div>
+        </div>
+
+        <div class="clues" id="clues"></div>
+        <div class="clue-tools">
+          <button class="add-row" id="addRow" type="button" data-i18n="addClue">+ Add clue</button>
+          <span class="row-limit" data-i18n="rowLimit">Up to 6 guesses</span>
+        </div>
+        <div class="keypad" id="keypad" aria-label="Equation keypad"></div>
+        <p class="form-error" id="formError" role="alert"></p>
+        <div class="actions">
+          <button class="button" id="clear" type="button" data-i18n="clear">Clear</button>
+          <button class="button primary" id="search" type="button" data-i18n="search">Find equations</button>
+        </div>
+      </section>
+    </main>
+
+    <section class="results" id="results">
+      <div class="results-head">
+        <h2 id="resultTitle" data-i18n="resultsTitle">Possible equations</h2>
+        <div class="result-summary" id="resultSummary" hidden><b id="resultTotal">0</b> <span data-i18n="matches">matches</span></div>
+      </div>
+      <p class="result-note" id="resultNote"></p>
+      <div class="result-empty" id="resultContent" data-i18n="initialHelp">Results will appear here after a search.</div>
+    </section>
+
+    <footer><span>2002WYT · Trace</span><span data-i18n="footer">Standard precedence · fully offline</span></footer>
+  </div>
+
+  <script>
+    (function () {
+      "use strict";
+
+      var I18N = {
+        en: {
+          locale:"en-US",pageTitle:"Equation Trace",metaDescription:"Equation Trace: an offline arithmetic-expression solver with gray, yellow, and green clues.",
+          backHome:"Back to Trace home",appName:"Equation Trace",offline:"Offline · calculated on this device",
+          eyebrow:"ARITHMETIC CLUE SOLVER",title:"Find possible equations",
+          intro:"Set the expression length and result, then enter the gray, yellow, and green clues from your game.",
+          rangeLabel:"SEARCH RANGE",expressionLength:"Expression length",decreaseLength:"Decrease length",increaseLength:"Increase length",
+          lengthHelp:"3–8 characters, excluding “= result”.",targetResult:"Target result",targetHelp:"Whole numbers from −9999 to 9999.",
+          rulesTitle:"Calculation rules",rulePrecedence:"Multiplication and division come first.",ruleZero:"No leading zeros or division by zero.",
+          ruleOperators:"Available operators: +, −, ×, ÷.",cluesTitle:"Enter clues",
+          cluesHelp:"Enter a full guess, then tap each tile to change its color.",gray:"Gray",yellow:"Yellow",green:"Green",
+          addClue:"+ Add clue",rowLimit:"Up to 6 guesses",clear:"Clear",search:"Find equations",searching:"Calculating…",
+          resultsTitle:"Possible equations",matches:"matches",initialHelp:"Results will appear here after a search.",
+          emptyTitle:"No equations found",emptyHelp:"Check the result and clue colors, then try again.",
+          matchingTitle:"Possible equations",shown:"Showing {0} of {1}",limited:"Only the first {0} matches are kept. Add another clue to narrow the list.",
+          showMore:"Show more",copy:"Copy",copied:"Copied",copyAria:"Copy {0}",footer:"Standard precedence · fully offline",
+          guessPlaceholder:"Example: 6+2×2",guessAria:"Guess {0}",removeClue:"Remove clue {0}",
+          tileAria:"Guess {0}, position {1}: {2}, {3}",emptyTile:"empty",statusAbsent:"gray",statusPresent:"yellow",statusCorrect:"green",
+          incomplete:"Complete or clear clue row {0}.",invalidTarget:"Enter a whole-number result from −9999 to 9999.",
+          noClueNote:"No color clues were entered; all matching equations are listed.",timeNote:"Calculated locally in {0} ms.",
+          erase:"Backspace"
+        },
+        "zh-CN": {
+          locale:"zh-CN",pageTitle:"猜算式 · 词迹",metaDescription:"猜算式：根据灰、黄、绿线索离线筛选符合结果的四则运算算式。",
+          backHome:"返回词迹首页",appName:"猜算式",offline:"离线 · 仅在本机计算",
+          eyebrow:"四则运算线索筛选",title:"找出可能的算式",
+          intro:"设置算式字符长度与计算结果，再录入游戏给出的灰、黄、绿线索。",
+          rangeLabel:"筛选范围",expressionLength:"算式字符长度",decreaseLength:"减少字符长度",increaseLength:"增加字符长度",
+          lengthHelp:"可选 3–8 个字符，不包含“= 结果”。",targetResult:"计算结果",targetHelp:"请输入 −9999 到 9999 的整数。",
+          rulesTitle:"计算规则",rulePrecedence:"先乘除，后加减。",ruleZero:"数字不能有前导零，除数不能为零。",
+          ruleOperators:"可用算子：+、−、×、÷。",cluesTitle:"录入线索",
+          cluesHelp:"输入完整猜测，再点击每个方块切换颜色。",gray:"灰色",yellow:"黄色",green:"绿色",
+          addClue:"+ 添加一行",rowLimit:"最多 6 次猜测",clear:"清空",search:"查找算式",searching:"正在计算…",
+          resultsTitle:"可能的算式",matches:"个结果",initialHelp:"开始查找后，结果会显示在这里。",
+          emptyTitle:"没有符合条件的算式",emptyHelp:"请检查计算结果和方块颜色后重试。",
+          matchingTitle:"可能的算式",shown:"已显示 {0} / {1}",limited:"仅保留前 {0} 个结果，请增加线索缩小范围。",
+          showMore:"显示更多",copy:"复制",copied:"已复制",copyAria:"复制 {0}",footer:"标准运算优先级 · 完全离线",
+          guessPlaceholder:"例如：6+2×2",guessAria:"第 {0} 次猜测",removeClue:"删除第 {0} 行线索",
+          tileAria:"第 {0} 行第 {1} 位：{2}，{3}",emptyTile:"空",statusAbsent:"灰色",statusPresent:"黄色",statusCorrect:"绿色",
+          incomplete:"请补全或清空第 {0} 行线索。",invalidTarget:"请输入 −9999 到 9999 的整数结果。",
+          noClueNote:"尚未录入颜色线索，当前列出所有符合长度和结果的算式。",timeNote:"已在本机完成计算，用时 {0} 毫秒。",
+          erase:"退格"
+        },
+        "zh-TW": {
+          locale:"zh-TW",pageTitle:"猜算式 · 詞跡",metaDescription:"猜算式：根據灰、黃、綠線索離線篩選符合結果的四則運算算式。",
+          backHome:"返回詞跡首頁",appName:"猜算式",offline:"離線 · 僅在本機計算",
+          eyebrow:"四則運算線索篩選",title:"找出可能的算式",
+          intro:"設定算式字元長度與計算結果，再輸入遊戲給出的灰、黃、綠線索。",
+          rangeLabel:"篩選範圍",expressionLength:"算式字元長度",decreaseLength:"減少字元長度",increaseLength:"增加字元長度",
+          lengthHelp:"可選 3–8 個字元，不包含「= 結果」。",targetResult:"計算結果",targetHelp:"請輸入 −9999 到 9999 的整數。",
+          rulesTitle:"計算規則",rulePrecedence:"先乘除，後加減。",ruleZero:"數字不能有前導零，除數不能為零。",
+          ruleOperators:"可用運算子：+、−、×、÷。",cluesTitle:"輸入線索",
+          cluesHelp:"輸入完整猜測，再點擊每個方塊切換顏色。",gray:"灰色",yellow:"黃色",green:"綠色",
+          addClue:"+ 新增一列",rowLimit:"最多 6 次猜測",clear:"清除",search:"尋找算式",searching:"正在計算…",
+          resultsTitle:"可能的算式",matches:"個結果",initialHelp:"開始尋找後，結果會顯示在這裡。",
+          emptyTitle:"沒有符合條件的算式",emptyHelp:"請檢查計算結果和方塊顏色後重試。",
+          matchingTitle:"可能的算式",shown:"已顯示 {0} / {1}",limited:"僅保留前 {0} 個結果，請增加線索縮小範圍。",
+          showMore:"顯示更多",copy:"複製",copied:"已複製",copyAria:"複製 {0}",footer:"標準運算優先順序 · 完全離線",
+          guessPlaceholder:"例如：6+2×2",guessAria:"第 {0} 次猜測",removeClue:"刪除第 {0} 列線索",
+          tileAria:"第 {0} 列第 {1} 位：{2}，{3}",emptyTile:"空",statusAbsent:"灰色",statusPresent:"黃色",statusCorrect:"綠色",
+          incomplete:"請補全或清除第 {0} 列線索。",invalidTarget:"請輸入 −9999 到 9999 的整數結果。",
+          noClueNote:"尚未輸入顏色線索，目前列出所有符合長度和結果的算式。",timeNote:"已在本機完成計算，用時 {0} 毫秒。",
+          erase:"退格"
+        }
+      };
+
+      var STATUS = ["absent","present","correct"];
+      var OPERATORS = ["+","-","×","÷"];
+      var MAX_STORED = 3000;
+      var PAGE_SIZE = 180;
+      var currentLanguage = readLanguage();
+      var expressionLength = 5;
+      var targetResult = 10;
+      var nextRowId = 1;
+      var rows = [makeRow()];
+      var activeRowId = rows[0].id;
+      var activeCursor = 0;
+      var storedResults = [];
+      var resultTotal = 0;
+      var shown = PAGE_SIZE;
+      var searched = false;
+
+      function readLanguage() {
+        var language = "";
+        try {
+          if (window.TraceApp && typeof window.TraceApp.getLanguage === "function") {
+            language = window.TraceApp.getLanguage();
+          }
+        } catch (error) {}
+        if (!language) {
+          try { language = localStorage.getItem("trace_language") || ""; } catch (error) {}
+        }
+        return I18N[language] ? language : "en";
+      }
+      function t(key) {
+        var value = I18N[currentLanguage][key] || I18N.en[key] || key;
+        for (var i=1;i<arguments.length;i++) value=value.replace("{"+(i-1)+"}",arguments[i]);
+        return value;
+      }
+      function applyLanguage() {
+        document.documentElement.lang=currentLanguage;
+        document.title=t("pageTitle");
+        var meta=document.querySelector('meta[name="description"]');if(meta)meta.content=t("metaDescription");
+        document.querySelectorAll("[data-i18n]").forEach(function(node){node.textContent=t(node.dataset.i18n)});
+        document.querySelectorAll("[data-i18n-aria]").forEach(function(node){node.setAttribute("aria-label",t(node.dataset.i18nAria))});
+      }
+      function applyMotionPreference() {
+        try {
+          if (window.TraceApp && typeof window.TraceApp.getAnimationsEnabled === "function") {
+            document.documentElement.classList.toggle("trace-reduce-motion",!window.TraceApp.getAnimationsEnabled());
+          }
+        } catch (error) {}
+      }
+      function haptic() {
+        try {
+          if (window.TraceApp && typeof window.TraceApp.performHaptic === "function") window.TraceApp.performHaptic();
+        } catch (error) {}
+      }
+      window.traceReturnHome=function(){
+        haptic();
+        try {
+          if(window.TraceApp&&typeof window.TraceApp.goHome==="function"){window.TraceApp.goHome();return}
+        } catch(error){}
+        if(history.length>1){history.back();return}
+        location.href="index.html";
+      };
+
+      function canonicalExpression(value) {
+        return String(value||"")
+          .replace(/\*/g,"×").replace(/\//g,"÷").replace(/[−–—]/g,"-")
+          .replace(/[^0-9+\-×÷]/g,"");
+      }
+      function normalizeExpression(value) {
+        return canonicalExpression(value).slice(0,expressionLength);
+      }
+      function makeRow() {
+        return {id:nextRowId++,chars:[],statuses:[]};
+      }
+      function updateRowText(row,value) {
+        var clean=normalizeExpression(value),old=row.chars.slice(),oldStatuses=row.statuses.slice();
+        row.chars=clean.split("");
+        row.statuses=row.chars.map(function(ch,index){
+          return old[index]===ch&&oldStatuses[index]?oldStatuses[index]:"absent";
+        });
+      }
+      function statusLabel(status) {
+        return t(status==="present"?"statusPresent":status==="correct"?"statusCorrect":"statusAbsent");
+      }
+      function renderClues(focusRow,focusCursor) {
+        var box=document.getElementById("clues");box.innerHTML="";
+        rows.forEach(function(row,rowIndex){
+          var clue=document.createElement("div");clue.className="clue";
+          var top=document.createElement("div");top.className="clue-top";
+          var number=document.createElement("span");number.className="clue-number";number.textContent=String(rowIndex+1).padStart(2,"0");
+          var input=document.createElement("input");input.className="guess-input";input.maxLength=expressionLength;
+          input.autocomplete="off";input.spellcheck=false;input.inputMode="text";input.value=row.chars.join("");
+          input.placeholder=t("guessPlaceholder");input.setAttribute("aria-label",t("guessAria",rowIndex+1));
+          input.onfocus=input.onclick=input.onkeyup=function(){
+            activeRowId=row.id;activeCursor=input.selectionStart==null?row.chars.length:input.selectionStart;
+          };
+          input.oninput=function(){
+            var cursor=input.selectionStart==null?input.value.length:input.selectionStart;
+            updateRowText(row,input.value);activeRowId=row.id;activeCursor=Math.min(cursor,row.chars.length);
+            renderClues(row.id,activeCursor);renderKeypad();clearError();searched=false;
+          };
+          var remove=document.createElement("button");remove.className="remove-row";remove.type="button";
+          remove.textContent="×";remove.setAttribute("aria-label",t("removeClue",rowIndex+1));
+          remove.onclick=function(){
+            rows=rows.length===1?[makeRow()]:rows.filter(function(item){return item.id!==row.id});
+            activeRowId=rows[0].id;activeCursor=rows[0].chars.length;searched=false;renderClues();renderKeypad();
+          };
+          top.appendChild(number);top.appendChild(input);top.appendChild(remove);
+          var tiles=document.createElement("div");tiles.className="tiles";tiles.style.setProperty("--length",expressionLength);
+          for(var i=0;i<expressionLength;i++){
+            (function(index){
+              var tile=document.createElement("button"),ch=row.chars[index]||"",status=row.statuses[index]||"";
+              tile.type="button";tile.className="tile"+(status?" "+status:"");tile.textContent=ch;
+              tile.setAttribute("aria-label",t("tileAria",rowIndex+1,index+1,ch||t("emptyTile"),status?statusLabel(status):t("emptyTile")));
+              tile.onclick=function(){
+                if(!row.chars[index]){activeRowId=row.id;activeCursor=index;input.focus();input.setSelectionRange(index,index);return}
+                var current=STATUS.indexOf(row.statuses[index]);
+                row.statuses[index]=STATUS[(current+1)%STATUS.length];
+                haptic();searched=false;renderClues(row.id,index+1);renderKeypad();
+              };
+              tiles.appendChild(tile);
+            })(i);
+          }
+          clue.appendChild(top);clue.appendChild(tiles);box.appendChild(clue);
+        });
+        document.getElementById("addRow").disabled=rows.length>=6;
+        if(focusRow!=null){
+          var target=box.querySelector('.guess-input[aria-label="'+t("guessAria",rows.findIndex(function(r){return r.id===focusRow})+1)+'"]');
+          if(target){
+            target.focus();var cursor=Math.max(0,Math.min(focusCursor==null?target.value.length:focusCursor,target.value.length));
+            target.setSelectionRange(cursor,cursor);
+          }
+        }
+      }
+      function strongestKeyState(ch) {
+        var rank={absent:1,present:2,correct:3},best="";
+        rows.forEach(function(row){row.chars.forEach(function(value,index){
+          var status=row.statuses[index];if(value===ch&&(!best||rank[status]>rank[best]))best=status;
+        })});
+        return best;
+      }
+      function renderKeypad() {
+        var keys=["7","8","9","÷","4","5","6","×","1","2","3","-","0","+"];
+        var box=document.getElementById("keypad");box.innerHTML="";
+        keys.forEach(function(ch){
+          var button=document.createElement("button"),state=strongestKeyState(ch);
+          button.type="button";button.className="key"+(state?" "+state:"");button.textContent=ch==="-"?"−":ch;
+          button.onclick=function(){insertKey(ch)};box.appendChild(button);
+        });
+        var erase=document.createElement("button");erase.type="button";erase.className="key erase";
+        erase.textContent="⌫";erase.setAttribute("aria-label",t("erase"));erase.onclick=function(){insertKey("Backspace")};box.appendChild(erase);
+      }
+      function insertKey(key) {
+        var row=rows.find(function(item){return item.id===activeRowId})||rows[0];
+        var text=row.chars.join(""),cursor=Math.max(0,Math.min(activeCursor,text.length));
+        if(key==="Backspace"){
+          if(cursor>0){text=text.slice(0,cursor-1)+text.slice(cursor);cursor--}
+        }else if(text.length<expressionLength){
+          text=text.slice(0,cursor)+key+text.slice(cursor);cursor++;
+        }else if(cursor<expressionLength){
+          text=text.slice(0,cursor)+key+text.slice(cursor+1);cursor++;
+        }
+        updateRowText(row,text);activeRowId=row.id;activeCursor=cursor;searched=false;
+        renderClues(row.id,cursor);renderKeypad();clearError();haptic();
+      }
+      function setLength(value) {
+        expressionLength=Math.max(3,Math.min(8,Math.trunc(Number(value)||5)));
+        document.getElementById("lengthInput").value=expressionLength;
+        rows=[makeRow()];activeRowId=rows[0].id;activeCursor=0;searched=false;clearResults();renderClues();renderKeypad();clearError();
+      }
+      function clearError(){document.getElementById("formError").textContent=""}
+      function showError(message){document.getElementById("formError").textContent=message}
+      function clearResults() {
+        storedResults=[];resultTotal=0;shown=PAGE_SIZE;searched=false;
+        document.getElementById("resultTitle").textContent=t("resultsTitle");
+        document.getElementById("resultSummary").hidden=true;
+        document.getElementById("resultNote").textContent="";
+        var content=document.getElementById("resultContent");content.className="result-empty";content.textContent=t("initialHelp");
+      }
+
+      function gcd(a,b){a=a<0n?-a:a;b=b<0n?-b:b;while(b){var next=a%b;a=b;b=next}return a||1n}
+      function fraction(n,d) {
+        if(d===0n)return null;
+        if(d<0n){n=-n;d=-d}
+        var common=gcd(n,d);return {n:n/common,d:d/common};
+      }
+      function fAdd(a,b){return fraction(a.n*b.d+b.n*a.d,a.d*b.d)}
+      function fMul(a,b){return fraction(a.n*b.n,a.d*b.d)}
+      function fDiv(a,b){return b.n===0n?null:fraction(a.n*b.d,a.d*b.n)}
+      function parseExpression(text) {
+        var normalized=canonicalExpression(text);
+        if(normalized.length!==text.length||!/^\d+(?:[+\-×÷]\d+)+$/.test(normalized))return null;
+        var numberTexts=normalized.split(/[+\-×÷]/);
+        if(numberTexts.some(function(value){return value.length>1&&value[0]==="0"}))return null;
+        return {numbers:numberTexts.map(function(value){return BigInt(value)}),operators:normalized.match(/[+\-×÷]/g)};
+      }
+      function evaluateExact(text) {
+        var parsed=parseExpression(text);if(!parsed)return null;
+        var total=fraction(0n,1n),term=fraction(parsed.numbers[0],1n);
+        for(var i=0;i<parsed.operators.length;i++){
+          var op=parsed.operators[i],next=fraction(parsed.numbers[i+1],1n);
+          if(op==="×")term=fMul(term,next);
+          else if(op==="÷")term=fDiv(term,next);
+          else{
+            total=fAdd(total,term);
+            term=op==="+"?next:fraction(-next.n,next.d);
+          }
+          if(!term)return null;
+        }
+        return fAdd(total,term);
+      }
+      function expressionEqualsTarget(text,target) {
+        var value=evaluateExact(text);return Boolean(value&&value.n===BigInt(target)*value.d);
+      }
+      function scoreGuess(answer,guess) {
+        var answerChars=answer.split(""),guessChars=guess.split(""),feedback=Array(guessChars.length).fill("absent"),remaining={};
+        for(var i=0;i<guessChars.length;i++){
+          if(guessChars[i]===answerChars[i])feedback[i]="correct";
+          else remaining[answerChars[i]]=(remaining[answerChars[i]]||0)+1;
+        }
+        for(var j=0;j<guessChars.length;j++){
+          if(feedback[j]==="correct")continue;
+          var ch=guessChars[j];if(remaining[ch]>0){feedback[j]="present";remaining[ch]--}
+        }
+        return feedback;
+      }
+      function matchesClues(expression,activeRows) {
+        for(var i=0;i<activeRows.length;i++){
+          var feedback=scoreGuess(expression,activeRows[i].chars.join(""));
+          for(var j=0;j<expressionLength;j++)if(feedback[j]!==activeRows[i].statuses[j])return false;
+        }
+        return true;
+      }
+
+      function constantSymbol(value){return{dep:false,k:value}}
+      function variableSymbol(){return{dep:true,a:1,b:0,c:0,d:1}}
+      function combineSymbol(left,op,right) {
+        if(!left||!right)return null;
+        if(!left.dep&&!right.dep){
+          if(op==="÷"&&right.k===0)return null;
+          return constantSymbol(op==="+"?left.k+right.k:op==="-"?left.k-right.k:op==="×"?left.k*right.k:left.k/right.k);
+        }
+        if(left.dep&&right.dep)return null;
+        var f=left.dep?left:right,k=left.dep?right.k:left.k,a=f.a,b=f.b,c=f.c,d=f.d;
+        if(left.dep){
+          if(op==="+")return{dep:true,a:a+k*c,b:b+k*d,c:c,d:d};
+          if(op==="-")return{dep:true,a:a-k*c,b:b-k*d,c:c,d:d};
+          if(op==="×")return{dep:true,a:a*k,b:b*k,c:c,d:d};
+          if(k===0)return null;
+          return{dep:true,a:a,b:b,c:c*k,d:d*k};
+        }
+        if(op==="+")return{dep:true,a:a+k*c,b:b+k*d,c:c,d:d};
+        if(op==="-")return{dep:true,a:k*c-a,b:k*d-b,c:c,d:d};
+        if(op==="×")return{dep:true,a:a*k,b:b*k,c:c,d:d};
+        return{dep:true,a:k*c,b:k*d,c:a,d:b};
+      }
+      function symbolicValue(values,operators,variableIndex) {
+        var operands=values.map(function(value,index){return index===variableIndex?variableSymbol():constantSymbol(value)});
+        var sum=null,sign="+",term=operands[0];
+        for(var i=0;i<operators.length;i++){
+          var op=operators[i];
+          if(op==="×"||op==="÷")term=combineSymbol(term,op,operands[i+1]);
+          else{
+            sum=sum?combineSymbol(sum,sign,term):(sign==="+"?term:combineSymbol(constantSymbol(0),"-",term));
+            sign=op;term=operands[i+1];
+          }
+          if(!term)return null;
+        }
+        return sum?combineSymbol(sum,sign,term):(sign==="+"?term:combineSymbol(constantSymbol(0),"-",term));
+      }
+      function compositions(total,count,prefix,callback) {
+        if(count===1){callback(prefix.concat(total));return}
+        for(var value=1;value<=total-count+1;value++)compositions(total-value,count-1,prefix.concat(value),callback);
+      }
+      function operatorSets(count,prefix,callback) {
+        if(prefix.length===count){callback(prefix);return}
+        OPERATORS.forEach(function(op){operatorSets(count,prefix.concat(op),callback)});
+      }
+      function numberRange(digits) {
+        return digits===1?[0,9]:[Math.pow(10,digits-1),Math.pow(10,digits)-1];
+      }
+      function buildExpression(values,operators) {
+        var text=String(values[0]);for(var i=0;i<operators.length;i++)text+=operators[i]+values[i+1];return text;
+      }
+      function solveVariable(values,operators,variableIndex,digits,target,emit) {
+        var symbolic=symbolicValue(values,operators,variableIndex);if(!symbolic||!symbolic.dep)return;
+        var coefficient=symbolic.a-target*symbolic.c;
+        var rhs=target*symbolic.d-symbolic.b;
+        var scale=Math.max(1,Math.abs(symbolic.a),Math.abs(symbolic.b),Math.abs(symbolic.c),Math.abs(symbolic.d),Math.abs(target));
+        var epsilon=scale*1e-10,range=numberRange(digits);
+        function tryValue(value){
+          if(value<range[0]||value>range[1]||!Number.isInteger(value))return;
+          values[variableIndex]=value;var expression=buildExpression(values,operators);
+          if(expressionEqualsTarget(expression,target))emit(expression);
+        }
+        if(Math.abs(coefficient)>epsilon){
+          var approximate=rhs/coefficient,rounded=Math.round(approximate);
+          for(var value=rounded-1;value<=rounded+1;value++)tryValue(value);
+        }else if(Math.abs(rhs)<=epsilon){
+          for(var candidate=range[0];candidate<=range[1];candidate++)tryValue(candidate);
+        }
+      }
+      function generateCandidates(length,target,activeRows,onMatch) {
+        var operatorMax=Math.floor((length-1)/2);
+        for(var operatorCount=1;operatorCount<=operatorMax;operatorCount++){
+          (function(opCount){
+            compositions(length-opCount,opCount+1,[],function(digitLengths){
+              var maxDigits=Math.max.apply(null,digitLengths),variableIndex=digitLengths.indexOf(maxDigits);
+              operatorSets(opCount,[],function(operators){
+                var values=Array(digitLengths.length).fill(0);
+                function enumerate(index){
+                  if(index===values.length){
+                    solveVariable(values,operators,variableIndex,digitLengths[variableIndex],target,function(expression){
+                      if(matchesClues(expression,activeRows))onMatch(expression);
+                    });
+                    return;
+                  }
+                  if(index===variableIndex){enumerate(index+1);return}
+                  var range=numberRange(digitLengths[index]);
+                  for(var value=range[0];value<=range[1];value++){values[index]=value;enumerate(index+1)}
+                }
+                enumerate(0);
+              });
+            });
+          })(operatorCount);
+        }
+      }
+
+      function fallbackCopy(text) {
+        var area=document.createElement("textarea");area.value=text;area.style.position="fixed";area.style.opacity="0";
+        document.body.appendChild(area);area.select();try{document.execCommand("copy")}catch(error){}area.remove();
+      }
+      function copyCandidate(text,button) {
+        var full=text+" = "+targetResult;
+        function done(){var old=button.querySelector("small").textContent;button.querySelector("small").textContent=t("copied");setTimeout(function(){button.querySelector("small").textContent=old},800)}
+        if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(full).then(done).catch(function(){fallbackCopy(full);done()});
+        else{fallbackCopy(full);done()}
+      }
+      function renderResults(elapsed,activeRowCount) {
+        var title=document.getElementById("resultTitle"),summary=document.getElementById("resultSummary"),content=document.getElementById("resultContent");
+        summary.hidden=false;document.getElementById("resultTotal").textContent=resultTotal.toLocaleString(t("locale"));
+        if(!resultTotal){
+          title.textContent=t("emptyTitle");content.className="result-empty";content.textContent=t("emptyHelp");
+          document.getElementById("resultNote").textContent=t("timeNote",elapsed);return;
+        }
+        title.textContent=t("matchingTitle");content.className="";
+        var note=t("timeNote",elapsed);
+        if(!activeRowCount)note=t("noClueNote")+" "+note;
+        if(resultTotal>storedResults.length)note+=" "+t("limited",MAX_STORED.toLocaleString(t("locale")));
+        document.getElementById("resultNote").textContent=note;
+        var html='<div class="result-list">';
+        storedResults.slice(0,shown).forEach(function(expression){
+          var full=expression+" = "+targetResult;
+          html+='<button class="candidate" type="button" data-expression="'+expression+'" aria-label="'+t("copyAria",full)+'"><code>'+full+'</code><small>'+t("copy")+'</small></button>';
+        });
+        html+='</div><div class="more-row"><span>'+t("shown",Math.min(shown,storedResults.length).toLocaleString(t("locale")),resultTotal.toLocaleString(t("locale")))+"</span>";
+        if(shown<storedResults.length)html+='<button id="showMore" type="button">'+t("showMore")+"</button>";
+        html+="</div>";content.innerHTML=html;
+        content.querySelectorAll(".candidate").forEach(function(button){button.onclick=function(){copyCandidate(button.dataset.expression,button)}});
+        var more=document.getElementById("showMore");if(more)more.onclick=function(){shown+=PAGE_SIZE;renderResults(elapsed,activeRowCount)};
+      }
+      function validateSearch() {
+        var raw=document.getElementById("targetInput").value,target=Number(raw);
+        if(String(raw).trim()===""||!Number.isInteger(target)||target<-9999||target>9999){showError(t("invalidTarget"));return null}
+        var activeRows=[];
+        for(var i=0;i<rows.length;i++){
+          if(rows[i].chars.length&&rows[i].chars.length!==expressionLength){showError(t("incomplete",i+1));return null}
+          if(rows[i].chars.length===expressionLength)activeRows.push(rows[i]);
+        }
+        return {target:target,activeRows:activeRows};
+      }
+      function search() {
+        var valid=validateSearch();if(!valid)return;
+        targetResult=valid.target;clearError();haptic();
+        var button=document.getElementById("search");button.disabled=true;button.textContent=t("searching");
+        document.getElementById("resultTitle").textContent=t("searching");
+        document.getElementById("resultContent").className="result-empty";
+        document.getElementById("resultContent").textContent=t("searching");
+        setTimeout(function(){
+          var started=performance.now();storedResults=[];resultTotal=0;shown=PAGE_SIZE;
+          generateCandidates(expressionLength,targetResult,valid.activeRows,function(expression){
+            resultTotal++;if(storedResults.length<MAX_STORED)storedResults.push(expression);
+          });
+          storedResults.sort(function(a,b){return a.localeCompare(b)});
+          var elapsed=Math.round(performance.now()-started);searched=true;renderResults(elapsed,valid.activeRows.length);
+          button.disabled=false;button.textContent=t("search");
+          document.getElementById("results").scrollIntoView({behavior:"smooth",block:"start"});
+        },30);
+      }
+      function resetAll() {
+        rows=[makeRow()];activeRowId=rows[0].id;activeCursor=0;document.getElementById("targetInput").value=10;targetResult=10;
+        renderClues();renderKeypad();clearError();clearResults();
+      }
+
+      document.getElementById("lengthMinus").onclick=function(){setLength(expressionLength-1)};
+      document.getElementById("lengthPlus").onclick=function(){setLength(expressionLength+1)};
+      document.getElementById("lengthInput").onchange=function(event){setLength(event.target.value)};
+      document.getElementById("targetInput").oninput=function(){searched=false;clearError()};
+      document.getElementById("addRow").onclick=function(){if(rows.length<6){var row=makeRow();rows.push(row);activeRowId=row.id;activeCursor=0;renderClues(row.id,0);renderKeypad()}};
+      document.getElementById("clear").onclick=resetAll;
+      document.getElementById("search").onclick=search;
+
+      applyLanguage();applyMotionPreference();renderClues();renderKeypad();clearResults();
+      try {
+        if(window.TraceApp&&typeof window.TraceApp.setLastTool==="function")window.TraceApp.setLastTool("equation");
+      } catch(error){}
+      window.EquationTraceTest={
+        normalizeExpression:normalizeExpression,
+        evaluateExpression:function(text){var value=evaluateExact(text);return value?Number(value.n)/Number(value.d):null},
+        expressionEqualsTarget:expressionEqualsTarget,
+        scoreGuess:scoreGuess,
+        generateCandidates:function(length,target){var result=[];generateCandidates(length,target,[],function(value){result.push(value)});return result}
+      };
+    })();
+  </script>
+</body>
+</html>
