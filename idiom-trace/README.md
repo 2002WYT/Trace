@@ -1,129 +1,97 @@
 <div align="center">
 
-# 语迹 · Idiom Trace
+# Idiom Trace · 语迹
 
-### A fast, private, and fully offline Chinese idiom solver
+### A private, fully offline Chinese idiom solver
 
-用汉字、声母、韵母与声调线索，快速筛选仍然可能的四字成语。
+Filter four-character Chinese idioms with character, initial, final, and tone clues.
 
-[![Offline](https://img.shields.io/badge/works-100%25_offline-15764b?style=for-the-badge)](./idiom-trace-offline.html)
-[![Dictionary](https://img.shields.io/badge/dictionary-29%2C474_idioms-c79819?style=for-the-badge)](./idiom-trace-offline.html)
-[![Single file](https://img.shields.io/badge/app-single_HTML-102d25?style=for-the-badge)](./idiom-trace-offline.html)
-[![Privacy](https://img.shields.io/badge/privacy-local_only-747b78?style=for-the-badge)](#privacy-first)
+[![Offline](https://img.shields.io/badge/runtime-100%25_offline-2f6f55?style=flat-square)](./idiom-trace-offline.html)
+[![Dictionary](https://img.shields.io/badge/dictionary-29%2C474_idioms-9a6700?style=flat-square)](./idiom-trace-offline.html)
+[![Single file](https://img.shields.io/badge/package-single_HTML-24292f?style=flat-square)](./idiom-trace-offline.html)
 
-[Open the app](./idiom-trace-offline.html) · [Download the ZIP](./idiom-trace-offline.zip) · [中文说明](#中文快速上手)
+[**Open the app**](./idiom-trace-offline.html) · [**Download the ZIP**](./idiom-trace-offline.zip)
 
 </div>
 
----
+## What it does
 
-## What is Idiom Trace?
+Idiom Trace is a deduction assistant for four-character Chinese idioms. Describe what is known about each position—the character, pinyin initial, final, or tone—and it narrows a dictionary of 29,474 idioms to the matching candidates.
 
-**Idiom Trace** is a Wordle-style deduction assistant for four-character Chinese idioms. Describe what you already know about each character — its character, initial, final, or tone — and the app instantly narrows a dictionary of **29,474 idioms** to the remaining possibilities.
+The interface supports English, Simplified Chinese, and Traditional Chinese. It follows the browser language and system light or dark appearance when opened as a standalone page. In the Trace Android app, both are selectable in Settings.
 
-There is no installation, server, account, or build step. The complete dictionary and search engine live inside one HTML file.
+## Main features
 
-## Why it feels fast
-
-| Feature | What it gives you |
+| Feature | Behavior |
 | --- | --- |
-| **Four-tone shortcut** | Type a sequence such as `4212` to fill all four tones and mark them green instantly |
-| **Tone-first workflow** | Enter `1`–`4` directly; use `0` or `5` for the neutral tone |
-| **Type or click pinyin** | Enter initials and finals manually, or use the large quick-input buttons |
-| **Global pinyin exclusion** | Eliminate one or more initials and finals from every position with a single click |
-| **Direct tile input** | Click a tile and enter an individual Chinese character |
-| **Automatic pinyin fill** | Enter a known four-character idiom to populate all pinyin clues |
-| **Gray / yellow / green clues** | Mark a component as absent, present in another position, or exactly correct |
-| **Duplicate-aware filtering** | Repeated characters and repeated pinyin components are counted correctly |
-| **Multiple guess rows** | Combine evidence from several attempts |
-| **Instant local search** | Browse and copy matching idioms without sending anything online |
-
-## The clue system
-
-| Color | Meaning | Rule |
-| :---: | --- | --- |
-| ⬛ **Gray** | Not present | Exclude the character or pinyin component |
-| 🟨 **Yellow** | Present, wrong position | Keep it, but not in this tile |
-| 🟩 **Green** | Correct position | Lock it to this tile |
-
-Every newly entered clue starts as **gray**. Click its color control to cycle:
-
-```text
-Gray  →  Yellow  →  Green  →  Gray
-```
+| Four-tone shortcut | Enter a sequence such as `4212` to fill and lock all four tones |
+| Tone-first entry | Use `1`–`4`; use `0` or `5` for neutral tone |
+| Pinyin input | Type initials and finals or use the quick panel |
+| Global exclusions | Exclude initials or finals from every position |
+| Character input | Enter one character per tile or autofill from a complete idiom |
+| Color clues | Gray means absent, yellow means wrong position, green means correct position |
+| Duplicate handling | Repeated characters and pinyin components are counted correctly |
+| Multiple rows | Combine evidence from several guesses |
+| Local search | Search and copy without uploading any input |
 
 ## Quick start
 
-1. Download [`idiom-trace-offline.html`](./idiom-trace-offline.html).
-2. Open it with a modern browser such as Chrome, Edge, or Firefox.
-3. If all four tones are known, enter a sequence such as `4212` in the row-level tone box. All four tones are filled and marked green automatically.
-4. Otherwise, use the individual tone fields:
-   - `1` = level tone
-   - `2` = rising tone
-   - `3` = dipping tone
-   - `4` = falling tone
-   - `0` or `5` = neutral tone
-5. Type initials and finals directly in their tiles, or select them from the quick-input panel. Press Enter to advance.
-6. Use the global initial/final exclusion buttons for pinyin components that cannot appear anywhere.
-7. Add characters and color states as needed, then select **搜索剩余成语**.
+1. Download and open [`idiom-trace-offline.html`](./idiom-trace-offline.html) in a modern browser.
+2. Enter a complete idiom, individual characters, pinyin components, or tones.
+3. Click a clue color to cycle through gray, yellow, and green.
+4. Use the initial/final exclusion panel for components that cannot appear anywhere.
+5. Select **Find remaining idioms**.
 
-> Tip: Type `v` for `ü` when entering finals. For example, `ve` is normalized to `üe`.
+Type `v` for `ü` when entering finals; for example, `ve` is normalized to `üe`.
 
-## 中文快速上手
+## Privacy and data
 
-1. 下载并双击打开 [`idiom-trace-offline.html`](./idiom-trace-offline.html)。
-2. 若已确定四个声调，在顶部“四声调”框直接输入如 `4212`；四格会一次填入并自动标绿。
-3. 单个声调仍支持直接输入 `1`、`2`、`3`、`4`，输入 `0` 或 `5` 代表轻声。
-4. 声母、韵母既可点击右侧按钮，也可在格内手动输入；按 Enter 自动进入下一项，输入 `v` 可代替 `ü`。
-5. “快速排除声母 / 韵母”支持多选，可从所有位置统一排除确定不会出现的拼音成分。
-6. 新线索默认显示为灰色；点击颜色按钮可按 **灰 → 黄 → 绿** 循环。
-7. 也可以直接点击汉字方块输入单个汉字，或输入完整四字成语自动补全拼音。
-8. 点击 **搜索剩余成语**，查看所有符合当前线索的候选结果。
-
-## Download options
-
-| File | Best for |
-| --- | --- |
-| [`idiom-trace-offline.html`](./idiom-trace-offline.html) | Open immediately in a browser |
-| [`idiom-trace-offline.zip`](./idiom-trace-offline.zip) | Smaller download and easy sharing |
-
-Both downloads contain the same standalone offline app.
-
-## Privacy first
-
-Idiom Trace performs all filtering in your browser:
-
-- no analytics
-- no cookies
-- no account
-- no database
-- no network requests
-- no uploaded clues or search history
-
-Once downloaded, it continues to work without an internet connection.
-
-## Dictionary and validation
-
-- **29,474** deduplicated four-character idioms
-- Idiom data derived from the open-source [`pwxcoo/chinese-xinhua`](https://github.com/pwxcoo/chinese-xinhua) dataset
-- Embedded pinyin is split into initial, final, and tone components
-- The release was checked with automated interaction tests covering four-tone sequences, automatic green states, manual initial/final entry, `v` → `ü` normalization, pinyin exclusions, color cycling, idiom autofill, and candidate filtering
-
-## Project philosophy
-
-The app is deliberately simple to keep:
-
-- one file to run
-- one click to open
-- zero setup
-- zero data collection
+- No installation, account, server, cookies, analytics, or network request.
+- The complete dictionary and solver are embedded in the HTML file.
+- Idiom data is derived from [`pwxcoo/chinese-xinhua`](https://github.com/pwxcoo/chinese-xinhua).
 
 ---
 
-<div align="center">
+# 语迹 · Idiom Trace
 
-Made for language learners, puzzle solvers, and lovers of Chinese idioms.
+### 完全离线、注重隐私的四字成语筛选工具
 
-**by 2002WYT**
+根据汉字、声母、韵母和声调线索筛选四字成语。
 
-</div>
+[**打开工具**](./idiom-trace-offline.html) · [**下载 ZIP**](./idiom-trace-offline.zip)
+
+## 功能说明
+
+语迹是一款四字成语推理辅助工具。输入每个位置已知的汉字、拼音声母、韵母或声调，即可从 29,474 条成语中筛出符合条件的候选结果。
+
+界面支持英语、简体中文和繁体中文。独立网页会跟随浏览器语言和系统深浅色外观；在词迹 Android 应用中，可直接在设置里选择语言和外观。
+
+## 主要功能
+
+| 功能 | 说明 |
+| --- | --- |
+| 四声调快捷输入 | 输入 `4212` 之类的序列，一次填写并锁定四个声调 |
+| 声调优先 | 使用 `1`～`4`；`0` 或 `5` 代表轻声 |
+| 拼音输入 | 可手动输入声母、韵母，也可使用快捷面板 |
+| 全局排除 | 从所有位置统一排除指定声母或韵母 |
+| 汉字输入 | 可逐格输入汉字，也可通过完整成语自动补全 |
+| 颜色线索 | 灰色表示不存在，黄色表示位置错误，绿色表示位置正确 |
+| 重复项处理 | 正确计算重复汉字和重复拼音成分 |
+| 多行线索 | 可合并多次猜测得到的信息 |
+| 本地筛选 | 无需上传输入即可搜索和复制结果 |
+
+## 快速开始
+
+1. 下载 [`idiom-trace-offline.html`](./idiom-trace-offline.html)，并用现代浏览器打开。
+2. 输入完整成语、单个汉字、拼音成分或声调。
+3. 点击线索颜色，在灰、黄、绿之间循环。
+4. 对确定不会出现的声母或韵母使用全局排除面板。
+5. 点击“搜索剩余成语”。
+
+输入韵母时可用 `v` 代替 `ü`，例如 `ve` 会自动转换为 `üe`。
+
+## 隐私与数据
+
+- 不需要安装、账号、服务器、Cookie、统计服务或网络请求。
+- 完整题库和筛选逻辑均内置在 HTML 文件中。
+- 成语数据来源于 [`pwxcoo/chinese-xinhua`](https://github.com/pwxcoo/chinese-xinhua)。

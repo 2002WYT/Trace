@@ -1,0 +1,54 @@
+name: Build Android APK / 构建 Android APK
+
+on:
+  workflow_dispatch:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: Lint and build debug APK / 检查并构建调试 APK
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: android
+
+    steps:
+      - name: Check out repository / 检出仓库
+        uses: actions/checkout@v7
+
+      - name: Set up JDK 17 / 配置 JDK 17
+        uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - name: Set up Gradle / 配置 Gradle
+        uses: gradle/actions/setup-gradle@v6
+
+      - name: Lint and assemble / 检查并构建
+        run: |
+          chmod +x gradlew
+          ./gradlew lintDebug assembleDebug --no-daemon
+
+      - name: Prepare named APK and checksum / 准备 APK 与校验值
+        run: |
+          TRACE_VERSION="$(sed -n 's/.*versionName "\([^"]*\)".*/\1/p' app/build.gradle)"
+          test -n "$TRACE_VERSION"
+          cp app/build/outputs/apk/debug/app-debug.apk "../Trace-v${TRACE_VERSION}-debug.apk"
+          sha256sum "../Trace-v${TRACE_VERSION}-debug.apk" > "../Trace-v${TRACE_VERSION}-debug.apk.sha256"
+          echo "TRACE_VERSION=$TRACE_VERSION" >> "$GITHUB_ENV"
+
+      - name: Upload APK artifact / 上传 APK 构建产物
+        uses: actions/upload-artifact@v7
+        with:
+          name: Trace-v${{ env.TRACE_VERSION }}-debug
+          path: |
+            Trace-v${{ env.TRACE_VERSION }}-debug.apk
+            Trace-v${{ env.TRACE_VERSION }}-debug.apk.sha256
+          if-no-files-found: error
+          retention-days: 30

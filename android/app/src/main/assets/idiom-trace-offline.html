@@ -1,10 +1,36 @@
 <!doctype html>
-<html lang="zh-CN">
+<html lang="en">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="color-scheme" content="light">
-  <title>语迹 Idiom Trace</title>
+  <meta name="color-scheme" content="light dark">
+  <script>
+    (function () {
+      var mode = "";
+      try {
+        if (window.TraceApp && typeof window.TraceApp.getTheme === "function") {
+          mode = window.TraceApp.getTheme();
+        }
+      } catch (error) {}
+      if (!mode) {
+        try {
+          mode = localStorage.getItem("trace_theme") || "system";
+        } catch (error) {
+          mode = "system";
+        }
+      }
+      if (mode !== "light" && mode !== "dark") mode = "system";
+      var systemDark = window.matchMedia
+        && window.matchMedia("(prefers-color-scheme: dark)").matches;
+      var theme = mode === "dark" || (mode === "system" && systemDark)
+        ? "dark"
+        : "light";
+      document.documentElement.dataset.theme = theme;
+      document.documentElement.style.colorScheme = theme;
+    })();
+  </script>
+  <meta name="description" content="Idiom Trace: a fully offline Chinese idiom solver.">
+  <title>Idiom Trace</title>
   <style>
     :root{
       --ink:#102d25;--muted:#6d7772;--paper:#f4f0e5;--card:#fffdf8;--line:#d9d3c5;
@@ -110,67 +136,338 @@
       .color::after{content:"●";font-size:9px}
     }
     html.trace-reduce-motion *{animation:none!important;transition:none!important;scroll-behavior:auto!important}
+
+    /* UI.md product reset */
+    :root{
+      --app-bg:#f6f7f8;--surface:#ffffff;--surface-muted:#f0f2f3;
+      --text:#24292f;--muted:#656d76;--line:#d0d7de;
+      --green:#2f6f55;--green-hover:#285f49;--gray:#6e7781;
+      --yellow:#9a6700;--red:#cf222e;--card:var(--surface);--paper:var(--app-bg);
+      --ink:var(--text);--lime:#ffffff;--shadow:none
+    }
+    :root[data-theme="dark"]{
+      --app-bg:#0d1117;--surface:#161b22;--surface-muted:#21262d;
+      --text:#e6edf3;--muted:#8b949e;--line:#30363d;
+      --green:#4a9b73;--green-hover:#5bac82;--gray:#768390;
+      --yellow:#bb8009;--red:#ff7b72;--card:var(--surface);--paper:var(--app-bg);
+      --ink:var(--text);--lime:#ffffff
+    }
+    html,body{background:var(--app-bg)}
+    body{
+      color:var(--text);background:var(--app-bg);
+      font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Microsoft YaHei",
+        "PingFang SC","Hiragino Sans GB",Arial,sans-serif
+    }
+    button,input{font-family:inherit;color:var(--text)}
+    :focus-visible{outline:2px solid var(--green);outline-offset:2px}
+    .shell{width:min(1180px,calc(100% - 24px));padding:12px 0 24px}
+    header{min-height:48px;padding:0 0 10px;border-color:var(--line)}
+    .page-back{
+      width:36px;height:36px;border:1px solid var(--line);border-radius:6px;
+      color:var(--text);background:var(--surface);box-shadow:none
+    }
+    .page-back:hover{background:var(--surface-muted)}.page-back:active{transform:none;background:var(--line)}
+    .brand{gap:9px}.mark{width:36px;height:36px;border-radius:6px;color:#fff;background:var(--green);font:700 18px/1 Georgia,serif;box-shadow:none}
+    .brand b{font-size:16px;letter-spacing:.02em}.brand small{font-size:8px;letter-spacing:.14em}
+    .offline{padding:7px 10px;border-color:var(--line);border-radius:6px;color:var(--muted);background:var(--surface);font-size:10px}
+    .offline i{background:var(--green);box-shadow:none}
+    .hero{grid-template-columns:1fr;gap:6px;padding:20px 0}
+    .eyebrow,.kicker{margin-bottom:6px;color:var(--muted);font-size:9px;letter-spacing:.12em}
+    h1{font-family:inherit;font-size:24px;line-height:1.35;font-weight:650;letter-spacing:0}
+    h1 em{color:inherit;font-style:normal}.intro{margin:0;color:var(--muted);font-size:14px;line-height:1.6}
+    .private{margin-top:4px;color:var(--muted);font-size:10px;letter-spacing:0}
+    .main-card,.results{border:1px solid var(--line);border-radius:8px;background:var(--surface);box-shadow:none}
+    .section-head,.results-head{padding:14px 16px;border-color:var(--line)}
+    .section-title{gap:10px}.step{padding:5px 6px;border-color:var(--line);border-radius:5px;color:var(--muted);font-size:10px}
+    h2{font-family:inherit;font-size:18px;font-weight:650}.pool{font-size:11px}.pool b{font-size:14px}
+    .workspace{grid-template-columns:minmax(0,1fr) 300px}
+    .board{padding:16px;border-color:var(--line)}.board-note{font-size:11px}
+    .clues{gap:10px}.clue{border-color:var(--line);border-radius:6px;background:var(--surface)}
+    .clue-top{padding:10px;border-color:var(--line)}
+    .whole,.tone-sequence{height:36px;border-color:var(--line);border-radius:5px;color:var(--text);background:var(--surface)}
+    .remove{color:var(--muted)}.remove:hover{color:var(--red)}
+    .slots{gap:6px;padding:10px}.slot{border-color:var(--line);border-radius:5px;background:var(--surface)}
+    .slot.active{border-color:var(--green);box-shadow:0 0 0 1px var(--green)}
+    .char,.value{border-color:var(--line);border-radius:4px;color:var(--text);background:var(--surface-muted)}
+    .char{height:44px;font-family:inherit;font-size:24px}
+    .value:hover{border-color:var(--green);background:var(--surface-muted)}
+    .value.active{border-color:var(--green);box-shadow:0 0 0 1px var(--green)}
+    .add{height:38px;margin-top:10px;border-color:var(--line);border-radius:5px;color:var(--green);background:var(--surface)}
+    .add:hover{border-color:var(--green);background:var(--surface-muted)}
+    .quick-exclude{margin-top:10px;padding:12px;border-color:var(--line);border-radius:6px;background:var(--surface-muted)}
+    .exclude-clear{height:32px;border-color:var(--line);border-radius:5px;color:var(--red)}
+    .exclude-chip{height:30px;border-color:var(--line);border-radius:4px;color:var(--text);background:var(--surface)}
+    .exclude-chip:hover{border-color:var(--gray);background:var(--surface-muted)}
+    .exclude-chip.selected{border-color:var(--gray);background:var(--gray)}
+    .picker{padding:16px;border-left:1px solid var(--line);background:var(--surface-muted)}
+    .tabs button,.option,.picker-actions button{
+      min-height:36px;border:1px solid var(--line);border-radius:5px;color:var(--text);background:var(--surface)
+    }
+    .tabs button.active{border-color:var(--green);background:var(--green)}
+    .option:hover,.option.selected{border-color:var(--green);color:var(--green);background:var(--surface)}
+    .picker-actions .clear-value{color:var(--red)}
+    .actions{padding:12px 16px;border-color:var(--line);background:var(--surface-muted)}
+    .actions button{height:40px;border-radius:5px}.reset{border-color:var(--line);color:var(--text);background:var(--surface)}
+    .search{min-width:190px;border-color:var(--green);background:var(--green)}
+    .search:hover{background:var(--green-hover)}
+    .results{margin-top:14px}.placeholder,.empty{padding:44px 20px;font-family:inherit;font-size:14px}
+    .result-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:0;background:var(--line)}
+    .idiom{min-height:96px;padding:14px;color:var(--text);background:var(--surface)}
+    .idiom:hover{background:var(--surface-muted)}.idiom strong{margin-top:8px;font-size:21px}.idiom em{margin-top:5px;color:var(--green)}
+    .parts{margin-top:8px}.parts span{background:var(--surface-muted);color:var(--muted)}
+    .more-row{padding:12px 16px}.more-row button{color:var(--green)}
+    footer{padding-top:18px;color:var(--muted);font-family:inherit;letter-spacing:0}
+    @media(max-width:1000px){
+      .workspace{grid-template-columns:1fr}.board{border-right:0}.picker{border-left:0;border-top:1px solid var(--line)}
+    }
+    @media(max-width:720px){
+      .shell{width:calc(100% - 16px)}.section-head,.results-head{padding:12px}
+      .board,.picker{padding:10px}.actions{padding:10px}.result-grid{grid-template-columns:repeat(2,1fr)}
+    }
+    @media(max-width:430px){.result-grid{grid-template-columns:1fr}}
   </style>
 </head>
 <body>
   <div class="shell">
     <header>
       <div class="header-leading">
-        <button class="page-back" type="button" onclick="traceReturnHome()" aria-label="返回词迹首页">←</button>
-        <div class="brand"><span class="mark">语</span><span><b>语迹</b><small>IDIOM TRACE</small></span></div>
+        <button class="page-back" type="button" onclick="traceReturnHome()" data-i18n-aria="backHome" aria-label="Back to Trace home">←</button>
+        <div class="brand"><span class="mark" data-i18n="brandMark">I</span><span><b data-i18n="brandName">Idiom Trace</b><small>IDIOM TRACE</small></span></div>
       </div>
-      <span class="offline"><i></i>离线单文件 · 数据仅在本机处理</span>
+      <span class="offline"><i></i><span data-i18n="offline">Single-file offline edition · Processed on this device</span></span>
     </header>
 
     <section class="hero">
-      <div><p class="eyebrow">CHINESE IDIOM SOLVER</p><h1>把声、韵、调，<br><em>变成成语答案。</em></h1></div>
-      <div><p class="intro">用汉字、声调、声母和韵母的灰黄绿线索，快速筛出仍然可能的四字成语。</p><p class="private">✓ 声调优先录入　✓ 声母韵母按钮　✓ 1–4/轻声快捷键</p></div>
+      <div><p class="eyebrow" data-i18n="heroEyebrow">CHINESE IDIOM SOLVER</p><h1 data-i18n-html="heroTitle">Turn characters and tones<br><em>into idiom answers.</em></h1></div>
+      <div><p class="intro" data-i18n="intro">Use gray, yellow, and green clues for characters, initials, finals, and tones to narrow the remaining four-character idioms.</p><p class="private" data-i18n="private">✓ Tone-first input　✓ Pinyin shortcuts　✓ 1–4 / neutral-tone keys</p></div>
     </section>
 
     <main class="main-card">
       <div class="section-head">
-        <div class="section-title"><span class="step">01</span><div><p class="kicker">ENTER THE CLUES</p><h2>录入成语线索</h2></div></div>
-        <p class="pool">当前词库 <b id="poolCount">0</b> 条</p>
+        <div class="section-title"><span class="step">01</span><div><p class="kicker" data-i18n="cluesKicker">ENTER THE CLUES</p><h2 data-i18n="enterClues">Enter idiom clues</h2></div></div>
+        <p class="pool"><span data-i18n="poolPrefix">Current dictionary</span> <b id="poolCount">0</b> <span data-i18n="poolSuffix">idioms</span></p>
       </div>
       <div class="workspace">
         <section class="board">
           <div class="board-note">
-            <span>可直接输入完整成语或四个声调；声母、韵母既可手动键入，也可用右侧按钮快速录入。</span>
-            <span class="legend"><span><i style="background:var(--gray)"></i>灰·不存在</span><span><i style="background:var(--yellow)"></i>黄·位置错</span><span><i style="background:var(--green)"></i>绿·位置对</span></span>
+            <span data-i18n="boardNote">Enter a complete idiom or four tones directly. Initials and finals can be typed or selected from the quick panel.</span>
+            <span class="legend"><span><i style="background:var(--gray)"></i><span data-i18n="grayLegend">Gray · Absent</span></span><span><i style="background:var(--yellow)"></i><span data-i18n="yellowLegend">Yellow · Wrong position</span></span><span><i style="background:var(--green)"></i><span data-i18n="greenLegend">Green · Correct position</span></span></span>
           </div>
           <div class="clues" id="clues"></div>
-          <button class="add" id="addRow">＋ 添加一组猜测线索</button>
+          <button class="add" id="addRow" data-i18n="addRow">＋ Add clue row</button>
           <section class="quick-exclude" aria-labelledby="quickExcludeTitle">
-            <div class="exclude-head"><div><strong id="quickExcludeTitle">快速排除声母 / 韵母</strong><small>点击确定不会出现的拼音成分，可多选；再次点击即可取消。</small></div><button class="exclude-clear" id="clearExclusions">清空排除</button></div>
-            <div class="exclude-group"><span class="exclude-label">声母</span><div class="exclude-options" id="initialExclusions"></div></div>
-            <div class="exclude-group"><span class="exclude-label">韵母</span><div class="exclude-options" id="finalExclusions"></div></div>
+            <div class="exclude-head"><div><strong id="quickExcludeTitle" data-i18n="quickExclude">Quick initial / final exclusions</strong><small data-i18n="quickExcludeHelp">Select pinyin components that cannot appear. Select again to remove an exclusion.</small></div><button class="exclude-clear" id="clearExclusions" data-i18n="clearExclusions">Clear exclusions</button></div>
+            <div class="exclude-group"><span class="exclude-label" data-i18n="initial">Initial</span><div class="exclude-options" id="initialExclusions"></div></div>
+            <div class="exclude-group"><span class="exclude-label" data-i18n="final">Final</span><div class="exclude-options" id="finalExclusions"></div></div>
           </section>
         </section>
         <aside class="picker">
           <div class="picker-sticky">
-            <p class="kicker">QUICK INPUT</p>
-            <h3>拼音快捷面板</h3>
+            <p class="kicker" data-i18n="quickKicker">QUICK INPUT</p>
+            <h3 data-i18n="quickPanel">Pinyin quick panel</h3>
             <p class="active-path" id="activePath"></p>
             <div class="tabs" id="tabs"></div>
             <div class="options" id="options"></div>
-            <div class="picker-actions"><button id="previousField">← 上一项</button><button class="clear-value" id="clearValue">清除此项</button></div>
-            <p class="advance">每个字先录声调，再自动跳到声母和韵母；选择韵母后进入下一个字的声调。声调面板支持数字键 1、2、3、4，按 0 或 5 输入轻声。</p>
+            <div class="picker-actions"><button id="previousField" data-i18n="previousField">← Previous field</button><button class="clear-value" id="clearValue" data-i18n="clearField">Clear field</button></div>
+            <p class="advance" data-i18n="advanceHelp">Enter each tone first, then the initial and final. After the final, focus moves to the next character. Use 1–4 for tones and 0 or 5 for neutral tone.</p>
           </div>
         </aside>
       </div>
-      <div class="actions"><button class="reset" id="reset">清空条件</button><button class="search" id="search">搜索剩余成语 →</button></div>
+      <div class="actions"><button class="reset" id="reset" data-i18n="reset">Clear clues</button><button class="search" id="search" data-i18n="search">Find remaining idioms →</button></div>
     </main>
 
     <section class="results" id="results">
-      <div class="results-head"><div><p class="kicker">POSSIBLE IDIOMS</p><h2 id="resultTitle">候选成语会出现在这里</h2></div><div class="total" id="totalBox" hidden><b id="total">0</b><span>条候选</span></div></div>
-      <div id="resultContent" class="placeholder">录入线索后搜索，或直接查看词库中的全部四字成语。</div>
+      <div class="results-head"><div><p class="kicker" data-i18n="resultsKicker">POSSIBLE IDIOMS</p><h2 id="resultTitle">Possible idioms will appear here</h2></div><div class="total" id="totalBox" hidden><b id="total">0</b><span data-i18n="candidates">candidates</span></div></div>
+      <div id="resultContent" class="placeholder">Add clues, or search now to view every idiom in the dictionary.</div>
     </section>
 
-    <footer><span>语迹 IDIOM TRACE</span><span>by 2002WYT</span><span>词库来源：chinese-xinhua 开源成语数据</span></footer>
+    <footer><span data-i18n="footerName">IDIOM TRACE</span><span data-i18n="byline">by 2002WYT</span><span data-i18n="footerSource">Dictionary: open-source chinese-xinhua idiom data</span></footer>
   </div>
 
   <script>
     "use strict";
+    var IDIOM_I18N={
+      en:{
+        pageTitle:"Idiom Trace",metaDescription:"Idiom Trace: a fully offline Chinese idiom solver.",
+        backHome:"Back to Trace home",brandMark:"I",brandName:"Idiom Trace",
+        offline:"Single-file offline edition · Processed on this device",
+        heroEyebrow:"CHINESE IDIOM SOLVER",heroTitle:"Chinese idiom solver",
+        intro:"Use gray, yellow, and green clues for characters, initials, finals, and tones to narrow the remaining four-character idioms.",
+        private:"✓ Tone-first input　✓ Pinyin shortcuts　✓ 1–4 / neutral-tone keys",
+        cluesKicker:"ENTER THE CLUES",quickKicker:"QUICK INPUT",resultsKicker:"POSSIBLE IDIOMS",
+        enterClues:"Enter idiom clues",poolPrefix:"Current dictionary",poolSuffix:"idioms",
+        boardNote:"Enter a complete idiom or four tones directly. Initials and finals can be typed or selected from the quick panel.",
+        grayLegend:"Gray · Absent",yellowLegend:"Yellow · Wrong position",greenLegend:"Green · Correct position",
+        addRow:"＋ Add clue row",quickExclude:"Quick initial / final exclusions",
+        quickExcludeHelp:"Select pinyin components that cannot appear. Select again to remove an exclusion.",
+        clearExclusions:"Clear exclusions",initial:"Initial",final:"Final",quickPanel:"Pinyin quick panel",
+        previousField:"← Previous field",clearField:"Clear field",
+        advanceHelp:"Enter each tone first, then the initial and final. After the final, focus moves to the next character. Use 1–4 for tones and 0 or 5 for neutral tone.",
+        reset:"Clear clues",search:"Find remaining idioms →",candidates:"candidates",
+        footerName:"IDIOM TRACE",byline:"by 2002WYT",footerSource:"Dictionary: open-source chinese-xinhua idiom data",
+        tone1:"1 · Level",tone2:"2 · Rising",tone3:"3 · Dipping",tone4:"4 · Falling",tone0:"Neutral",
+        typeInitial:"Initial",typeFinal:"Final",typeTone:"Tone",
+        statusUnset:"Not set",statusAbsent:"Gray",statusPresent:"Yellow",statusCorrect:"Green",
+        choose:"Select",clueLabel:"Clue {0}",wholePlaceholder:"Enter a four-character idiom to fill pinyin",
+        toneSequencePlaceholder:"Four tones, e.g. 3214",
+        toneSequenceAria:"Enter four tones; 0 or 5 means neutral tone. All four turn green when complete.",
+        removeClue:"Remove this clue",autofilled:"✓ Pinyin filled from the dictionary",
+        positionLabel:"Character {0}",charPlaceholder:"字",charAria:"Chinese character {0}",
+        charStatus:"Character · {0}",tonePlaceholder:"Tone 1–4 / 0",
+        toneTitle:"Enter 1, 2, 3, or 4; use 0 or 5 for neutral tone",
+        toneAria:"Tone for character {0}; enter 1–4, or 0/5 for neutral tone",
+        componentTitle:"Type the {0}, or use the quick panel",
+        componentAria:"{0} for character {1}; manual input is supported",
+        activePath:"Clue {0} · Character {1} · {2}",neutralShort:"N",
+        cancelExclude:"Remove exclusion",exclude:"Exclude",
+        initialResultTitle:"Possible idioms will appear here",
+        initialResultHelp:"Add clues, or search now to view every idiom in the dictionary.",
+        noMatchesTitle:"No matching idioms found",
+        noMatchesHelp:"Some clues may conflict. Check character, initial, final, and tone colors.",
+        matchingTitle:"These idioms still match",shown:"Showing {0} / {1}",showMore:"Show more ↓",
+        copied:"Copied",locale:"en-US"
+      },
+      "zh-CN":{
+        pageTitle:"语迹 Idiom Trace",metaDescription:"语迹 Idiom Trace：完全离线的中文成语筛选工具。",
+        backHome:"返回词迹首页",brandMark:"语",brandName:"语迹",
+        offline:"离线单文件 · 数据仅在本机处理",
+        heroEyebrow:"中文成语筛选",heroTitle:"成语筛选工具",
+        intro:"用汉字、声调、声母和韵母的灰黄绿线索，快速筛出仍然可能的四字成语。",
+        private:"✓ 声调优先录入　✓ 声母韵母按钮　✓ 1–4/轻声快捷键",
+        cluesKicker:"录入线索",quickKicker:"快捷输入",resultsKicker:"候选成语",
+        enterClues:"录入成语线索",poolPrefix:"当前词库",poolSuffix:"条",
+        boardNote:"可直接输入完整成语或四个声调；声母、韵母既可手动键入，也可用右侧按钮快速录入。",
+        grayLegend:"灰 · 不存在",yellowLegend:"黄 · 位置错",greenLegend:"绿 · 位置对",
+        addRow:"＋ 添加一组猜测线索",quickExclude:"快速排除声母 / 韵母",
+        quickExcludeHelp:"点击确定不会出现的拼音成分，可多选；再次点击即可取消。",
+        clearExclusions:"清空排除",initial:"声母",final:"韵母",quickPanel:"拼音快捷面板",
+        previousField:"← 上一项",clearField:"清除此项",
+        advanceHelp:"每个字先录声调，再自动跳到声母和韵母；选择韵母后进入下一个字的声调。声调面板支持数字键 1、2、3、4，按 0 或 5 输入轻声。",
+        reset:"清空条件",search:"搜索剩余成语 →",candidates:"条候选",
+        footerName:"语迹 IDIOM TRACE",byline:"作者：2002WYT",footerSource:"词库来源：chinese-xinhua 开源成语数据",
+        tone1:"1 · 阴平",tone2:"2 · 阳平",tone3:"3 · 上声",tone4:"4 · 去声",tone0:"轻声",
+        typeInitial:"声母",typeFinal:"韵母",typeTone:"声调",
+        statusUnset:"未设",statusAbsent:"灰",statusPresent:"黄",statusCorrect:"绿",
+        choose:"选择",clueLabel:"线索 {0}",wholePlaceholder:"输入四字成语，自动补全拼音",
+        toneSequencePlaceholder:"四声调，如 3214",
+        toneSequenceAria:"直接输入四个声调，0或5表示轻声，输入完成后自动标绿",
+        removeClue:"删除此线索",autofilled:"✓ 已从词库自动补全四字拼音",
+        positionLabel:"第 {0} 字",charPlaceholder:"字",charAria:"第{0}个汉字",
+        charStatus:"字 · {0}",tonePlaceholder:"声调 1–4 / 0",
+        toneTitle:"输入 1、2、3、4；0 或 5 表示轻声",
+        toneAria:"第{0}个字的声调，输入1到4，0或5表示轻声",
+        componentTitle:"可手动输入{0}，或使用右侧快捷按钮",
+        componentAria:"第{1}个字的{0}，可手动输入",
+        activePath:"线索 {0} · 第 {1} 字 · {2}",neutralShort:"轻",
+        cancelExclude:"取消排除",exclude:"排除",
+        initialResultTitle:"候选成语会出现在这里",
+        initialResultHelp:"录入线索后搜索，或直接查看词库中的全部四字成语。",
+        noMatchesTitle:"没有找到匹配成语",
+        noMatchesHelp:"线索之间可能有冲突，请检查汉字、声母、韵母和声调的颜色状态。",
+        matchingTitle:"这些成语仍然符合",shown:"已显示 {0} / {1}",showMore:"继续显示 ↓",
+        copied:"已复制",locale:"zh-CN"
+      },
+      "zh-TW":{
+        pageTitle:"語跡 Idiom Trace",metaDescription:"語跡 Idiom Trace：完全離線的中文成語篩選工具。",
+        backHome:"返回詞跡首頁",brandMark:"語",brandName:"語跡",
+        offline:"離線單一檔案 · 資料僅在本機處理",
+        heroEyebrow:"中文成語篩選",heroTitle:"成語篩選工具",
+        intro:"用漢字、聲調、聲母和韻母的灰黃綠線索，快速篩出仍然可能的四字成語。",
+        private:"✓ 聲調優先輸入　✓ 聲母韻母按鈕　✓ 1–4/輕聲快速鍵",
+        cluesKicker:"輸入線索",quickKicker:"快速輸入",resultsKicker:"候選成語",
+        enterClues:"輸入成語線索",poolPrefix:"目前詞庫",poolSuffix:"條",
+        boardNote:"可直接輸入完整成語或四個聲調；聲母、韻母既可手動輸入，也可用右側按鈕快速輸入。",
+        grayLegend:"灰 · 不存在",yellowLegend:"黃 · 位置錯",greenLegend:"綠 · 位置對",
+        addRow:"＋ 新增一組猜測線索",quickExclude:"快速排除聲母 / 韻母",
+        quickExcludeHelp:"點擊確定不會出現的拼音成分，可複選；再次點擊即可取消。",
+        clearExclusions:"清除排除",initial:"聲母",final:"韻母",quickPanel:"拼音快速面板",
+        previousField:"← 上一項",clearField:"清除此項",
+        advanceHelp:"每個字先輸入聲調，再自動跳到聲母和韻母；選擇韻母後進入下一個字的聲調。聲調面板支援數字鍵 1、2、3、4，按 0 或 5 輸入輕聲。",
+        reset:"清除條件",search:"搜尋剩餘成語 →",candidates:"個候選",
+        footerName:"語跡 IDIOM TRACE",byline:"作者：2002WYT",footerSource:"詞庫來源：chinese-xinhua 開源成語資料",
+        tone1:"1 · 陰平",tone2:"2 · 陽平",tone3:"3 · 上聲",tone4:"4 · 去聲",tone0:"輕聲",
+        typeInitial:"聲母",typeFinal:"韻母",typeTone:"聲調",
+        statusUnset:"未設定",statusAbsent:"灰",statusPresent:"黃",statusCorrect:"綠",
+        choose:"選擇",clueLabel:"線索 {0}",wholePlaceholder:"輸入四字成語，自動補全拼音",
+        toneSequencePlaceholder:"四聲調，如 3214",
+        toneSequenceAria:"直接輸入四個聲調，0或5表示輕聲，輸入完成後自動標綠",
+        removeClue:"刪除此線索",autofilled:"✓ 已從詞庫自動補全四字拼音",
+        positionLabel:"第 {0} 字",charPlaceholder:"字",charAria:"第{0}個漢字",
+        charStatus:"字 · {0}",tonePlaceholder:"聲調 1–4 / 0",
+        toneTitle:"輸入 1、2、3、4；0 或 5 表示輕聲",
+        toneAria:"第{0}個字的聲調，輸入1到4，0或5表示輕聲",
+        componentTitle:"可手動輸入{0}，或使用右側快速按鈕",
+        componentAria:"第{1}個字的{0}，可手動輸入",
+        activePath:"線索 {0} · 第 {1} 字 · {2}",neutralShort:"輕",
+        cancelExclude:"取消排除",exclude:"排除",
+        initialResultTitle:"候選成語會出現在這裡",
+        initialResultHelp:"輸入線索後搜尋，或直接查看詞庫中的全部四字成語。",
+        noMatchesTitle:"找不到符合的成語",
+        noMatchesHelp:"線索之間可能有衝突，請檢查漢字、聲母、韻母和聲調的顏色狀態。",
+        matchingTitle:"這些成語仍然符合",shown:"已顯示 {0} / {1}",showMore:"繼續顯示 ↓",
+        copied:"已複製",locale:"zh-TW"
+      }
+    };
+    function normalizeTraceLanguage(value){return value==="zh-CN"||value==="zh-TW"?value:"en"}
+    function detectTraceLanguage(){
+      try{
+        if(window.TraceApp&&typeof window.TraceApp.getLanguage==="function"){
+          var nativeLanguage=window.TraceApp.getLanguage();
+          if(nativeLanguage)return normalizeTraceLanguage(nativeLanguage);
+        }
+      }catch(error){}
+      try{
+        var savedLanguage=localStorage.getItem("trace_language");
+        if(savedLanguage)return normalizeTraceLanguage(savedLanguage);
+      }catch(error){}
+      var browserLanguage=String(navigator.language||"").toLowerCase();
+      if(/^zh-(tw|hk|mo|hant)/.test(browserLanguage))return"zh-TW";
+      if(/^zh/.test(browserLanguage))return"zh-CN";
+      return"en";
+    }
+    var currentLanguage=detectTraceLanguage();
+    function detectTraceTheme(){
+      try{
+        if(window.TraceApp&&typeof window.TraceApp.getTheme==="function"){
+          var nativeTheme=window.TraceApp.getTheme();
+          if(nativeTheme)return nativeTheme==="light"||nativeTheme==="dark"?nativeTheme:"system";
+        }
+      }catch(error){}
+      try{
+        var savedTheme=localStorage.getItem("trace_theme");
+        if(savedTheme)return savedTheme==="light"||savedTheme==="dark"?savedTheme:"system";
+      }catch(error){}
+      return"system";
+    }
+    var currentThemeMode=detectTraceTheme();
+    var traceThemeQuery=window.matchMedia?window.matchMedia("(prefers-color-scheme: dark)"):null;
+    function applyTraceTheme(){
+      var resolvedTheme=currentThemeMode==="dark"||currentThemeMode==="light"
+        ?currentThemeMode:(traceThemeQuery&&traceThemeQuery.matches?"dark":"light");
+      document.documentElement.dataset.theme=resolvedTheme;
+      document.documentElement.style.colorScheme=resolvedTheme;
+    }
+    applyTraceTheme();
+    if(traceThemeQuery){
+      var handleTraceThemeChange=function(){if(currentThemeMode==="system")applyTraceTheme()};
+      if(typeof traceThemeQuery.addEventListener==="function")traceThemeQuery.addEventListener("change",handleTraceThemeChange);
+      else if(typeof traceThemeQuery.addListener==="function")traceThemeQuery.addListener(handleTraceThemeChange);
+    }
+    function t(key){
+      var text=(IDIOM_I18N[currentLanguage]&&IDIOM_I18N[currentLanguage][key])||IDIOM_I18N.en[key]||key;
+      for(var index=1;index<arguments.length;index++)text=text.replace("{"+(index-1)+"}",arguments[index]);
+      return text;
+    }
+    function applyStaticLanguage(){
+      document.documentElement.lang=currentLanguage;
+      document.title=t("pageTitle");
+      var description=document.querySelector('meta[name="description"]');
+      if(description)description.setAttribute("content",t("metaDescription"));
+      document.querySelectorAll("[data-i18n]").forEach(function(node){node.textContent=t(node.dataset.i18n)});
+      document.querySelectorAll("[data-i18n-html]").forEach(function(node){node.innerHTML=t(node.dataset.i18nHtml)});
+      document.querySelectorAll("[data-i18n-aria]").forEach(function(node){node.setAttribute("aria-label",t(node.dataset.i18nAria))});
+    }
+    applyStaticLanguage();
     function traceReturnHome(){
       try{
         if(window.TraceApp&&typeof window.TraceApp.performHaptic==="function") window.TraceApp.performHaptic();
@@ -182,10 +479,10 @@
     var INITIAL_OPTIONS=["Ø","zh","ch","sh","b","p","m","f","d","t","n","l","g","k","h","j","q","x","r","z","c","s","y","w"];
     var FINAL_OPTIONS=["a","o","e","ai","ei","ao","ou","an","en","ang","eng","ong","i","ia","ie","iao","iu","ian","in","iang","ing","iong","u","ua","uo","uai","ui","ue","uan","un","uang","ü","üe","er"];
     var TONE_OPTIONS=["1","2","3","4","0"];
-    var TONE_LABELS={"1":"1 · 阴平","2":"2 · 阳平","3":"3 · 上声","4":"4 · 去声","0":"轻声"};
-    var TYPE_LABELS={initial:"声母",final:"韵母",tone:"声调"};
+    var TONE_LABELS={"1":t("tone1"),"2":t("tone2"),"3":t("tone3"),"4":t("tone4"),"0":t("tone0")};
+    var TYPE_LABELS={initial:t("typeInitial"),final:t("typeFinal"),tone:t("typeTone")};
     var STATUS_ORDER=["absent","present","correct"];
-    var STATUS_LABELS={unset:"未设",absent:"灰",present:"黄",correct:"绿"};
+    var STATUS_LABELS={unset:t("statusUnset"),absent:t("statusAbsent"),present:t("statusPresent"),correct:t("statusCorrect")};
     var rowCounter=1,rows=[],active={rowId:0,pos:0,type:"tone"},excludedInitials=new Set(),excludedFinals=new Set(),results=[],shown=120,searched=false;
 
     var idioms=IDIOM_DATA.map(function(entry){
@@ -205,7 +502,7 @@
     function getRow(id){return rows.find(function(row){return row.id===id})}
     function statusKey(type){return type==="initial"?"initialStatuses":type==="final"?"finalStatuses":"toneStatuses"}
     function valueKey(type){return type==="initial"?"initials":type==="final"?"finals":"tones"}
-    function displayValue(type,value){if(!value)return"选择";if(type==="tone")return TONE_LABELS[value]||value;return value}
+    function displayValue(type,value){if(!value)return t("choose");if(type==="tone")return TONE_LABELS[value]||value;return value}
     function cycleStatus(status){var index=STATUS_ORDER.indexOf(status);return index<0?"absent":STATUS_ORDER[(index+1)%STATUS_ORDER.length]}
 
     function setWholeWord(rowId,value){
@@ -317,7 +614,7 @@
         var node=document.createElement("article");node.className="clue";
         var top=document.createElement("div");top.className="clue-top";
         var hasFourTones=row.tones.every(Boolean),tonesAreCorrect=hasFourTones&&row.toneStatuses.every(function(status){return status==="correct"});
-        top.innerHTML='<span class="clue-num">线索 '+String(rowIndex+1).padStart(2,"0")+'</span><input class="whole" placeholder="输入四字成语，自动补全拼音" value="'+row.chars.join("")+'"><input class="tone-sequence '+(tonesAreCorrect?"complete":"")+'" inputmode="numeric" maxlength="7" placeholder="四声调，如 3214" aria-label="直接输入四个声调，0或5表示轻声，输入完成后自动标绿" value="'+(hasFourTones?row.tones.join(""):"")+'"><button class="remove" aria-label="删除此线索">×</button>'+(row.autofilled?'<span class="autofill">✓ 已从词库自动补全四字拼音</span>':"");
+        top.innerHTML='<span class="clue-num">'+t("clueLabel",String(rowIndex+1).padStart(2,"0"))+'</span><input class="whole" placeholder="'+t("wholePlaceholder")+'" value="'+row.chars.join("")+'"><input class="tone-sequence '+(tonesAreCorrect?"complete":"")+'" inputmode="numeric" maxlength="7" placeholder="'+t("toneSequencePlaceholder")+'" aria-label="'+t("toneSequenceAria")+'" value="'+(hasFourTones?row.tones.join(""):"")+'"><button class="remove" aria-label="'+t("removeClue")+'">×</button>'+(row.autofilled?'<span class="autofill">'+t("autofilled")+'</span>':"");
         var wholeInput=top.querySelector(".whole"),toneSequence=top.querySelector(".tone-sequence"),wholeComposing=false;
         wholeInput.oncompositionstart=function(){wholeComposing=true};
         wholeInput.oncompositionend=function(event){wholeComposing=false;setWholeWord(row.id,event.target.value)};
@@ -342,16 +639,16 @@
         var slots=document.createElement("div");slots.className="slots";
         for(let pos=0;pos<4;pos++){
           var slot=document.createElement("div");slot.className="slot "+(active.rowId===row.id&&active.pos===pos?"active":"");
-          slot.innerHTML='<div class="slot-title"><span>第 '+(pos+1)+' 字</span><span>'+String(pos+1).padStart(2,"0")+'</span></div>';
+          slot.innerHTML='<div class="slot-title"><span>'+t("positionLabel",pos+1)+'</span><span>'+String(pos+1).padStart(2,"0")+'</span></div>';
           var charLine=document.createElement("div");charLine.className="char-line";
-          var charInput=document.createElement("input");charInput.className="char "+row.charStatuses[pos];charInput.value=row.chars[pos];charInput.placeholder="字";charInput.setAttribute("aria-label","第"+(pos+1)+"个汉字");
+          var charInput=document.createElement("input");charInput.className="char "+row.charStatuses[pos];charInput.value=row.chars[pos];charInput.placeholder=t("charPlaceholder");charInput.setAttribute("aria-label",t("charAria",pos+1));
           charInput.oncompositionstart=function(){this.dataset.composing="1"};
           charInput.oncompositionend=(function(position){return function(event){this.dataset.composing="";setChar(row.id,position,event.target.value)}})(pos);
           charInput.oninput=(function(position){return function(event){
             if(!this.dataset.composing&&!event.isComposing&&(event.target.value===""||/[\u3400-\u9fff]/u.test(event.target.value)))setChar(row.id,position,event.target.value);
           }})(pos);
           charInput.onblur=(function(position){return function(event){setChar(row.id,position,event.target.value)}})(pos);
-          var charColor=document.createElement("button");charColor.className="color "+row.charStatuses[pos];charColor.textContent="字·"+STATUS_LABELS[row.charStatuses[pos]];charColor.disabled=!row.chars[pos];
+          var charColor=document.createElement("button");charColor.className="color "+row.charStatuses[pos];charColor.textContent=t("charStatus",STATUS_LABELS[row.charStatuses[pos]]);charColor.disabled=!row.chars[pos];
           charColor.onclick=(function(position){return function(){cycleOne(row.id,position,"char")}})(pos);
           charLine.appendChild(charInput);charLine.appendChild(charColor);slot.appendChild(charLine);
           ["tone","initial","final"].forEach(function(type){
@@ -361,8 +658,8 @@
             if(type==="tone"){
               valueButton=document.createElement("input");valueButton.type="text";valueButton.inputMode="numeric";valueButton.maxLength=1;valueButton.pattern="[0-5]*";
               valueButton.className="value tone-entry "+status+" "+(active.rowId===row.id&&active.pos===pos&&active.type===type?"active":"");
-              valueButton.value=value;valueButton.placeholder="声调 1–4 / 0";valueButton.title="输入 1、2、3、4；0 或 5 表示轻声";
-              valueButton.setAttribute("aria-label","第"+(pos+1)+"个字的声调，输入1到4，0或5表示轻声");
+              valueButton.value=value;valueButton.placeholder=t("tonePlaceholder");valueButton.title=t("toneTitle");
+              valueButton.setAttribute("aria-label",t("toneAria",pos+1));
               valueButton.onfocus=function(){
                 active={rowId:row.id,pos:pos,type:"tone"};
                 document.querySelectorAll(".slot").forEach(function(item){item.classList.remove("active")});
@@ -379,8 +676,8 @@
             }else{
               valueButton=document.createElement("input");valueButton.type="text";valueButton.spellcheck=false;valueButton.autocapitalize="none";valueButton.maxLength=type==="initial"?2:5;
               valueButton.className="value component-entry "+status+" "+(active.rowId===row.id&&active.pos===pos&&active.type===type?"active":"");
-              valueButton.value=value;valueButton.placeholder=TYPE_LABELS[type];valueButton.title="可手动输入"+TYPE_LABELS[type]+"，或使用右侧快捷按钮";
-              valueButton.setAttribute("aria-label","第"+(pos+1)+"个字的"+TYPE_LABELS[type]+"，可手动输入");
+              valueButton.value=value;valueButton.placeholder=TYPE_LABELS[type];valueButton.title=t("componentTitle",TYPE_LABELS[type]);
+              valueButton.setAttribute("aria-label",t("componentAria",TYPE_LABELS[type],pos+1));
               valueButton.onfocus=function(){
                 active={rowId:row.id,pos:pos,type:type};
                 document.querySelectorAll(".slot").forEach(function(item){item.classList.remove("active")});
@@ -426,7 +723,7 @@
     function renderPicker(){
       var row=getRow(active.rowId);if(!row){return}
       var value=row[valueKey(active.type)][active.pos];
-      document.getElementById("activePath").textContent="线索 "+String(rows.indexOf(row)+1).padStart(2,"0")+" · 第 "+(active.pos+1)+" 字 · "+TYPE_LABELS[active.type];
+      document.getElementById("activePath").textContent=t("activePath",String(rows.indexOf(row)+1).padStart(2,"0"),active.pos+1,TYPE_LABELS[active.type]);
       var tabs=document.getElementById("tabs");tabs.innerHTML="";
       ["tone","initial","final"].forEach(function(type){
         var button=document.createElement("button");button.textContent=TYPE_LABELS[type];button.className=active.type===type?"active":"";
@@ -436,7 +733,7 @@
       var box=document.getElementById("options");box.innerHTML="";
       options.forEach(function(option){
         var button=document.createElement("button");button.className="option "+(active.type==="tone"?"tone ":"")+(value===option?"selected":"");
-        if(active.type==="tone"){button.innerHTML="<b>"+(option==="0"?"轻":option)+"</b><span>"+TONE_LABELS[option]+"</span><kbd>"+(option==="0"?"0 / 5":option)+"</kbd>"}
+        if(active.type==="tone"){button.innerHTML="<b>"+(option==="0"?t("neutralShort"):option)+"</b><span>"+TONE_LABELS[option]+"</span><kbd>"+(option==="0"?"0 / 5":option)+"</kbd>"}
         else button.textContent=option;
         button.onclick=function(){chooseOption(option)};box.appendChild(button);
       });
@@ -455,15 +752,15 @@
           var button=document.createElement("button"),isSelected=selected.has(option);
           button.className="exclude-chip "+(isSelected?"selected":"");
           button.textContent=option;
-          button.title=(isSelected?"取消排除":"排除")+typeLabel+" "+option;
+          button.title=(isSelected?t("cancelExclude"):t("exclude"))+" "+typeLabel+" "+option;
           button.setAttribute("aria-pressed",isSelected?"true":"false");
           button.setAttribute("aria-label",button.title);
           button.onclick=function(){toggleQuickExclusion(type,option)};
           box.appendChild(button);
         });
       }
-      build("initialExclusions",INITIAL_OPTIONS,excludedInitials,"声母","initial");
-      build("finalExclusions",FINAL_OPTIONS,excludedFinals,"韵母","final");
+      build("initialExclusions",INITIAL_OPTIONS,excludedInitials,t("typeInitial"),"initial");
+      build("finalExclusions",FINAL_OPTIONS,excludedFinals,t("typeFinal"),"final");
       document.getElementById("clearExclusions").disabled=excludedInitials.size===0&&excludedFinals.size===0;
     }
 
@@ -511,22 +808,22 @@
 
     function renderResults(){
       var title=document.getElementById("resultTitle"),totalBox=document.getElementById("totalBox"),content=document.getElementById("resultContent");
-      if(!searched){title.textContent="候选成语会出现在这里";totalBox.hidden=true;content.className="placeholder";content.textContent="录入线索后搜索，或直接查看词库中的全部四字成语。";return}
-      totalBox.hidden=false;document.getElementById("total").textContent=results.length.toLocaleString("zh-CN");
-      if(!results.length){title.textContent="没有找到匹配成语";content.className="empty";content.textContent="线索之间可能有冲突，请检查汉字、声母、韵母和声调的颜色状态。";return}
-      title.textContent="这些成语仍然符合";content.className="";
+      if(!searched){title.textContent=t("initialResultTitle");totalBox.hidden=true;content.className="placeholder";content.textContent=t("initialResultHelp");return}
+      totalBox.hidden=false;document.getElementById("total").textContent=results.length.toLocaleString(t("locale"));
+      if(!results.length){title.textContent=t("noMatchesTitle");content.className="empty";content.textContent=t("noMatchesHelp");return}
+      title.textContent=t("matchingTitle");content.className="";
       var html='<div class="result-grid">';
       results.slice(0,shown).forEach(function(item,index){
-        html+='<button class="idiom" data-word="'+item.word+'"><span class="rank">'+String(index+1).padStart(3,"0")+'</span><strong>'+item.word+'</strong><em>'+item.pinyin+'</em><span class="parts">'+item.parts.map(function(part){return"<span>"+part.initial+" · "+part.final+" · "+(part.tone==="0"?"轻":part.tone)+"</span>"}).join("")+"</span></button>";
+        html+='<button class="idiom" data-word="'+item.word+'"><span class="rank">'+String(index+1).padStart(3,"0")+'</span><strong>'+item.word+'</strong><em>'+item.pinyin+'</em><span class="parts">'+item.parts.map(function(part){return"<span>"+part.initial+" · "+part.final+" · "+(part.tone==="0"?t("neutralShort"):part.tone)+"</span>"}).join("")+"</span></button>";
       });
-      html+='</div><div class="more-row"><span>已显示 '+Math.min(shown,results.length)+" / "+results.length+"</span>"+(shown<results.length?'<button id="more">继续显示 ↓</button>':"")+"</div>";
+      html+='</div><div class="more-row"><span>'+t("shown",Math.min(shown,results.length),results.length)+"</span>"+(shown<results.length?'<button id="more">'+t("showMore")+'</button>':"")+"</div>";
       content.innerHTML=html;
       content.querySelectorAll(".idiom").forEach(function(button){button.onclick=function(){copyText(button.dataset.word,button)}});
       var more=document.getElementById("more");if(more)more.onclick=function(){shown+=120;renderResults()};
     }
 
     function copyText(text,button){
-      function done(){var label=button.querySelector("strong"),old=label.textContent;label.textContent="已复制";setTimeout(function(){label.textContent=old},700)}
+      function done(){var label=button.querySelector("strong"),old=label.textContent;label.textContent=t("copied");setTimeout(function(){label.textContent=old},700)}
       if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(text).then(done).catch(function(){fallbackCopy(text);done()});
       else{fallbackCopy(text);done()}
     }
@@ -539,7 +836,7 @@
     function renderAll(){renderClues();renderPicker();renderQuickExclusions();renderResults()}
 
     rows=[makeRow()];active.rowId=rows[0].id;
-    document.getElementById("poolCount").textContent=idioms.length.toLocaleString("zh-CN");
+    document.getElementById("poolCount").textContent=idioms.length.toLocaleString(t("locale"));
     document.getElementById("addRow").onclick=function(){if(rows.length<6){var row=makeRow();rows.push(row);active={rowId:row.id,pos:0,type:"tone"};renderAll()}};
     document.getElementById("clearExclusions").onclick=function(){excludedInitials.clear();excludedFinals.clear();searched=false;renderQuickExclusions();renderResults()};
     document.getElementById("previousField").onclick=function(){advanceActive(-1)};
