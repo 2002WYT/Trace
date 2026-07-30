@@ -394,7 +394,7 @@
 
       <a class="tool-card equation-tool" href="equation-trace-offline.html" data-tool="equation">
         <div class="tool-preview equation-preview" aria-hidden="true">
-          <span class="correct">6</span><span class="present">+</span><span>2</span><span>×</span><span>2</span>
+          <span class="correct">6</span><span class="present">+</span><span>2</span><span>*</span><span>2</span>
         </div>
         <div class="tool-copy">
           <span class="tool-label">EQUATION TRACE</span>
@@ -405,7 +405,7 @@
       </a>
     </section>
 
-    <footer class="home-footer"><span>2002WYT</span><span>v<span data-version>1.2.0</span></span></footer>
+    <footer class="home-footer"><span>2002WYT</span><span>v<span data-version>1.2.1</span></span></footer>
   </main>
 
   <div class="modal" id="settingsDialog" hidden>
@@ -503,7 +503,7 @@
         </div>
 
         <dl class="about-list">
-          <dt data-i18n="version">Version</dt><dd>v<span data-version>1.2.0</span></dd>
+          <dt data-i18n="version">Version</dt><dd>v<span data-version>1.2.1</span></dd>
           <dt data-i18n="author">Author</dt><dd>2002WYT</dd>
         </dl>
 
@@ -526,7 +526,7 @@
       var activeDialog = null;
       var lastFocused = null;
       var closeTimer = null;
-      var fallbackVersion = "1.2.0";
+      var fallbackVersion = "1.2.1";
       var runningInAndroidApp = Boolean(
         window.TraceApp && typeof window.TraceApp.exitApp === "function"
       );

@@ -142,10 +142,11 @@
       gap:6px;padding:10px;border-top:1px solid var(--line)
     }
     .tile{
-      aspect-ratio:1;padding:0;border:1px solid var(--line);border-radius:4px;
-      background:var(--surface-muted);font:700 17px ui-monospace,SFMono-Regular,Consolas,monospace
+      width:100%;min-width:0;aspect-ratio:1;padding:0;border:1px solid var(--line);border-radius:4px;
+      background:var(--surface-muted);text-align:center;caret-color:currentColor;
+      font:700 17px ui-monospace,SFMono-Regular,Consolas,monospace
     }
-    .tile:empty::after{content:"·";color:var(--muted)}
+    .tile::placeholder{color:var(--muted);opacity:1}
     .tile.absent{border-color:var(--gray);background:var(--gray);color:#fff}
     .tile.present{border-color:var(--yellow);background:var(--yellow);color:#fff}
     .tile.correct{border-color:var(--green);background:var(--green);color:#fff}
@@ -272,7 +273,7 @@
               <input id="lengthInput" type="number" min="3" max="8" value="5">
               <button id="lengthPlus" type="button" data-i18n-aria="increaseLength" aria-label="Increase length">+</button>
             </div>
-            <small class="field-help" data-i18n="lengthHelp">3–8 characters, excluding “= result”.</small>
+            <small class="field-help" data-i18n="lengthHelp">3–8 characters for the expression itself.</small>
           </div>
           <div class="field">
             <label for="targetInput" data-i18n="targetResult">Target result</label>
@@ -285,7 +286,7 @@
           <ul>
             <li data-i18n="rulePrecedence">Multiplication and division come first.</li>
             <li data-i18n="ruleZero">No leading zeros or division by zero.</li>
-            <li data-i18n="ruleOperators">Available operators: +, −, ×, ÷.</li>
+            <li data-i18n="ruleOperators">Available operators: +, -, *, /.</li>
           </ul>
         </div>
       </aside>
@@ -294,7 +295,7 @@
         <div class="clue-head">
           <div>
             <h2 data-i18n="cluesTitle">Enter clues</h2>
-            <p data-i18n="cluesHelp">Enter a full guess, then tap each tile to change its color.</p>
+            <p data-i18n="cluesHelp">Type directly in any box. Guesses may be partial; empty positions are ignored. Tap a filled box to change its color.</p>
           </div>
           <div class="legend" aria-label="Clue colors">
             <span><i class="gray"></i><span data-i18n="gray">Gray</span></span>
@@ -340,18 +341,18 @@
           eyebrow:"ARITHMETIC CLUE SOLVER",title:"Find possible equations",
           intro:"Set the expression length and result, then enter the gray, yellow, and green clues from your game.",
           rangeLabel:"SEARCH RANGE",expressionLength:"Expression length",decreaseLength:"Decrease length",increaseLength:"Increase length",
-          lengthHelp:"3–8 characters, excluding “= result”.",targetResult:"Target result",targetHelp:"Whole numbers from −9999 to 9999.",
+          lengthHelp:"3–8 characters for the expression itself.",targetResult:"Target result",targetHelp:"Whole numbers from −9999 to 9999.",
           rulesTitle:"Calculation rules",rulePrecedence:"Multiplication and division come first.",ruleZero:"No leading zeros or division by zero.",
-          ruleOperators:"Available operators: +, −, ×, ÷.",cluesTitle:"Enter clues",
-          cluesHelp:"Enter a full guess, then tap each tile to change its color.",gray:"Gray",yellow:"Yellow",green:"Green",
+          ruleOperators:"Available operators: +, -, *, /.",cluesTitle:"Enter clues",
+          cluesHelp:"Type directly in any box. Guesses may be partial; empty positions are ignored. Tap a filled box to change its color.",gray:"Gray",yellow:"Yellow",green:"Green",
           addClue:"+ Add clue",rowLimit:"Up to 6 guesses",clear:"Clear",search:"Find equations",searching:"Calculating…",
           resultsTitle:"Possible equations",matches:"matches",initialHelp:"Results will appear here after a search.",
           emptyTitle:"No equations found",emptyHelp:"Check the result and clue colors, then try again.",
           matchingTitle:"Possible equations",shown:"Showing {0} of {1}",limited:"Only the first {0} matches are kept. Add another clue to narrow the list.",
           showMore:"Show more",copy:"Copy",copied:"Copied",copyAria:"Copy {0}",footer:"Standard precedence · fully offline",
-          guessPlaceholder:"Example: 6+2×2",guessAria:"Guess {0}",removeClue:"Remove clue {0}",
+          guessPlaceholder:"Example: 6+2*2",guessAria:"Guess {0}",removeClue:"Remove clue {0}",
           tileAria:"Guess {0}, position {1}: {2}, {3}",emptyTile:"empty",statusAbsent:"gray",statusPresent:"yellow",statusCorrect:"green",
-          incomplete:"Complete or clear clue row {0}.",invalidTarget:"Enter a whole-number result from −9999 to 9999.",
+          invalidTarget:"Enter a whole-number result from −9999 to 9999.",
           noClueNote:"No color clues were entered; all matching equations are listed.",timeNote:"Calculated locally in {0} ms.",
           erase:"Backspace"
         },
@@ -361,18 +362,18 @@
           eyebrow:"四则运算线索筛选",title:"找出可能的算式",
           intro:"设置算式字符长度与计算结果，再录入游戏给出的灰、黄、绿线索。",
           rangeLabel:"筛选范围",expressionLength:"算式字符长度",decreaseLength:"减少字符长度",increaseLength:"增加字符长度",
-          lengthHelp:"可选 3–8 个字符，不包含“= 结果”。",targetResult:"计算结果",targetHelp:"请输入 −9999 到 9999 的整数。",
+          lengthHelp:"算式本身可选 3～8 个字符。",targetResult:"计算结果",targetHelp:"请输入 −9999 到 9999 的整数。",
           rulesTitle:"计算规则",rulePrecedence:"先乘除，后加减。",ruleZero:"数字不能有前导零，除数不能为零。",
-          ruleOperators:"可用算子：+、−、×、÷。",cluesTitle:"录入线索",
-          cluesHelp:"输入完整猜测，再点击每个方块切换颜色。",gray:"灰色",yellow:"黄色",green:"绿色",
+          ruleOperators:"可用算子：+、-、*、/。",cluesTitle:"录入线索",
+          cluesHelp:"可在任意方块内直接输入；字符不必填满，空白位置会被忽略。点击已填写方块可切换颜色。",gray:"灰色",yellow:"黄色",green:"绿色",
           addClue:"+ 添加一行",rowLimit:"最多 6 次猜测",clear:"清空",search:"查找算式",searching:"正在计算…",
           resultsTitle:"可能的算式",matches:"个结果",initialHelp:"开始查找后，结果会显示在这里。",
           emptyTitle:"没有符合条件的算式",emptyHelp:"请检查计算结果和方块颜色后重试。",
           matchingTitle:"可能的算式",shown:"已显示 {0} / {1}",limited:"仅保留前 {0} 个结果，请增加线索缩小范围。",
           showMore:"显示更多",copy:"复制",copied:"已复制",copyAria:"复制 {0}",footer:"标准运算优先级 · 完全离线",
-          guessPlaceholder:"例如：6+2×2",guessAria:"第 {0} 次猜测",removeClue:"删除第 {0} 行线索",
+          guessPlaceholder:"例如：6+2*2",guessAria:"第 {0} 次猜测",removeClue:"删除第 {0} 行线索",
           tileAria:"第 {0} 行第 {1} 位：{2}，{3}",emptyTile:"空",statusAbsent:"灰色",statusPresent:"黄色",statusCorrect:"绿色",
-          incomplete:"请补全或清空第 {0} 行线索。",invalidTarget:"请输入 −9999 到 9999 的整数结果。",
+          invalidTarget:"请输入 −9999 到 9999 的整数结果。",
           noClueNote:"尚未录入颜色线索，当前列出所有符合长度和结果的算式。",timeNote:"已在本机完成计算，用时 {0} 毫秒。",
           erase:"退格"
         },
@@ -382,25 +383,25 @@
           eyebrow:"四則運算線索篩選",title:"找出可能的算式",
           intro:"設定算式字元長度與計算結果，再輸入遊戲給出的灰、黃、綠線索。",
           rangeLabel:"篩選範圍",expressionLength:"算式字元長度",decreaseLength:"減少字元長度",increaseLength:"增加字元長度",
-          lengthHelp:"可選 3–8 個字元，不包含「= 結果」。",targetResult:"計算結果",targetHelp:"請輸入 −9999 到 9999 的整數。",
+          lengthHelp:"算式本身可選 3～8 個字元。",targetResult:"計算結果",targetHelp:"請輸入 −9999 到 9999 的整數。",
           rulesTitle:"計算規則",rulePrecedence:"先乘除，後加減。",ruleZero:"數字不能有前導零，除數不能為零。",
-          ruleOperators:"可用運算子：+、−、×、÷。",cluesTitle:"輸入線索",
-          cluesHelp:"輸入完整猜測，再點擊每個方塊切換顏色。",gray:"灰色",yellow:"黃色",green:"綠色",
+          ruleOperators:"可用運算子：+、-、*、/。",cluesTitle:"輸入線索",
+          cluesHelp:"可在任意方塊內直接輸入；字元不必填滿，空白位置會被忽略。點擊已填寫方塊可切換顏色。",gray:"灰色",yellow:"黃色",green:"綠色",
           addClue:"+ 新增一列",rowLimit:"最多 6 次猜測",clear:"清除",search:"尋找算式",searching:"正在計算…",
           resultsTitle:"可能的算式",matches:"個結果",initialHelp:"開始尋找後，結果會顯示在這裡。",
           emptyTitle:"沒有符合條件的算式",emptyHelp:"請檢查計算結果和方塊顏色後重試。",
           matchingTitle:"可能的算式",shown:"已顯示 {0} / {1}",limited:"僅保留前 {0} 個結果，請增加線索縮小範圍。",
           showMore:"顯示更多",copy:"複製",copied:"已複製",copyAria:"複製 {0}",footer:"標準運算優先順序 · 完全離線",
-          guessPlaceholder:"例如：6+2×2",guessAria:"第 {0} 次猜測",removeClue:"刪除第 {0} 列線索",
+          guessPlaceholder:"例如：6+2*2",guessAria:"第 {0} 次猜測",removeClue:"刪除第 {0} 列線索",
           tileAria:"第 {0} 列第 {1} 位：{2}，{3}",emptyTile:"空",statusAbsent:"灰色",statusPresent:"黃色",statusCorrect:"綠色",
-          incomplete:"請補全或清除第 {0} 列線索。",invalidTarget:"請輸入 −9999 到 9999 的整數結果。",
+          invalidTarget:"請輸入 −9999 到 9999 的整數結果。",
           noClueNote:"尚未輸入顏色線索，目前列出所有符合長度和結果的算式。",timeNote:"已在本機完成計算，用時 {0} 毫秒。",
           erase:"退格"
         }
       };
 
       var STATUS = ["absent","present","correct"];
-      var OPERATORS = ["+","-","×","÷"];
+      var OPERATORS = ["+","-","*","/"];
       var MAX_STORED = 3000;
       var PAGE_SIZE = 180;
       var currentLanguage = readLanguage();
@@ -462,20 +463,25 @@
 
       function canonicalExpression(value) {
         return String(value||"")
-          .replace(/\*/g,"×").replace(/\//g,"÷").replace(/[−–—]/g,"-")
-          .replace(/[^0-9+\-×÷]/g,"");
+          .replace(/[−–—]/g,"-")
+          .replace(/[^0-9+\-*/]/g,"");
       }
       function normalizeExpression(value) {
         return canonicalExpression(value).slice(0,expressionLength);
       }
       function makeRow() {
-        return {id:nextRowId++,chars:[],statuses:[]};
+        return {id:nextRowId++,chars:Array(expressionLength).fill(""),statuses:Array(expressionLength).fill("")};
+      }
+      function firstEmptyIndex(row) {
+        var index=row.chars.indexOf("");return index<0?expressionLength:index;
       }
       function updateRowText(row,value) {
         var clean=normalizeExpression(value),old=row.chars.slice(),oldStatuses=row.statuses.slice();
-        row.chars=clean.split("");
-        row.statuses=row.chars.map(function(ch,index){
-          return old[index]===ch&&oldStatuses[index]?oldStatuses[index]:"absent";
+        row.chars=Array(expressionLength).fill("");
+        row.statuses=Array(expressionLength).fill("");
+        clean.split("").forEach(function(ch,index){
+          row.chars[index]=ch;
+          row.statuses[index]=old[index]===ch&&oldStatuses[index]?oldStatuses[index]:"absent";
         });
       }
       function statusLabel(status) {
@@ -502,20 +508,41 @@
           remove.textContent="×";remove.setAttribute("aria-label",t("removeClue",rowIndex+1));
           remove.onclick=function(){
             rows=rows.length===1?[makeRow()]:rows.filter(function(item){return item.id!==row.id});
-            activeRowId=rows[0].id;activeCursor=rows[0].chars.length;searched=false;renderClues();renderKeypad();
+            activeRowId=rows[0].id;activeCursor=firstEmptyIndex(rows[0]);searched=false;renderClues();renderKeypad();
           };
           top.appendChild(number);top.appendChild(input);top.appendChild(remove);
           var tiles=document.createElement("div");tiles.className="tiles";tiles.style.setProperty("--length",expressionLength);
           for(var i=0;i<expressionLength;i++){
             (function(index){
-              var tile=document.createElement("button"),ch=row.chars[index]||"",status=row.statuses[index]||"";
-              tile.type="button";tile.className="tile"+(status?" "+status:"");tile.textContent=ch;
+              var tile=document.createElement("input"),ch=row.chars[index]||"",status=row.statuses[index]||"";
+              tile.type="text";tile.maxLength=1;tile.autocomplete="off";tile.spellcheck=false;tile.inputMode="text";
+              tile.className="tile"+(status?" "+status:"");tile.value=ch;tile.placeholder="·";
               tile.setAttribute("aria-label",t("tileAria",rowIndex+1,index+1,ch||t("emptyTile"),status?statusLabel(status):t("emptyTile")));
+              tile.onfocus=function(){activeRowId=row.id;activeCursor=index;try{tile.select()}catch(error){}};
+              tile.oninput=function(){
+                var clean=canonicalExpression(tile.value).slice(0,1),old=row.chars[index];
+                row.chars[index]=clean;
+                row.statuses[index]=clean?(old===clean&&row.statuses[index]?row.statuses[index]:"absent"):"";
+                activeRowId=row.id;activeCursor=Math.min(index+1,expressionLength);searched=false;clearError();
+                renderClues(row.id,Math.min(activeCursor,expressionLength-1),true);renderKeypad();
+              };
+              tile.onkeydown=function(event){
+                if(event.key==="ArrowLeft"&&index>0){event.preventDefault();renderClues(row.id,index-1,true)}
+                else if(event.key==="ArrowRight"&&index<expressionLength-1){event.preventDefault();renderClues(row.id,index+1,true)}
+                else if(event.key==="Backspace"&&!tile.value&&index>0){
+                  event.preventDefault();row.chars[index-1]="";row.statuses[index-1]="";
+                  activeRowId=row.id;activeCursor=index-1;searched=false;renderClues(row.id,index-1,true);renderKeypad();
+                }
+              };
               tile.onclick=function(){
-                if(!row.chars[index]){activeRowId=row.id;activeCursor=index;input.focus();input.setSelectionRange(index,index);return}
+                activeRowId=row.id;activeCursor=index;
+                if(!row.chars[index])return;
                 var current=STATUS.indexOf(row.statuses[index]);
                 row.statuses[index]=STATUS[(current+1)%STATUS.length];
-                haptic();searched=false;renderClues(row.id,index+1);renderKeypad();
+                tile.className="tile "+row.statuses[index];
+                tile.setAttribute("aria-label",t("tileAria",rowIndex+1,index+1,row.chars[index],statusLabel(row.statuses[index])));
+                try{tile.select()}catch(error){}
+                haptic();searched=false;renderKeypad();
               };
               tiles.appendChild(tile);
             })(i);
@@ -524,10 +551,17 @@
         });
         document.getElementById("addRow").disabled=rows.length>=6;
         if(focusRow!=null){
-          var target=box.querySelector('.guess-input[aria-label="'+t("guessAria",rows.findIndex(function(r){return r.id===focusRow})+1)+'"]');
+          var rowPosition=rows.findIndex(function(r){return r.id===focusRow});
+          var clueNode=box.children[rowPosition];
+          var cursor=Math.max(0,Math.min(focusCursor==null?0:focusCursor,expressionLength-1));
+          var target=arguments[2]&&clueNode?clueNode.querySelectorAll(".tile")[cursor]:
+            box.querySelector('.guess-input[aria-label="'+t("guessAria",rowPosition+1)+'"]');
           if(target){
-            target.focus();var cursor=Math.max(0,Math.min(focusCursor==null?target.value.length:focusCursor,target.value.length));
-            target.setSelectionRange(cursor,cursor);
+            target.focus();
+            if(target.classList.contains("guess-input")){
+              var textCursor=Math.max(0,Math.min(focusCursor==null?target.value.length:focusCursor,target.value.length));
+              target.setSelectionRange(textCursor,textCursor);
+            }else{try{target.select()}catch(error){}}
           }
         }
       }
@@ -539,7 +573,7 @@
         return best;
       }
       function renderKeypad() {
-        var keys=["7","8","9","÷","4","5","6","×","1","2","3","-","0","+"];
+        var keys=["7","8","9","/","4","5","6","*","1","2","3","-","0","+"];
         var box=document.getElementById("keypad");box.innerHTML="";
         keys.forEach(function(ch){
           var button=document.createElement("button"),state=strongestKeyState(ch);
@@ -551,16 +585,16 @@
       }
       function insertKey(key) {
         var row=rows.find(function(item){return item.id===activeRowId})||rows[0];
-        var text=row.chars.join(""),cursor=Math.max(0,Math.min(activeCursor,text.length));
+        var cursor=Math.max(0,Math.min(activeCursor,expressionLength));
         if(key==="Backspace"){
-          if(cursor>0){text=text.slice(0,cursor-1)+text.slice(cursor);cursor--}
-        }else if(text.length<expressionLength){
-          text=text.slice(0,cursor)+key+text.slice(cursor);cursor++;
-        }else if(cursor<expressionLength){
-          text=text.slice(0,cursor)+key+text.slice(cursor+1);cursor++;
+          var removeIndex=cursor>0?cursor-1:0;row.chars[removeIndex]="";row.statuses[removeIndex]="";cursor=removeIndex;
+        }else{
+          var index=cursor>=expressionLength?expressionLength-1:cursor,old=row.chars[index];
+          row.chars[index]=key;row.statuses[index]=old===key&&row.statuses[index]?row.statuses[index]:"absent";
+          cursor=Math.min(index+1,expressionLength);
         }
-        updateRowText(row,text);activeRowId=row.id;activeCursor=cursor;searched=false;
-        renderClues(row.id,cursor);renderKeypad();clearError();haptic();
+        activeRowId=row.id;activeCursor=cursor;searched=false;
+        renderClues(row.id,Math.min(cursor,expressionLength-1),true);renderKeypad();clearError();haptic();
       }
       function setLength(value) {
         expressionLength=Math.max(3,Math.min(8,Math.trunc(Number(value)||5)));
@@ -588,18 +622,18 @@
       function fDiv(a,b){return b.n===0n?null:fraction(a.n*b.d,a.d*b.n)}
       function parseExpression(text) {
         var normalized=canonicalExpression(text);
-        if(normalized.length!==text.length||!/^\d+(?:[+\-×÷]\d+)+$/.test(normalized))return null;
-        var numberTexts=normalized.split(/[+\-×÷]/);
+        if(normalized.length!==text.length||!/^\d+(?:[+\-*/]\d+)+$/.test(normalized))return null;
+        var numberTexts=normalized.split(/[+\-*/]/);
         if(numberTexts.some(function(value){return value.length>1&&value[0]==="0"}))return null;
-        return {numbers:numberTexts.map(function(value){return BigInt(value)}),operators:normalized.match(/[+\-×÷]/g)};
+        return {numbers:numberTexts.map(function(value){return BigInt(value)}),operators:normalized.match(/[+\-*/]/g)};
       }
       function evaluateExact(text) {
         var parsed=parseExpression(text);if(!parsed)return null;
         var total=fraction(0n,1n),term=fraction(parsed.numbers[0],1n);
         for(var i=0;i<parsed.operators.length;i++){
           var op=parsed.operators[i],next=fraction(parsed.numbers[i+1],1n);
-          if(op==="×")term=fMul(term,next);
-          else if(op==="÷")term=fDiv(term,next);
+          if(op==="*")term=fMul(term,next);
+          else if(op==="/")term=fDiv(term,next);
           else{
             total=fAdd(total,term);
             term=op==="+"?next:fraction(-next.n,next.d);
@@ -611,22 +645,32 @@
       function expressionEqualsTarget(text,target) {
         var value=evaluateExact(text);return Boolean(value&&value.n===BigInt(target)*value.d);
       }
-      function scoreGuess(answer,guess) {
-        var answerChars=answer.split(""),guessChars=guess.split(""),feedback=Array(guessChars.length).fill("absent"),remaining={};
+      function scoreGuessChars(answer,guessChars) {
+        var answerChars=answer.split(""),feedback=Array(guessChars.length).fill(null);
+        var exact=Array(answerChars.length).fill(false),remaining={};
         for(var i=0;i<guessChars.length;i++){
-          if(guessChars[i]===answerChars[i])feedback[i]="correct";
-          else remaining[answerChars[i]]=(remaining[answerChars[i]]||0)+1;
+          if(guessChars[i]&&guessChars[i]===answerChars[i]){feedback[i]="correct";exact[i]=true}
+        }
+        for(var k=0;k<answerChars.length;k++){
+          if(!exact[k])remaining[answerChars[k]]=(remaining[answerChars[k]]||0)+1;
         }
         for(var j=0;j<guessChars.length;j++){
-          if(feedback[j]==="correct")continue;
-          var ch=guessChars[j];if(remaining[ch]>0){feedback[j]="present";remaining[ch]--}
+          if(!guessChars[j]||feedback[j]==="correct")continue;
+          var ch=guessChars[j];
+          if(remaining[ch]>0){feedback[j]="present";remaining[ch]--}
+          else feedback[j]="absent";
         }
         return feedback;
       }
+      function scoreGuess(answer,guess) {
+        return scoreGuessChars(answer,guess.split(""));
+      }
       function matchesClues(expression,activeRows) {
         for(var i=0;i<activeRows.length;i++){
-          var feedback=scoreGuess(expression,activeRows[i].chars.join(""));
-          for(var j=0;j<expressionLength;j++)if(feedback[j]!==activeRows[i].statuses[j])return false;
+          var feedback=scoreGuessChars(expression,activeRows[i].chars);
+          for(var j=0;j<expressionLength;j++){
+            if(activeRows[i].chars[j]&&feedback[j]!==activeRows[i].statuses[j])return false;
+          }
         }
         return true;
       }
@@ -636,21 +680,21 @@
       function combineSymbol(left,op,right) {
         if(!left||!right)return null;
         if(!left.dep&&!right.dep){
-          if(op==="÷"&&right.k===0)return null;
-          return constantSymbol(op==="+"?left.k+right.k:op==="-"?left.k-right.k:op==="×"?left.k*right.k:left.k/right.k);
+          if(op==="/"&&right.k===0)return null;
+          return constantSymbol(op==="+"?left.k+right.k:op==="-"?left.k-right.k:op==="*"?left.k*right.k:left.k/right.k);
         }
         if(left.dep&&right.dep)return null;
         var f=left.dep?left:right,k=left.dep?right.k:left.k,a=f.a,b=f.b,c=f.c,d=f.d;
         if(left.dep){
           if(op==="+")return{dep:true,a:a+k*c,b:b+k*d,c:c,d:d};
           if(op==="-")return{dep:true,a:a-k*c,b:b-k*d,c:c,d:d};
-          if(op==="×")return{dep:true,a:a*k,b:b*k,c:c,d:d};
+          if(op==="*")return{dep:true,a:a*k,b:b*k,c:c,d:d};
           if(k===0)return null;
           return{dep:true,a:a,b:b,c:c*k,d:d*k};
         }
         if(op==="+")return{dep:true,a:a+k*c,b:b+k*d,c:c,d:d};
         if(op==="-")return{dep:true,a:k*c-a,b:k*d-b,c:c,d:d};
-        if(op==="×")return{dep:true,a:a*k,b:b*k,c:c,d:d};
+        if(op==="*")return{dep:true,a:a*k,b:b*k,c:c,d:d};
         return{dep:true,a:k*c,b:k*d,c:a,d:b};
       }
       function symbolicValue(values,operators,variableIndex) {
@@ -658,7 +702,7 @@
         var sum=null,sign="+",term=operands[0];
         for(var i=0;i<operators.length;i++){
           var op=operators[i];
-          if(op==="×"||op==="÷")term=combineSymbol(term,op,operands[i+1]);
+          if(op==="*"||op==="/")term=combineSymbol(term,op,operands[i+1]);
           else{
             sum=sum?combineSymbol(sum,sign,term):(sign==="+"?term:combineSymbol(constantSymbol(0),"-",term));
             sign=op;term=operands[i+1];
@@ -730,7 +774,7 @@
         document.body.appendChild(area);area.select();try{document.execCommand("copy")}catch(error){}area.remove();
       }
       function copyCandidate(text,button) {
-        var full=text+" = "+targetResult;
+        var full=text;
         function done(){var old=button.querySelector("small").textContent;button.querySelector("small").textContent=t("copied");setTimeout(function(){button.querySelector("small").textContent=old},800)}
         if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(full).then(done).catch(function(){fallbackCopy(full);done()});
         else{fallbackCopy(full);done()}
@@ -749,7 +793,7 @@
         document.getElementById("resultNote").textContent=note;
         var html='<div class="result-list">';
         storedResults.slice(0,shown).forEach(function(expression){
-          var full=expression+" = "+targetResult;
+          var full=expression;
           html+='<button class="candidate" type="button" data-expression="'+expression+'" aria-label="'+t("copyAria",full)+'"><code>'+full+'</code><small>'+t("copy")+'</small></button>';
         });
         html+='</div><div class="more-row"><span>'+t("shown",Math.min(shown,storedResults.length).toLocaleString(t("locale")),resultTotal.toLocaleString(t("locale")))+"</span>";
@@ -763,8 +807,7 @@
         if(String(raw).trim()===""||!Number.isInteger(target)||target<-9999||target>9999){showError(t("invalidTarget"));return null}
         var activeRows=[];
         for(var i=0;i<rows.length;i++){
-          if(rows[i].chars.length&&rows[i].chars.length!==expressionLength){showError(t("incomplete",i+1));return null}
-          if(rows[i].chars.length===expressionLength)activeRows.push(rows[i]);
+          if(rows[i].chars.some(function(ch){return Boolean(ch)}))activeRows.push(rows[i]);
         }
         return {target:target,activeRows:activeRows};
       }

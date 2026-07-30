@@ -10,8 +10,8 @@ android {
         applicationId "io.github.wyt2002.trace"
         minSdk 23
         targetSdk 34
-        versionCode 8
-        versionName "1.2.0"
+        versionCode 9
+        versionName "1.2.1"
     }
 
     buildTypes {

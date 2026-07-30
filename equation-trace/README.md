@@ -16,11 +16,11 @@ Equation Trace finds arithmetic expressions that:
 
 - have the selected character length;
 - evaluate to the selected whole-number result;
-- match every gray, yellow, and green clue entered by the user.
+- match every filled gray, yellow, and green clue entered by the user; empty tile positions are ignored.
 
-The solver uses the digits `0–9` and the operators `+`, `−`, `×`, and `÷`. It applies standard operator precedence, rejects leading zeros and division by zero, and handles repeated characters with the same two-pass rule used by Wordle-style games.
+The solver uses the digits `0–9` and the operators `+`, `-`, `*`, and `/`. It applies standard operator precedence, rejects leading zeros and division by zero, and handles repeated characters with the same two-pass rule used by Wordle-style games.
 
-The expression length does not include `= result`. For example, `6+2×2 = 10` has an expression length of five.
+The selected expression length covers only the expression itself. For example, `6+2*2` has an expression length of five.
 
 ## Quick start
 
@@ -28,9 +28,10 @@ The expression length does not include `= result`. For example, `6+2×2 = 10` ha
 2. Open the HTML file in Chrome, Edge, Firefox, Safari, or another modern browser.
 3. Choose an expression length from 3 to 8 characters.
 4. Enter the target whole-number result.
-5. Enter each full guess and tap its tiles to cycle through gray, yellow, and green.
-6. Select **Find equations**.
-7. Select any result to copy the complete equation.
+5. Type known characters directly into any tiles. A clue row may be incomplete; empty positions are ignored.
+6. Tap each filled tile to cycle through gray, yellow, and green.
+7. Select **Find equations**.
+8. Select any result to copy the expression only.
 
 ## Calculation and clue rules
 
@@ -70,11 +71,11 @@ The expression length does not include `= result`. For example, `6+2×2 = 10` ha
 
 - 字符数量与所选长度一致；
 - 运算值与所选整数结果一致；
-- 符合用户录入的每一行灰、黄、绿线索。
+- 符合用户录入的每个已填写灰、黄、绿线索；空白方块会被忽略。
 
-工具使用数字 `0～9` 和算子 `+`、`−`、`×`、`÷`。计算遵循标准四则运算优先级，不允许前导零或除以零，并使用与 Wordle 类游戏一致的两轮判定方式处理重复字符。
+工具使用数字 `0～9` 和算子 `+`、`-`、`*`、`/`。计算遵循标准四则运算优先级，不允许前导零或除以零，并使用与 Wordle 类游戏一致的两轮判定方式处理重复字符。
 
-字符长度不包含“`= 结果`”。例如 `6+2×2 = 10` 的算式字符长度是 5。
+所选字符长度只计算算式本身。例如 `6+2*2` 的算式字符长度是 5。
 
 ## 快速开始
 
@@ -82,9 +83,10 @@ The expression length does not include `= result`. For example, `6+2×2 = 10` ha
 2. 使用 Chrome、Edge、Firefox、Safari 或其他现代浏览器打开 HTML 文件。
 3. 选择 3～8 个字符的算式长度。
 4. 输入目标整数结果。
-5. 输入每次完整猜测，再点击方块，在灰、黄、绿三种颜色之间切换。
-6. 点击“查找算式”。
-7. 点击任意结果即可复制完整算式。
+5. 在任意方块中直接输入已知字符；线索不必填满，空白位置会被忽略。
+6. 点击已填写方块，在灰、黄、绿三种颜色之间切换。
+7. 点击“查找算式”。
+8. 点击任意结果即可只复制算式本身。
 
 ## 计算与线索规则
 

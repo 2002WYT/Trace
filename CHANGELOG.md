@@ -4,6 +4,30 @@ Important changes to the Trace Android app and its bundled web tools are documen
 
 本文件记录词迹 Android 应用及其内置网页工具的重要变更。每个版本均为英文在前、中文翻译在后。
 
+## [1.2.1] - 2026-07-31
+
+### Added
+
+- Added direct character entry in each Equation Trace clue tile.
+- Added support for searching with incomplete clue rows; unfilled tile positions are ignored.
+
+### Changed
+
+- Equation Trace now generates and displays multiplication and division with `*` and `/` instead of `×` and `÷`.
+- Equation Trace candidates and copied text now contain only the expression, without an appended equals sign or target answer.
+- Updated the Android version to 1.2.1 (`versionCode 9`).
+
+### 新增
+
+- 猜算式支持在每个线索方块中直接输入字符。
+- 猜算式支持使用未填满的线索行查找；空白方块位置会被忽略。
+
+### 改进
+
+- 猜算式现在使用 `*` 和 `/` 生成并显示乘除运算，不再使用 `×` 和 `÷`。
+- 猜算式候选与复制内容现在只包含算式，不再附加等号与目标答案。
+- Android 版本更新为 1.2.1（`versionCode 9`）。
+
 ## [1.2.0] - 2026-07-30
 
 ### Added
@@ -174,6 +198,7 @@ Important changes to the Trace Android app and its bundled web tools are documen
 - 内置语迹、Word Trace、完整题库与筛选逻辑。
 - 增加统一首页，并支持无需账号和网络权限的完全离线运行。
 
+[1.2.1]: https://github.com/2002WYT/Trace/releases/tag/v1.2.1
 [1.2.0]: https://github.com/2002WYT/Trace/releases/tag/v1.2.0
 [1.1.3]: https://github.com/2002WYT/Trace/releases/tag/v1.1.3
 [1.1.2]: https://github.com/2002WYT/Trace/releases/tag/v1.1.2

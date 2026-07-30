@@ -14,7 +14,7 @@ Solve four-character Chinese idioms, filter English words, or find arithmetic ex
 
 [**Try online**](https://2002wyt.github.io/Trace/)
 ·
-[**Download Android APK**](https://github.com/2002WYT/Trace/releases/download/v1.2.0/Trace-v1.2.0.apk)
+[**Download Android APK**](https://github.com/2002WYT/Trace/releases/download/v1.2.1/Trace-v1.2.1.apk)
 ·
 [**Changelog**](./CHANGELOG.md)
 ·
@@ -26,6 +26,8 @@ Solve four-character Chinese idioms, filter English words, or find arithmetic ex
 
 <img src="./docs/images/trace-mobile-home-v1.2.0.png" width="200" alt="Trace 1.2.0 Android home screen">
 <img src="./docs/images/equation-trace-mobile-v1.2.0.png" width="200" alt="Equation Trace 1.2.0 arithmetic clue screen">
+
+<sub>Screenshots: Trace 1.2.0 / 截图版本：词迹 1.2.0</sub>
 
 </div>
 
@@ -45,11 +47,13 @@ All three standalone pages contain their data and filtering logic in a single fi
 
 ## Android app
 
-Trace 1.2.0 provides:
+Trace 1.2.1 provides:
 
 - English, Simplified Chinese, and Traditional Chinese interfaces;
 - System, Light, and Dark appearance modes;
 - all three solvers, including the new arithmetic-expression generator, inside one app;
+- Equation Trace expressions using `+`, `-`, `*`, and `/`, direct per-tile clue entry, and searches with incomplete clue rows;
+- expression-only Equation Trace results and copied text, without an appended equals sign or target answer;
 - compact phone layouts based on familiar productivity-tool patterns;
 - three text-size options, optional transitions and haptic feedback;
 - optional screen wake lock and resume-last-tool behavior;
@@ -131,7 +135,7 @@ Trace is released under the [MIT License](./LICENSE).
 
 [**在线试玩**](https://2002wyt.github.io/Trace/)
 ·
-[**下载 Android APK**](https://github.com/2002WYT/Trace/releases/download/v1.2.0/Trace-v1.2.0.apk)
+[**下载 Android APK**](https://github.com/2002WYT/Trace/releases/download/v1.2.1/Trace-v1.2.1.apk)
 ·
 [**查看更新日志**](./CHANGELOG.md)
 ·
@@ -153,11 +157,13 @@ Trace is released under the [MIT License](./LICENSE).
 
 ## Android 应用
 
-词迹 1.2.0 提供：
+词迹 1.2.1 提供：
 
 - 英语、简体中文和繁体中文界面；
 - 跟随系统、浅色和深色三种外观模式；
 - 一个应用内的三款工具，包括新增的四则运算算式生成与筛选功能；
+- 猜算式统一使用 `+`、`-`、`*`、`/`，支持逐个方块直接录入字符，并允许使用未填满的线索行查找；
+- 猜算式候选和复制内容只包含算式，不再附加等号与目标答案；
 - 参考成熟效率工具整理的紧凑手机布局；
 - 三档文字大小，以及可选的过渡动画和触感反馈；
 - 可选的解题时保持屏幕常亮和启动时继续上次工具；

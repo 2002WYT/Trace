@@ -301,7 +301,7 @@ public final class MainActivity extends Activity {
                     .getPackageInfo(getPackageName(), 0)
                     .versionName;
         } catch (android.content.pm.PackageManager.NameNotFoundException exception) {
-            return "1.2.0";
+            return "1.2.1";
         }
     }
 
