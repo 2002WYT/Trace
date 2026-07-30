@@ -1,11 +1,36 @@
 <!doctype html>
-<html lang="zh-CN">
+<html lang="en">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-  <meta name="color-scheme" content="light">
-  <meta name="description" content="词迹 Trace：猜成语与猜英语单词的在线筛选工具。">
-  <title>词迹 Trace</title>
+  <meta name="color-scheme" content="light dark">
+  <script>
+    (function () {
+      var mode = "";
+      try {
+        if (window.TraceApp && typeof window.TraceApp.getTheme === "function") {
+          mode = window.TraceApp.getTheme();
+        }
+      } catch (error) {}
+      if (!mode) {
+        try {
+          mode = localStorage.getItem("trace_theme") || "system";
+        } catch (error) {
+          mode = "system";
+        }
+      }
+      if (mode !== "light" && mode !== "dark") mode = "system";
+      var systemDark = window.matchMedia
+        && window.matchMedia("(prefers-color-scheme: dark)").matches;
+      var theme = mode === "dark" || (mode === "system" && systemDark)
+        ? "dark"
+        : "light";
+      document.documentElement.dataset.theme = theme;
+      document.documentElement.style.colorScheme = theme;
+    })();
+  </script>
+  <meta name="description" content="Trace: a fully offline Chinese idiom and English word solver.">
+  <title>Trace</title>
   <style>
     :root{
       --ink:#102d25;--muted:#68736e;--paper:#f3efe4;--card:#fffdf7;
@@ -119,16 +144,20 @@
       animation:card-in .28s both cubic-bezier(.2,.8,.2,1)
     }
     .tool-card:nth-child(2){animation-delay:.05s}
+    .tool-card:nth-child(3){animation-delay:.1s}
     .tool-card::before{content:"";position:absolute;inset:0 auto 0 0;width:4px;background:var(--lime)}
     .tool-card.word-tool::before{background:var(--gold)}
+    .tool-card.equation-tool::before{background:var(--green)}
     .tool-card:active{transform:scale(.985);background:#fff;box-shadow:0 4px 12px rgba(16,45,37,.08)}
     .tool-preview{display:grid;width:74px;height:74px;gap:4px;padding:7px;border-radius:18px 18px 18px 7px;background:#edf0df}
     .idiom-preview{grid-template-columns:repeat(2,1fr)}
     .word-preview{grid-template-columns:repeat(3,1fr);align-content:center;background:#eee9dc}
+    .equation-preview{grid-template-columns:repeat(3,1fr);align-content:center;background:#e8ece9}
     .tool-preview span{display:grid;min-width:0;place-items:center;border:1px solid rgba(16,45,37,.14);border-radius:7px;background:#fffdf7;color:#5d6964;font:700 13px/1 Georgia,"Songti SC",serif}
     .tool-preview .correct{border-color:var(--green);color:#fff;background:var(--green)}
     .tool-preview .present{border-color:var(--gold);color:#fff;background:var(--gold)}
     .word-preview span{height:25px;font-size:10px}
+    .equation-preview span{height:25px;font-size:10px}
     .tool-copy{min-width:0}.tool-label{color:var(--green);font:700 8px Georgia,serif;letter-spacing:.16em}
     .word-tool .tool-label{color:#88691e}
     .tool-copy h2{margin:6px 0 7px;font:750 23px/1.15 "PingFang SC","Microsoft YaHei",system-ui,sans-serif;letter-spacing:0}
@@ -172,48 +201,181 @@
     .home-shell{animation:home-in .25s ease-out}
     body.page-leaving .home-shell{opacity:0;transform:translateY(5px);transition:opacity .16s ease,transform .16s ease}
     html.reduce-motion *,html.trace-reduce-motion *{animation:none!important;transition:none!important;scroll-behavior:auto!important}
-    @media(min-width:680px){.tool-list{grid-template-columns:1fr 1fr}.tool-card{grid-template-columns:70px minmax(0,1fr) 28px}.home-intro{padding-top:36px}}
+    @media(min-width:680px){.tool-list{grid-template-columns:1fr 1fr}.tool-card{grid-template-columns:70px minmax(0,1fr) 28px}.equation-tool{grid-column:1/-1}.home-intro{padding-top:36px}}
     @media(max-height:660px){.home-intro{padding-top:12px;padding-bottom:12px}.tool-card{min-height:116px}.tool-preview{width:66px;height:66px}.tool-card{grid-template-columns:66px minmax(0,1fr) 26px}.home-footer{margin-top:14px}}
+
+    /* Mature tool UI: compact, neutral, and consistent with UI.md. */
+    :root{
+      --app-bg:#f6f7f8;--surface:#ffffff;--surface-muted:#f0f2f3;
+      --text:#24292f;--text-muted:#656d76;--border:#d0d7de;
+      --accent:#2f6f55;--accent-hover:#285f49;--danger:#cf222e;
+      --ink:var(--text);--muted:var(--text-muted);--paper:var(--app-bg);
+      --card:var(--surface);--line:var(--border);--green:var(--accent);
+      --lime:#ffffff;--gold:#8a6d1f
+    }
+    :root[data-theme="dark"]{
+      --app-bg:#0d1117;--surface:#161b22;--surface-muted:#21262d;
+      --text:#e6edf3;--text-muted:#8b949e;--border:#30363d;
+      --accent:#4a9b73;--accent-hover:#5bac82;--danger:#ff7b72;
+      --ink:var(--text);--muted:var(--text-muted);--paper:var(--app-bg);
+      --card:var(--surface);--line:var(--border);--green:var(--accent);
+      --lime:#ffffff;--gold:#c6a95b
+    }
+    html,body{background:var(--app-bg)}
+    body{
+      color:var(--text);background:var(--app-bg);
+      font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Microsoft YaHei",
+        "PingFang SC","Hiragino Sans GB",Arial,sans-serif
+    }
+    button,input{font-family:inherit}
+    :focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+    .home-shell{width:min(680px,calc(100% - 24px));min-height:100vh;padding:12px 0 20px;animation:none}
+    .app-header{min-height:48px;padding:0 0 10px;border-bottom:1px solid var(--border)}
+    .app-header>.brand{margin-left:8px}
+    .mark{width:36px;border-radius:6px;color:#fff;background:var(--accent);font:700 18px/1 Georgia,serif}
+    .brand-copy b{font-size:16px;letter-spacing:.02em}.brand-copy small{margin-top:1px;font-size:7px;letter-spacing:.16em}
+    .app-back,.menu-button{
+      width:36px;height:36px;border:1px solid var(--border);border-radius:6px;
+      color:var(--text);background:var(--surface);box-shadow:none
+    }
+    .app-back:hover,.menu-button:hover,.dialog-back:hover,.close-button:hover{background:var(--surface-muted)}
+    .app-back:active,.menu-button:active,.dialog-back:active,.close-button:active{transform:none;background:var(--border)}
+    .menu-button{font-size:21px}
+    .home-intro{padding:22px 0 14px}
+    .home-intro .section-kicker{margin-bottom:5px;color:var(--text-muted);font-size:9px;letter-spacing:.12em}
+    .home-intro h1{font-size:22px;line-height:1.35;font-weight:650}
+    .home-intro p:last-child{margin-top:5px;color:var(--text-muted);font-size:13px;line-height:1.55}
+    .tool-list{grid-template-columns:1fr;gap:8px}
+    .tool-card{
+      grid-template-columns:54px minmax(0,1fr) 24px;min-height:88px;gap:12px;padding:14px;
+      border:1px solid var(--border);border-radius:8px;color:var(--text);
+      background:var(--surface);box-shadow:none;animation:none;
+      transition:border-color .15s ease,background-color .15s ease
+    }
+    .tool-card::before{display:none}
+    .tool-card:hover{border-color:var(--accent);background:var(--surface)}
+    .tool-card:active{transform:none;background:var(--surface-muted);box-shadow:none}
+    .tool-preview{width:54px;height:54px;gap:3px;padding:5px;border-radius:6px;background:var(--surface-muted)}
+    .word-preview{background:var(--surface-muted)}
+    .equation-preview{background:var(--surface-muted)}
+    .tool-preview span{border-color:var(--border);border-radius:3px;color:var(--text-muted);background:var(--surface);font-size:11px}
+    .tool-preview .correct{border-color:var(--accent);background:var(--accent)}
+    .tool-preview .present{border-color:#8a6d1f;background:#8a6d1f}
+    .word-preview span,.equation-preview span{height:19px;font-size:8px}
+    .tool-label{color:var(--text-muted);font-size:8px;letter-spacing:.12em}
+    .word-tool .tool-label{color:var(--text-muted)}
+    .tool-copy h2{margin:4px 0;font-size:17px;line-height:1.35;font-weight:650}
+    .tool-copy p{color:var(--text-muted);font-size:11px}
+    .chevron{width:24px;height:24px;border-radius:6px;color:var(--text-muted);background:transparent;font-size:19px}
+    .home-footer{margin-top:auto;padding-top:12px;border-color:var(--border);color:var(--text-muted)}
+    .app-menu{
+      top:43px;width:220px;padding:5px;border:1px solid var(--border);border-radius:8px;
+      background:var(--surface);box-shadow:0 8px 24px rgba(0,0,0,.18);animation:none
+    }
+    .app-menu button{gap:0;padding:10px;border-radius:5px;color:var(--text)}
+    .app-menu button:hover,.app-menu button:active{background:var(--surface-muted)}
+    .menu-icon{display:none}
+    .menu-copy b{font-size:13px}.menu-copy small{color:var(--text-muted);font-size:10px}
+    .modal{padding:12px;background:rgba(0,0,0,.48);animation:none}
+    .sheet{
+      width:min(520px,100%);border:1px solid var(--border);border-radius:8px;
+      color:var(--text);background:var(--surface);box-shadow:0 16px 48px rgba(0,0,0,.3);animation:none
+    }
+    .modal.is-closing,.modal.is-closing .sheet{animation:none}
+    .sheet-handle{display:none}
+    .sheet-head{grid-template-columns:36px minmax(0,1fr) 36px;gap:10px;padding:12px 14px;border-color:var(--border)}
+    .sheet-head small{color:var(--text-muted);font-size:8px;letter-spacing:.12em}
+    .sheet-head h2{font-size:20px;font-weight:650}
+    .dialog-back,.close-button{
+      width:36px;height:36px;border:1px solid var(--border);border-radius:6px;
+      color:var(--text);background:var(--surface);box-shadow:none
+    }
+    .sheet-body{padding:14px}
+    .setting-section-title{margin:16px 0 7px;color:var(--text-muted);font-size:10px;letter-spacing:.08em}
+    .setting-section-title:first-child{margin-top:0}
+    .setting-group{margin-bottom:8px;padding:12px;border:1px solid var(--border);border-radius:6px;background:var(--surface)}
+    .setting-group legend{font-size:13px}
+    .setting-group p,.setting-row small{color:var(--text-muted);font-size:11px;line-height:1.5}
+    .segments{gap:4px}
+    .segments button{
+      min-height:36px;border:1px solid var(--border);border-radius:5px;
+      color:var(--text);background:var(--surface);font-size:12px
+    }
+    .segments button:hover{background:var(--surface-muted)}
+    .segments button[aria-pressed="true"]{border-color:var(--accent);color:#fff;background:var(--accent)}
+    .setting-row{
+      min-height:58px;margin:0;padding:10px 2px;border:0;border-bottom:1px solid var(--border);
+      border-radius:0;background:transparent
+    }
+    .setting-row b{font-size:13px}.setting-row small{margin-top:3px}
+    .toggle-track{background:var(--border)}
+    .toggle-track::after{background:var(--surface)}
+    .toggle-input:checked+.toggle-track{background:var(--accent)}
+    .reset-button{
+      min-height:38px;margin-top:14px;border:1px solid var(--border);border-radius:6px;
+      color:var(--text);background:var(--surface)
+    }
+    .reset-button:hover{background:var(--surface-muted)}
+    .about-hero{margin-bottom:14px;padding-bottom:14px;border-color:var(--border)}
+    .about-mark{width:48px;border-radius:7px;color:#fff;background:var(--accent);font-size:24px}
+    .about-hero h3{font-size:18px}.about-hero p{color:var(--text-muted);font-size:11px}
+    .about-list{font-size:13px}.about-list dt{color:var(--text-muted)}
+    .repo-title{color:var(--text-muted);letter-spacing:.1em}
+    .repo-link{border:1px solid var(--border);border-radius:6px;background:var(--surface)}
+    .repo-link:hover{border-color:var(--accent);background:var(--surface-muted)}
+    .repo-link small,.copyright{color:var(--text-muted)}
+    @media(min-width:680px){
+      .tool-list{grid-template-columns:1fr 1fr}
+      .tool-card{grid-template-columns:54px minmax(0,1fr) 24px}
+      .equation-tool{grid-column:1/-1}
+      .home-intro{padding-top:28px}
+      .modal{align-items:center}
+    }
+    @media(max-height:660px){
+      .home-intro{padding:14px 0 10px}
+      .tool-card{min-height:82px;grid-template-columns:50px minmax(0,1fr) 24px}
+      .tool-preview{width:50px;height:50px}
+    }
   </style>
 </head>
 <body>
   <main class="shell home-shell">
     <header class="app-header">
-      <button class="app-back" id="appBack" type="button" aria-label="退出词迹">←</button>
+      <button class="app-back" id="appBack" type="button" data-i18n-aria="exitApp" aria-label="Exit Trace">←</button>
       <div class="brand">
-        <span class="mark" aria-hidden="true">迹</span>
-        <span class="brand-copy"><b>词迹</b><small>TRACE</small></span>
+        <span class="mark" data-i18n="brandMark" aria-hidden="true">T</span>
+        <span class="brand-copy"><b data-i18n="appName">Trace</b><small>TRACE</small></span>
       </div>
       <div class="header-actions">
-        <button class="menu-button" id="menuButton" type="button" aria-label="打开应用菜单" aria-expanded="false" aria-controls="appMenu">⋮</button>
+        <button class="menu-button" id="menuButton" type="button" data-i18n-aria="openMenu" aria-label="Open app menu" aria-expanded="false" aria-controls="appMenu">⋮</button>
       </div>
-      <nav class="app-menu" id="appMenu" aria-label="应用菜单" hidden>
+      <nav class="app-menu" id="appMenu" data-i18n-aria="appMenu" aria-label="App menu" hidden>
         <button type="button" data-open-dialog="settingsDialog">
           <span class="menu-icon" aria-hidden="true">⚙</span>
-          <span class="menu-copy"><b>设置</b><small>显示与使用偏好</small></span>
+          <span class="menu-copy"><b data-i18n="settings">Settings</b><small data-i18n="settingsSummary">Language, display, and usage</small></span>
         </button>
         <button type="button" data-open-dialog="aboutDialog">
           <span class="menu-icon" aria-hidden="true">i</span>
-          <span class="menu-copy"><b>关于</b><small>版本与开源项目</small></span>
+          <span class="menu-copy"><b data-i18n="about">About</b><small data-i18n="aboutSummary">Version and open-source project</small></span>
         </button>
       </nav>
     </header>
 
     <section class="home-intro">
-      <p class="section-kicker">WORD TOOLS</p>
-      <h1>选择工具</h1>
-      <p>从已有线索开始筛选。</p>
+      <p class="section-kicker" data-i18n="toolSection">WORD TOOLS</p>
+      <h1 data-i18n="chooseTool">Choose a tool</h1>
+      <p data-i18n="startFromClues">Start filtering from the clues you already have.</p>
     </section>
 
-    <section class="tool-list" aria-label="选择工具">
+    <section class="tool-list" data-i18n-aria="chooseTool" aria-label="Choose a tool">
       <a class="tool-card" href="idiom-trace-offline.html" data-tool="idiom">
         <div class="tool-preview idiom-preview" aria-hidden="true">
-          <span class="correct">一</span><span class="present">举</span><span>成</span><span>名</span>
+          <span class="correct">一</span><span class="present" data-i18n="sampleIdiomSecond">举</span><span>成</span><span>名</span>
         </div>
         <div class="tool-copy">
           <span class="tool-label">IDIOM TRACE</span>
-          <h2>猜成语</h2>
-          <p>汉字 · 声韵 · 声调</p>
+          <h2 data-i18n="idiomTool">Chinese idioms</h2>
+          <p data-i18n="idiomToolSummary">Characters · Pinyin · Tones</p>
         </div>
         <span class="chevron" aria-hidden="true">›</span>
       </a>
@@ -224,47 +386,81 @@
         </div>
         <div class="tool-copy">
           <span class="tool-label">WORD TRACE</span>
-          <h2>猜单词</h2>
-          <p>字母 · 位置 · 词表</p>
+          <h2 data-i18n="wordTool">English words</h2>
+          <p data-i18n="wordToolSummary">Letters · Positions · Dictionaries</p>
+        </div>
+        <span class="chevron" aria-hidden="true">›</span>
+      </a>
+
+      <a class="tool-card equation-tool" href="equation-trace-offline.html" data-tool="equation">
+        <div class="tool-preview equation-preview" aria-hidden="true">
+          <span class="correct">6</span><span class="present">+</span><span>2</span><span>×</span><span>2</span>
+        </div>
+        <div class="tool-copy">
+          <span class="tool-label">EQUATION TRACE</span>
+          <h2 data-i18n="equationTool">Arithmetic equations</h2>
+          <p data-i18n="equationToolSummary">Digits · Operators · Target result</p>
         </div>
         <span class="chevron" aria-hidden="true">›</span>
       </a>
     </section>
 
-    <footer class="home-footer"><span>2002WYT</span><span>v<span data-version>1.1.2</span></span></footer>
+    <footer class="home-footer"><span>2002WYT</span><span>v<span data-version>1.2.0</span></span></footer>
   </main>
 
   <div class="modal" id="settingsDialog" hidden>
     <section class="sheet" role="dialog" aria-modal="true" aria-labelledby="settingsTitle">
       <div class="sheet-handle" aria-hidden="true"></div>
       <div class="sheet-head">
-        <button class="dialog-back" type="button" data-close-dialog aria-label="返回首页">←</button>
-        <div><small>SETTINGS</small><h2 id="settingsTitle">设置</h2></div>
-        <button class="close-button" type="button" data-close-dialog aria-label="关闭设置">×</button>
+        <button class="dialog-back" type="button" data-close-dialog data-i18n-aria="backHome" aria-label="Back to home">←</button>
+        <div><small data-i18n="settingsLabel">SETTINGS</small><h2 id="settingsTitle" data-i18n="settings">Settings</h2></div>
+        <button class="close-button" type="button" data-close-dialog data-i18n-aria="closeSettings" aria-label="Close settings">×</button>
       </div>
       <div class="sheet-body">
-        <p class="setting-section-title">显示</p>
+        <p class="setting-section-title" data-i18n="languageSection">LANGUAGE</p>
         <fieldset class="setting-group">
-          <legend>文字大小</legend>
-          <div class="segments" id="zoomOptions">
-            <button type="button" data-text-zoom="100" aria-pressed="true">标准</button>
-            <button type="button" data-text-zoom="115" aria-pressed="false">较大</button>
-            <button type="button" data-text-zoom="130" aria-pressed="false">特大</button>
+          <legend data-i18n="appLanguage">App language</legend>
+          <div class="segments" id="languageOptions">
+            <button type="button" data-language="en" aria-pressed="true">English</button>
+            <button type="button" data-language="zh-CN" aria-pressed="false">简体中文</button>
+            <button type="button" data-language="zh-TW" aria-pressed="false">繁體中文</button>
           </div>
-          <p>同时应用到首页、猜成语和猜单词页面。</p>
+          <p data-i18n="languageHelp">Applies to the home screen, settings, and all three tools.</p>
+        </fieldset>
+
+        <p class="setting-section-title" data-i18n="appearanceSection">APPEARANCE</p>
+        <fieldset class="setting-group">
+          <legend data-i18n="theme">Theme</legend>
+          <div class="segments" id="themeOptions">
+            <button type="button" data-theme-mode="system" data-i18n="themeSystem" aria-pressed="true">System</button>
+            <button type="button" data-theme-mode="light" data-i18n="themeLight" aria-pressed="false">Light</button>
+            <button type="button" data-theme-mode="dark" data-i18n="themeDark" aria-pressed="false">Dark</button>
+          </div>
+          <p data-i18n="themeHelp">Dark mode uses a low-contrast palette for night use.</p>
+        </fieldset>
+
+        <p class="setting-section-title" data-i18n="displaySection">DISPLAY</p>
+        <fieldset class="setting-group">
+          <legend data-i18n="textSize">Text size</legend>
+          <div class="segments" id="zoomOptions">
+            <button type="button" data-text-zoom="100" data-i18n="textStandard" aria-pressed="true">Standard</button>
+            <button type="button" data-text-zoom="115" data-i18n="textLarge" aria-pressed="false">Large</button>
+            <button type="button" data-text-zoom="130" data-i18n="textLargest" aria-pressed="false">Largest</button>
+          </div>
+          <p data-i18n="textSizeHelp">Applies to the home screen and all three tools.</p>
         </fieldset>
 
         <label class="setting-row" for="animationsEnabled">
-          <span><b>过渡动画</b><small>让页面和弹窗切换更自然。</small></span>
+          <span><b data-i18n="animations">Transitions</b><small data-i18n="animationsHelp">Animate page and dialog changes.</small></span>
           <span class="toggle-control">
             <input class="toggle-input" id="animationsEnabled" type="checkbox">
             <span class="toggle-track" aria-hidden="true"></span>
           </span>
         </label>
 
-        <p class="setting-section-title">使用</p>
+        <p class="setting-section-title" data-i18n="usageSection">USAGE</p>
         <label class="setting-row" for="hapticsEnabled">
-          <span><b>触感反馈</b><small>点击主要按钮时轻微振动。</small></span>
+          <span><b data-i18n="haptics">Haptic feedback</b><small data-i18n="hapticsHelp">Vibrate lightly for primary actions.</small></span>
           <span class="toggle-control">
             <input class="toggle-input" id="hapticsEnabled" type="checkbox">
             <span class="toggle-track" aria-hidden="true"></span>
@@ -272,7 +468,7 @@
         </label>
 
         <label class="setting-row" for="keepScreenOn">
-          <span><b>解题时保持屏幕常亮</b><small>应用在前台时不自动熄屏。</small></span>
+          <span><b data-i18n="keepScreenOn">Keep screen on while solving</b><small data-i18n="keepScreenOnHelp">Prevent sleep while the app is in the foreground.</small></span>
           <span class="toggle-control">
             <input class="toggle-input" id="keepScreenOn" type="checkbox">
             <span class="toggle-track" aria-hidden="true"></span>
@@ -280,14 +476,14 @@
         </label>
 
         <label class="setting-row" for="resumeLastTool">
-          <span><b>启动时继续上次工具</b><small>下次打开应用时跳过首页。</small></span>
+          <span><b data-i18n="resumeTool">Resume the last tool on launch</b><small data-i18n="resumeToolHelp">Skip the home screen next time.</small></span>
           <span class="toggle-control">
             <input class="toggle-input" id="resumeLastTool" type="checkbox">
             <span class="toggle-track" aria-hidden="true"></span>
           </span>
         </label>
 
-        <button class="reset-button" id="resetSettings" type="button">恢复默认设置</button>
+        <button class="reset-button" id="resetSettings" type="button" data-i18n="resetSettings">Restore default settings</button>
       </div>
     </section>
   </div>
@@ -296,28 +492,28 @@
     <section class="sheet" role="dialog" aria-modal="true" aria-labelledby="aboutTitle">
       <div class="sheet-handle" aria-hidden="true"></div>
       <div class="sheet-head">
-        <button class="dialog-back" type="button" data-close-dialog aria-label="返回首页">←</button>
-        <div><small>ABOUT</small><h2 id="aboutTitle">关于词迹</h2></div>
-        <button class="close-button" type="button" data-close-dialog aria-label="关闭关于">×</button>
+        <button class="dialog-back" type="button" data-close-dialog data-i18n-aria="backHome" aria-label="Back to home">←</button>
+        <div><small data-i18n="aboutLabel">ABOUT</small><h2 id="aboutTitle" data-i18n="aboutTrace">About Trace</h2></div>
+        <button class="close-button" type="button" data-close-dialog data-i18n-aria="closeAbout" aria-label="Close about">×</button>
       </div>
       <div class="sheet-body">
         <div class="about-hero">
-          <span class="about-mark" aria-hidden="true">迹</span>
-          <div><h3>词迹 Trace</h3><p>成语与英语单词猜词助手</p></div>
+          <span class="about-mark" data-i18n="brandMark" aria-hidden="true">T</span>
+          <div><h3 data-i18n="aboutName">Trace</h3><p data-i18n="aboutDescription">Idiom, word, and equation puzzle solver</p></div>
         </div>
 
         <dl class="about-list">
-          <dt>版本</dt><dd>v<span data-version>1.1.2</span></dd>
-          <dt>作者</dt><dd>2002WYT</dd>
+          <dt data-i18n="version">Version</dt><dd>v<span data-version>1.2.0</span></dd>
+          <dt data-i18n="author">Author</dt><dd>2002WYT</dd>
         </dl>
 
         <p class="repo-title">GITHUB</p>
         <a class="repo-link" href="https://github.com/2002WYT/Trace">
-          <span><b>2002WYT / Trace</b><small>源码、版本记录与下载</small></span>
+          <span><b>2002WYT / Trace</b><small data-i18n="repoDescription">Source, changelog, and downloads</small></span>
           <span aria-hidden="true">↗</span>
         </a>
 
-        <p class="copyright">© 2002WYT · Made for word-game explorers</p>
+        <p class="copyright" data-i18n="copyright">© 2002WYT · Made for puzzle-game players</p>
       </div>
     </section>
   </div>
@@ -330,15 +526,200 @@
       var activeDialog = null;
       var lastFocused = null;
       var closeTimer = null;
-      var fallbackVersion = "1.1.2";
+      var fallbackVersion = "1.2.0";
       var runningInAndroidApp = Boolean(
         window.TraceApp && typeof window.TraceApp.exitApp === "function"
       );
-
-      if (!runningInAndroidApp) {
-        appBack.setAttribute("aria-label", "返回 GitHub 项目");
-        appBack.setAttribute("title", "返回 GitHub 项目");
-      }
+      var I18N = {
+        en: {
+          pageTitle: "Trace",
+          metaDescription: "Trace: fully offline solvers for Chinese idioms, English words, and arithmetic equations.",
+          exitApp: "Exit Trace",
+          backProject: "Back to the GitHub project",
+          brandMark: "T",
+          appName: "Trace",
+          openMenu: "Open app menu",
+          appMenu: "App menu",
+          settings: "Settings",
+          settingsSummary: "Language, display, and usage",
+          about: "About",
+          aboutSummary: "Version and open-source project",
+          toolSection: "PUZZLE TOOLS",
+          chooseTool: "Choose a tool",
+          startFromClues: "Start filtering from the clues you already have.",
+          sampleIdiomSecond: "举",
+          idiomTool: "Chinese idioms",
+          idiomToolSummary: "Characters · Pinyin · Tones",
+          wordTool: "English words",
+          wordToolSummary: "Letters · Positions · Dictionaries",
+          equationTool: "Arithmetic equations",
+          equationToolSummary: "Digits · Operators · Target result",
+          backHome: "Back to home",
+          closeSettings: "Close settings",
+          settingsLabel: "SETTINGS",
+          languageSection: "LANGUAGE",
+          appLanguage: "App language",
+          languageHelp: "Applies to the home screen, settings, and all three tools.",
+          appearanceSection: "APPEARANCE",
+          theme: "Theme",
+          themeSystem: "System",
+          themeLight: "Light",
+          themeDark: "Dark",
+          themeHelp: "Dark mode uses a low-contrast palette for night use.",
+          displaySection: "DISPLAY",
+          textSize: "Text size",
+          textStandard: "Standard",
+          textLarge: "Large",
+          textLargest: "Largest",
+          textSizeHelp: "Applies to the home screen and all three tools.",
+          animations: "Transitions",
+          animationsHelp: "Animate page and dialog changes.",
+          usageSection: "USAGE",
+          haptics: "Haptic feedback",
+          hapticsHelp: "Vibrate lightly for primary actions.",
+          keepScreenOn: "Keep screen on while solving",
+          keepScreenOnHelp: "Prevent sleep while the app is in the foreground.",
+          resumeTool: "Resume the last tool on launch",
+          resumeToolHelp: "Skip the home screen next time.",
+          resetSettings: "Restore default settings",
+          aboutTrace: "About Trace",
+          closeAbout: "Close about",
+          aboutLabel: "ABOUT",
+          aboutName: "Trace",
+          aboutDescription: "Idiom, word, and equation puzzle solver",
+          version: "Version",
+          author: "Author",
+          repoDescription: "Source, changelog, and downloads",
+          copyright: "© 2002WYT · Made for puzzle-game players"
+        },
+        "zh-CN": {
+          pageTitle: "词迹 Trace",
+          metaDescription: "词迹 Trace：完全离线的猜成语、猜单词与猜算式工具。",
+          exitApp: "退出词迹",
+          backProject: "返回 GitHub 项目",
+          brandMark: "迹",
+          appName: "词迹",
+          openMenu: "打开应用菜单",
+          appMenu: "应用菜单",
+          settings: "设置",
+          settingsSummary: "语言、显示与使用偏好",
+          about: "关于",
+          aboutSummary: "版本与开源项目",
+          toolSection: "解谜工具",
+          chooseTool: "选择工具",
+          startFromClues: "从已有线索开始筛选。",
+          sampleIdiomSecond: "举",
+          idiomTool: "猜成语",
+          idiomToolSummary: "汉字 · 声韵 · 声调",
+          wordTool: "猜单词",
+          wordToolSummary: "字母 · 位置 · 词表",
+          equationTool: "猜算式",
+          equationToolSummary: "数字 · 算子 · 计算结果",
+          backHome: "返回首页",
+          closeSettings: "关闭设置",
+          settingsLabel: "设置",
+          languageSection: "语言",
+          appLanguage: "应用语言",
+          languageHelp: "同时应用到首页、设置和三个解谜工具。",
+          appearanceSection: "外观",
+          theme: "主题",
+          themeSystem: "跟随系统",
+          themeLight: "浅色",
+          themeDark: "深色",
+          themeHelp: "深色模式使用适合夜间阅读的低对比度配色。",
+          displaySection: "显示",
+          textSize: "文字大小",
+          textStandard: "标准",
+          textLarge: "较大",
+          textLargest: "特大",
+          textSizeHelp: "同时应用到首页和三个工具页面。",
+          animations: "过渡动画",
+          animationsHelp: "让页面和弹窗切换更自然。",
+          usageSection: "使用",
+          haptics: "触感反馈",
+          hapticsHelp: "点击主要按钮时轻微振动。",
+          keepScreenOn: "解题时保持屏幕常亮",
+          keepScreenOnHelp: "应用在前台时不自动熄屏。",
+          resumeTool: "启动时继续上次工具",
+          resumeToolHelp: "下次打开应用时跳过首页。",
+          resetSettings: "恢复默认设置",
+          aboutTrace: "关于词迹",
+          closeAbout: "关闭关于",
+          aboutLabel: "关于",
+          aboutName: "词迹 Trace",
+          aboutDescription: "猜成语、猜单词与猜算式助手",
+          version: "版本",
+          author: "作者",
+          repoDescription: "源码、版本记录与下载",
+          copyright: "© 2002WYT · 为文字与算式游戏玩家制作"
+        },
+        "zh-TW": {
+          pageTitle: "詞跡 Trace",
+          metaDescription: "詞跡 Trace：完全離線的猜成語、猜單字與猜算式工具。",
+          exitApp: "退出詞跡",
+          backProject: "返回 GitHub 專案",
+          brandMark: "跡",
+          appName: "詞跡",
+          openMenu: "開啟應用程式選單",
+          appMenu: "應用程式選單",
+          settings: "設定",
+          settingsSummary: "語言、顯示與使用偏好",
+          about: "關於",
+          aboutSummary: "版本與開源專案",
+          toolSection: "解謎工具",
+          chooseTool: "選擇工具",
+          startFromClues: "從已有線索開始篩選。",
+          sampleIdiomSecond: "舉",
+          idiomTool: "猜成語",
+          idiomToolSummary: "漢字 · 聲韻 · 聲調",
+          wordTool: "猜單字",
+          wordToolSummary: "字母 · 位置 · 詞表",
+          equationTool: "猜算式",
+          equationToolSummary: "數字 · 運算子 · 計算結果",
+          backHome: "返回首頁",
+          closeSettings: "關閉設定",
+          settingsLabel: "設定",
+          languageSection: "語言",
+          appLanguage: "應用程式語言",
+          languageHelp: "同時套用到首頁、設定和三個解謎工具。",
+          appearanceSection: "外觀",
+          theme: "主題",
+          themeSystem: "跟隨系統",
+          themeLight: "淺色",
+          themeDark: "深色",
+          themeHelp: "深色模式使用適合夜間閱讀的低對比度配色。",
+          displaySection: "顯示",
+          textSize: "文字大小",
+          textStandard: "標準",
+          textLarge: "較大",
+          textLargest: "特大",
+          textSizeHelp: "同時套用到首頁和三個工具頁面。",
+          animations: "轉場動畫",
+          animationsHelp: "讓頁面和彈出視窗切換更自然。",
+          usageSection: "使用",
+          haptics: "觸覺回饋",
+          hapticsHelp: "點擊主要按鈕時輕微震動。",
+          keepScreenOn: "解題時保持螢幕恆亮",
+          keepScreenOnHelp: "應用程式在前景時不自動關閉螢幕。",
+          resumeTool: "啟動時繼續上次工具",
+          resumeToolHelp: "下次開啟應用程式時略過首頁。",
+          resetSettings: "恢復預設設定",
+          aboutTrace: "關於詞跡",
+          closeAbout: "關閉關於",
+          aboutLabel: "關於",
+          aboutName: "詞跡 Trace",
+          aboutDescription: "猜成語、猜單字與猜算式助手",
+          version: "版本",
+          author: "作者",
+          repoDescription: "原始碼、版本記錄與下載",
+          copyright: "© 2002WYT · 為文字與算式遊戲玩家製作"
+        }
+      };
+      var currentLanguage = "en";
+      var currentThemeMode = "system";
+      var systemThemeQuery = window.matchMedia
+        ? window.matchMedia("(prefers-color-scheme: dark)")
+        : null;
 
       function callApp(method, value, fallback) {
         try {
@@ -364,6 +745,104 @@
         try {
           localStorage.setItem(key, String(value));
         } catch (error) {}
+      }
+
+      function normalizeLanguage(value) {
+        return value === "zh-CN" || value === "zh-TW" ? value : "en";
+      }
+
+      function detectSystemLanguage() {
+        var language = String(navigator.language || "").toLowerCase();
+        if (/^zh-(tw|hk|mo|hant)/.test(language)) return "zh-TW";
+        if (/^zh/.test(language)) return "zh-CN";
+        return "en";
+      }
+
+      function initialLanguage() {
+        var nativeLanguage = callApp("getLanguage", undefined, "");
+        if (nativeLanguage) return normalizeLanguage(nativeLanguage);
+        var savedLanguage = readFallback("trace_language", "");
+        return savedLanguage ? normalizeLanguage(savedLanguage) : detectSystemLanguage();
+      }
+
+      function t(key) {
+        return (I18N[currentLanguage] && I18N[currentLanguage][key])
+          || I18N.en[key]
+          || key;
+      }
+
+      function updateLanguageButtons() {
+        document.querySelectorAll("[data-language]").forEach(function (button) {
+          button.setAttribute(
+            "aria-pressed",
+            String(button.dataset.language === currentLanguage)
+          );
+        });
+      }
+
+      function applyLanguage(language) {
+        currentLanguage = normalizeLanguage(language);
+        document.documentElement.lang = currentLanguage;
+        document.title = t("pageTitle");
+        var description = document.querySelector('meta[name="description"]');
+        if (description) description.setAttribute("content", t("metaDescription"));
+        document.querySelectorAll("[data-i18n]").forEach(function (node) {
+          node.textContent = t(node.dataset.i18n);
+        });
+        document.querySelectorAll("[data-i18n-aria]").forEach(function (node) {
+          node.setAttribute("aria-label", t(node.dataset.i18nAria));
+        });
+        if (!runningInAndroidApp) {
+          appBack.setAttribute("aria-label", t("backProject"));
+          appBack.setAttribute("title", t("backProject"));
+        }
+        updateLanguageButtons();
+      }
+
+      function setLanguage(language) {
+        var normalized = normalizeLanguage(language);
+        callApp("setLanguage", normalized, undefined);
+        writeFallback("trace_language", normalized);
+        applyLanguage(normalized);
+      }
+
+      function normalizeTheme(value) {
+        return value === "light" || value === "dark" ? value : "system";
+      }
+
+      function initialTheme() {
+        var nativeTheme = callApp("getTheme", undefined, "");
+        if (nativeTheme) return normalizeTheme(nativeTheme);
+        return normalizeTheme(readFallback("trace_theme", "system"));
+      }
+
+      function resolvedTheme(mode) {
+        if (mode === "light" || mode === "dark") return mode;
+        return systemThemeQuery && systemThemeQuery.matches ? "dark" : "light";
+      }
+
+      function updateThemeButtons() {
+        document.querySelectorAll("[data-theme-mode]").forEach(function (button) {
+          button.setAttribute(
+            "aria-pressed",
+            String(button.dataset.themeMode === currentThemeMode)
+          );
+        });
+      }
+
+      function applyTheme(mode) {
+        currentThemeMode = normalizeTheme(mode);
+        var theme = resolvedTheme(currentThemeMode);
+        document.documentElement.dataset.theme = theme;
+        document.documentElement.style.colorScheme = theme;
+        updateThemeButtons();
+      }
+
+      function setTheme(mode) {
+        var normalized = normalizeTheme(mode);
+        callApp("setTheme", normalized, undefined);
+        writeFallback("trace_theme", normalized);
+        applyTheme(normalized);
       }
 
       function setMenu(open) {
@@ -487,6 +966,18 @@
         undefined,
         readFallback("trace_resume_last_tool", "false") === "true"
       );
+      applyTheme(initialTheme());
+      applyLanguage(initialLanguage());
+      if (systemThemeQuery) {
+        var handleSystemThemeChange = function () {
+          if (currentThemeMode === "system") applyTheme("system");
+        };
+        if (typeof systemThemeQuery.addEventListener === "function") {
+          systemThemeQuery.addEventListener("change", handleSystemThemeChange);
+        } else if (typeof systemThemeQuery.addListener === "function") {
+          systemThemeQuery.addListener(handleSystemThemeChange);
+        }
+      }
 
       function updateZoomButtons(value) {
         document.querySelectorAll("[data-text-zoom]").forEach(function (button) {
@@ -545,6 +1036,22 @@
         }
       });
 
+      document.getElementById("languageOptions").addEventListener("click", function (event) {
+        var button = event.target.closest("[data-language]");
+        if (button) {
+          haptic();
+          setLanguage(button.dataset.language);
+        }
+      });
+
+      document.getElementById("themeOptions").addEventListener("click", function (event) {
+        var button = event.target.closest("[data-theme-mode]");
+        if (button) {
+          haptic();
+          setTheme(button.dataset.themeMode);
+        }
+      });
+
       document.getElementById("animationsEnabled").addEventListener("change", function (event) {
         setAnimationsEnabled(event.target.checked);
         haptic();
@@ -572,6 +1079,8 @@
         setHapticsEnabled(true);
         setKeepScreenOn(false);
         setResumeLastTool(false);
+        setLanguage(detectSystemLanguage());
+        setTheme("system");
       });
 
       document.querySelectorAll("[data-tool]").forEach(function (link) {

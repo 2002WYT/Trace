@@ -3,7 +3,33 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="color-scheme" content="light">
+  <meta name="color-scheme" content="light dark">
+  <script>
+    (function () {
+      var mode = "";
+      try {
+        if (window.TraceApp && typeof window.TraceApp.getTheme === "function") {
+          mode = window.TraceApp.getTheme();
+        }
+      } catch (error) {}
+      if (!mode) {
+        try {
+          mode = localStorage.getItem("trace_theme") || "system";
+        } catch (error) {
+          mode = "system";
+        }
+      }
+      if (mode !== "light" && mode !== "dark") mode = "system";
+      var systemDark = window.matchMedia
+        && window.matchMedia("(prefers-color-scheme: dark)").matches;
+      var theme = mode === "dark" || (mode === "system" && systemDark)
+        ? "dark"
+        : "light";
+      document.documentElement.dataset.theme = theme;
+      document.documentElement.style.colorScheme = theme;
+    })();
+  </script>
+  <meta name="description" content="Word Trace: a fully offline English word solver.">
   <title>Word Trace</title>
   <style>
     :root {
@@ -104,46 +130,288 @@
     }
     @media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important}}
     html.trace-reduce-motion *{animation:none!important;transition:none!important;scroll-behavior:auto!important}
+
+    /* UI.md product reset */
+    :root{
+      --app-bg:#f6f7f8;--surface:#ffffff;--surface-muted:#f0f2f3;
+      --text:#24292f;--muted:#656d76;--line:#d0d7de;
+      --green:#2f6f55;--green2:#285f49;--gray:#6e7781;
+      --yellow:#9a6700;--card:var(--surface);--paper:var(--app-bg);--ink:var(--text)
+    }
+    :root[data-theme="dark"]{
+      --app-bg:#0d1117;--surface:#161b22;--surface-muted:#21262d;
+      --text:#e6edf3;--muted:#8b949e;--line:#30363d;
+      --green:#4a9b73;--green2:#5bac82;--gray:#768390;
+      --yellow:#bb8009;--card:var(--surface);--paper:var(--app-bg);--ink:var(--text)
+    }
+    html,body{background:var(--app-bg)}
+    body{
+      color:var(--text);background:var(--app-bg);
+      font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Microsoft YaHei",
+        "PingFang SC","Hiragino Sans GB",Arial,sans-serif
+    }
+    button,input{font-family:inherit;color:var(--text)}
+    :focus-visible{outline:2px solid var(--green);outline-offset:2px}
+    .shell{width:min(1180px,calc(100% - 24px))}
+    header{height:60px;border-color:var(--line)}
+    .page-back{
+      width:36px;height:36px;border:1px solid var(--line);border-radius:6px;
+      color:var(--text);background:var(--surface);box-shadow:none
+    }
+    .page-back:hover{background:var(--surface-muted)}.page-back:active{transform:none;background:var(--line)}
+    .brand{gap:9px}.mark{width:36px;height:36px;border-radius:6px;color:#fff;background:var(--green);font-size:17px}
+    .brand b{font-size:15px;letter-spacing:.04em}.brand small{color:var(--muted);font-size:8px;letter-spacing:.12em}
+    .offline{padding:7px 10px;border:1px solid var(--line);border-radius:6px;color:var(--muted);background:var(--surface);font-size:10px}
+    .offline i{background:var(--green)}
+    .hero{grid-template-columns:1fr;gap:6px;padding:20px 0}
+    .eyebrow,.kicker{margin-bottom:6px;color:var(--muted);font-size:9px;letter-spacing:.12em}
+    h1{font-size:24px;line-height:1.35;font-weight:650;letter-spacing:0}
+    h1 em{color:inherit;font-style:normal}.intro{margin:0;color:var(--muted);font-size:14px;line-height:1.6}
+    .private-note{margin-top:4px;color:var(--muted);font-size:10px;letter-spacing:0}
+    .panel{border:1px solid var(--line);border-radius:8px;background:var(--surface);box-shadow:none}
+    .block{padding:16px;border-color:var(--line)}
+    .heading{margin-bottom:14px}.heading-main{gap:10px}.step{width:28px;height:28px;border-color:var(--line);border-radius:5px;color:var(--muted)}
+    h2{font-size:18px;font-weight:650}.pool{font-size:11px}.pool b{font-size:14px}
+    .range{grid-template-columns:minmax(240px,.7fr) minmax(0,1.3fr);gap:24px;padding-left:38px}
+    label,.label{color:var(--text);font-size:12px}
+    .length{
+      height:38px;grid-template-columns:46px 64px 1fr 46px;
+      border:1px solid var(--line);border-radius:5px;background:var(--surface-muted);overflow:hidden
+    }
+    .length button,.length input{
+      height:36px;border:0;border-right:1px solid var(--line);border-radius:0;color:var(--text);background:var(--surface)
+    }
+    .length button:last-child{border-right:0;border-left:1px solid var(--line)}
+    .sources button{
+      height:36px;border:1px solid var(--line);border-radius:5px;color:var(--text);background:var(--surface)
+    }
+    .length button:hover,.sources button:hover{background:var(--surface-muted)}
+    .length input{width:64px}.length span{border-left:0;color:var(--muted);background:var(--surface-muted)}.help{color:var(--muted)}
+    .sources{gap:5px}.sources button.active{border-color:var(--green);color:#fff;background:var(--green)}
+    .legend{color:var(--muted);font-size:10px}.legend i{border-radius:2px}
+    .work{grid-template-columns:minmax(0,1fr) 280px;gap:20px;padding-left:38px}
+    .board-help{color:var(--muted);font-size:11px}.clues{gap:10px}
+    .clue{border:1px solid var(--line);border-radius:6px;background:var(--surface)}
+    .clue-top{padding:9px 10px;border-color:var(--line)}
+    .guess{height:36px;border:1px solid var(--line);border-radius:5px;color:var(--text);background:var(--surface)}
+    .remove{color:var(--muted)}.remove:hover{color:#cf222e}
+    .tiles{gap:5px;padding:10px}.tile{height:40px;border-color:var(--line);border-radius:4px;color:var(--text);background:var(--surface-muted)}
+    .add{height:38px;margin-top:10px;border-color:var(--line);border-radius:5px;color:var(--green);background:var(--surface)}
+    .add:hover{border-color:var(--green);background:var(--surface-muted)}
+    .keyboard-box{padding-left:20px;border-color:var(--line)}.keyboard-title b{font-size:12px}.keyboard-title small,.duplicate{color:var(--muted)}
+    .badge{border-radius:5px;color:var(--text);background:var(--surface-muted)}
+    .key{border-color:var(--line);border-radius:4px;color:var(--text);background:var(--surface)}
+    .actions{height:auto;min-height:64px;border-color:var(--line);background:var(--surface-muted)}
+    .actions button{min-height:40px}.clear{padding:0 20px;color:var(--text);background:var(--surface)}
+    .clear:hover{background:var(--surface-muted)}
+    .search{min-width:210px;padding:0 18px;background:var(--green)}
+    .search:hover{background:var(--green2)}.search i{width:auto;height:auto;border:0;border-radius:0}
+    .results{padding:24px 0 32px}.results-head{padding-bottom:12px;border-color:var(--line)}
+    .results-head h2{font-size:20px}.total b{font-size:28px}.placeholder,.empty{min-height:140px;font-size:13px}
+    .result-grid{grid-template-columns:repeat(3,minmax(0,1fr));border-color:var(--line)}
+    .word{min-height:92px;padding:14px;border-color:var(--line);color:var(--text);background:var(--surface)}
+    .word:hover{background:var(--surface-muted)}.word strong{margin:8px 0 10px;font-size:19px}
+    .tag{background:var(--surface-muted);color:var(--muted)}.tag.advanced,.tag.tem{background:var(--surface-muted);color:var(--muted)}
+    .more-row{padding:12px 0}.more-row button{border-color:var(--green);border-radius:5px;color:var(--green)}
+    footer{min-height:80px;border-color:var(--line);color:var(--muted)}
+    @media(max-width:900px){
+      .range,.work{grid-template-columns:1fr;gap:16px;padding-left:0}
+      .keyboard-box{padding:16px 0 0;border-left:0;border-top:1px solid var(--line)}
+    }
+    @media(max-width:640px){
+      .shell{width:calc(100% - 16px)}header{height:52px}.block{padding:12px}
+      .heading{align-items:flex-start}.actions{min-height:58px}.clear{padding:0 14px}
+      .search{min-width:0}.result-grid{grid-template-columns:repeat(2,1fr)}
+    }
   </style>
 </head>
 <body>
   <div class="shell">
     <header>
       <div class="header-leading">
-        <button class="page-back" type="button" onclick="traceReturnHome()" aria-label="Back to Trace home">←</button>
-        <div class="brand"><span class="mark">W</span><span class="brand-text"><b>WORD TRACE</b><small>ENGLISH TOOL</small></span></div>
+        <button class="page-back" type="button" onclick="traceReturnHome()" data-i18n-aria="backHome" aria-label="Back to Trace home">←</button>
+        <div class="brand"><span class="mark">W</span><span class="brand-text"><b>WORD TRACE</b><small data-i18n="englishTool">ENGLISH TOOL</small></span></div>
       </div>
-      <span class="offline"><i></i>Single-file offline edition · Processed on this device</span>
+      <span class="offline"><i></i><span data-i18n="offline">Single-file offline edition · Processed on this device</span></span>
     </header>
     <section class="hero">
-      <div><p class="eyebrow">OFFLINE WORD GAME SOLVER</p><h1>Make your next guess<br><em>less about luck.</em></h1></div>
-      <div><p class="intro">Enter gray, yellow, and green clues to find every answer still possible across six exam dictionaries.</p><p class="private-note">✓ No internet required　✓ Nothing is uploaded　✓ Duplicate-letter aware</p></div>
+      <div><p class="eyebrow" data-i18n="heroEyebrow">OFFLINE WORD GAME SOLVER</p><h1 data-i18n-html="heroTitle">Make your next guess<br><em>less about luck.</em></h1></div>
+      <div><p class="intro" data-i18n="intro">Enter gray, yellow, and green clues to find every answer still possible across six exam dictionaries.</p><p class="private-note" data-i18n="private">✓ No internet required　✓ Nothing is uploaded　✓ Duplicate-letter aware</p></div>
     </section>
     <section class="panel">
       <div class="block">
-        <div class="heading"><div class="heading-main"><span class="step">01</span><div><p class="kicker">SET THE RANGE</p><h2>Define the search range</h2></div></div><p class="pool">Current pool <b id="poolCount">0</b> words</p></div>
+        <div class="heading"><div class="heading-main"><span class="step">01</span><div><p class="kicker" data-i18n="rangeKicker">SET THE RANGE</p><h2 data-i18n="defineRange">Define the search range</h2></div></div><p class="pool"><span data-i18n="poolPrefix">Current pool</span> <b id="poolCount">0</b> <span data-i18n="poolSuffix">words</span></p></div>
         <div class="range">
-          <div><label for="lengthInput">Word length</label><div class="length"><button id="minus" aria-label="Decrease length">−</button><input id="lengthInput" type="number" min="2" max="18" value="5"><span>LETTERS</span><button id="plus" aria-label="Increase length">+</button></div><small class="help">Supports 2–18 letters</small></div>
-          <div><span class="label">Exam dictionaries</span><div class="sources" id="sources"></div><small class="help">Select one or more; duplicates are removed</small></div>
+          <div><label for="lengthInput" data-i18n="wordLength">Word length</label><div class="length"><button id="minus" data-i18n-aria="decreaseLength" aria-label="Decrease length">−</button><input id="lengthInput" type="number" min="2" max="18" value="5"><span data-i18n="letters">LETTERS</span><button id="plus" data-i18n-aria="increaseLength" aria-label="Increase length">+</button></div><small class="help" data-i18n="lengthHelp">Supports 2–18 letters</small></div>
+          <div><span class="label" data-i18n="dictionaries">Exam dictionaries</span><div class="sources" id="sources"></div><small class="help" data-i18n="dictionariesHelp">Select one or more; duplicates are removed</small></div>
         </div>
       </div>
       <div class="block">
-        <div class="heading"><div class="heading-main"><span class="step">02</span><div><p class="kicker">ADD THE CLUES</p><h2>Enter color clues</h2></div></div><div class="legend"><span><i style="background:var(--gray)"></i>Gray · Not in word</span><span><i style="background:var(--yellow)"></i>Yellow · Wrong position</span><span><i style="background:var(--green)"></i>Green · Correct position</span></div></div>
+        <div class="heading"><div class="heading-main"><span class="step">02</span><div><p class="kicker" data-i18n="cluesKicker">ADD THE CLUES</p><h2 data-i18n="enterClues">Enter color clues</h2></div></div><div class="legend"><span><i style="background:var(--gray)"></i><span data-i18n="grayLegend">Gray · Not in word</span></span><span><i style="background:var(--yellow)"></i><span data-i18n="yellowLegend">Yellow · Wrong position</span></span><span><i style="background:var(--green)"></i><span data-i18n="greenLegend">Green · Correct position</span></span></div></div>
         <div class="work">
-          <div><p class="board-help">Type a whole word or click any tile to enter one letter. New letters start gray; click a filled tile to cycle: gray → yellow → green → gray.</p><div class="clues" id="clues"></div><button class="add" id="addRow">+ Add clue row</button></div>
-          <aside class="keyboard-box"><div class="keyboard-title"><div><b>Quick exclusions</b><small>Click letters that are not in the answer</small></div><span class="badge" id="excludedCount">0</span></div><div class="keyboard" id="keyboard"></div><p class="duplicate">If one copy of a letter is colored and another is gray, the solver uses the exact number of copies implied by that clue.</p></aside>
+          <div><p class="board-help" data-i18n="boardHelp">Type a whole word or click any tile to enter one letter. New letters start gray; click a filled tile to cycle: gray → yellow → green → gray.</p><div class="clues" id="clues"></div><button class="add" id="addRow" data-i18n="addRow">+ Add clue row</button></div>
+          <aside class="keyboard-box"><div class="keyboard-title"><div><b data-i18n="quickExclusions">Quick exclusions</b><small data-i18n="quickExclusionsHelp">Click letters that are not in the answer</small></div><span class="badge" id="excludedCount">0</span></div><div class="keyboard" id="keyboard"></div><p class="duplicate" data-i18n="duplicateHelp">If one copy of a letter is colored and another is gray, the solver uses the exact number of copies implied by that clue.</p></aside>
         </div>
       </div>
-      <div class="actions"><button class="clear" id="clear">Clear clues</button><button class="search" id="search"><span>Find remaining words</span><i>↗</i></button></div>
+      <div class="actions"><button class="clear" id="clear" data-i18n="clearClues">Clear clues</button><button class="search" id="search"><span data-i18n="findWords">Find remaining words</span><i>↗</i></button></div>
     </section>
     <section class="results" id="results">
-      <div class="results-head"><div><p class="kicker">POSSIBLE WORDS</p><h2 id="resultTitle">Possible words will appear here</h2></div><div class="total" id="totalBox" hidden><b id="total">0</b><span>candidates</span></div></div>
+      <div class="results-head"><div><p class="kicker" data-i18n="resultsKicker">POSSIBLE WORDS</p><h2 id="resultTitle">Possible words will appear here</h2></div><div class="total" id="totalBox" hidden><b id="total">0</b><span data-i18n="candidates">candidates</span></div></div>
       <div id="resultContent" class="placeholder">Add color clues, or search now to view every word in the current range.</div>
     </section>
-    <footer><span>WORD TRACE</span><span>by 2002WYT</span><span>CET4 · CET6 · IELTS · TOEFL · GMAT · TEM8</span></footer>
+    <footer><span>WORD TRACE</span><span data-i18n="byline">by 2002WYT</span><span>CET4 · CET6 · IELTS · TOEFL · GMAT · TEM8</span></footer>
   </div>
   <script>
     "use strict";
+    var WORD_I18N={
+      en:{
+        pageTitle:"Word Trace",metaDescription:"Word Trace: a fully offline English word solver.",
+        backHome:"Back to Trace home",englishTool:"ENGLISH TOOL",
+        offline:"Single-file offline edition · Processed on this device",
+        heroEyebrow:"OFFLINE WORD GAME SOLVER",heroTitle:"English word solver",
+        intro:"Enter gray, yellow, and green clues to find every answer still possible across six exam dictionaries.",
+        private:"✓ No internet required　✓ Nothing is uploaded　✓ Duplicate-letter aware",
+        rangeKicker:"SET THE RANGE",cluesKicker:"ADD THE CLUES",resultsKicker:"POSSIBLE WORDS",
+        defineRange:"Define the search range",poolPrefix:"Current pool",poolSuffix:"words",
+        wordLength:"Word length",decreaseLength:"Decrease length",increaseLength:"Increase length",
+        letters:"LETTERS",lengthHelp:"Supports 2–18 letters",dictionaries:"Exam dictionaries",
+        dictionariesHelp:"Select one or more; duplicates are removed",enterClues:"Enter color clues",
+        grayLegend:"Gray · Not in word",yellowLegend:"Yellow · Wrong position",greenLegend:"Green · Correct position",
+        boardHelp:"Type a whole word or click any tile to enter one letter. New letters start gray; click a filled tile to cycle: gray → yellow → green → gray.",
+        addRow:"+ Add clue row",quickExclusions:"Quick exclusions",
+        quickExclusionsHelp:"Click letters that are not in the answer",
+        duplicateHelp:"If one copy of a letter is colored and another is gray, the solver uses the exact number of copies implied by that clue.",
+        clearClues:"Clear clues",findWords:"Find remaining words",candidates:"candidates",byline:"by 2002WYT",
+        statusUnset:"Not set",statusAbsent:"Not in the word",statusPresent:"In the word, wrong position",
+        statusCorrect:"Correct letter and position",allSources:"All",guessAria:"Guess {0}",
+        guessPlaceholder:"Enter {0} letters",removeClue:"Remove this clue",
+        clueLetterAria:"Clue {0}, letter {1}: {2}",
+        initialResultTitle:"Possible words will appear here",
+        initialResultHelp:"Add color clues, or search now to view every word in the current range.",
+        noMatchesTitle:"No matching words found",
+        noMatchesHelp:"Some clues may conflict. Check gray duplicate letters, green positions, and quick exclusions.",
+        matchingTitle:"These words still match",shown:"Showing {0} / {1}",
+        showMore:"Show more ↓",copied:"Copied",locale:"en-US"
+      },
+      "zh-CN":{
+        pageTitle:"Word Trace · 英语单词筛选",metaDescription:"Word Trace：完全离线的英语单词猜词筛选工具。",
+        backHome:"返回词迹首页",englishTool:"英语工具",
+        offline:"离线单文件 · 数据仅在本机处理",
+        heroEyebrow:"离线英语猜词筛选",heroTitle:"英语单词筛选工具",
+        intro:"输入灰、黄、绿线索，从六套考试词表中找出所有仍然可能的答案。",
+        private:"✓ 无需联网　✓ 不上传内容　✓ 正确处理重复字母",
+        rangeKicker:"设置范围",cluesKicker:"添加线索",resultsKicker:"候选单词",
+        defineRange:"定义搜索范围",poolPrefix:"当前词库",poolSuffix:"个单词",
+        wordLength:"单词长度",decreaseLength:"减少长度",increaseLength:"增加长度",
+        letters:"字母",lengthHelp:"支持 2～18 个字母",dictionaries:"考试词表",
+        dictionariesHelp:"可选择一个或多个词表；重复项会自动去除",enterClues:"输入颜色线索",
+        grayLegend:"灰 · 单词中不存在",yellowLegend:"黄 · 位置错误",greenLegend:"绿 · 位置正确",
+        boardHelp:"可输入完整单词，也可点击格子逐个输入字母。新字母默认为灰色；点击已填写格子可按灰 → 黄 → 绿 → 灰循环。",
+        addRow:"+ 添加线索行",quickExclusions:"快速排除",
+        quickExclusionsHelp:"点击答案中不存在的字母",
+        duplicateHelp:"如果同一字母有一个彩色格和一个灰色格，筛选器会按该线索推断出的准确重复次数处理。",
+        clearClues:"清空线索",findWords:"查找剩余单词",candidates:"个候选",byline:"作者：2002WYT",
+        statusUnset:"未设置",statusAbsent:"单词中不存在",statusPresent:"单词中存在但位置错误",
+        statusCorrect:"字母和位置均正确",allSources:"全部",guessAria:"猜测 {0}",
+        guessPlaceholder:"输入 {0} 个字母",removeClue:"删除此线索",
+        clueLetterAria:"线索 {0}，第 {1} 个字母：{2}",
+        initialResultTitle:"候选单词会出现在这里",
+        initialResultHelp:"添加颜色线索，或立即搜索当前范围内的全部单词。",
+        noMatchesTitle:"没有找到匹配单词",
+        noMatchesHelp:"部分线索可能冲突，请检查灰色重复字母、绿色位置和快速排除。",
+        matchingTitle:"这些单词仍然符合",shown:"已显示 {0} / {1}",
+        showMore:"继续显示 ↓",copied:"已复制",locale:"zh-CN"
+      },
+      "zh-TW":{
+        pageTitle:"Word Trace · 英語單字篩選",metaDescription:"Word Trace：完全離線的英語單字猜詞篩選工具。",
+        backHome:"返回詞跡首頁",englishTool:"英語工具",
+        offline:"離線單一檔案 · 資料僅在本機處理",
+        heroEyebrow:"離線英語猜詞篩選",heroTitle:"英語單字篩選工具",
+        intro:"輸入灰、黃、綠線索，從六套考試詞表中找出所有仍然可能的答案。",
+        private:"✓ 無需連線　✓ 不上傳內容　✓ 正確處理重複字母",
+        rangeKicker:"設定範圍",cluesKicker:"新增線索",resultsKicker:"候選單字",
+        defineRange:"定義搜尋範圍",poolPrefix:"目前詞庫",poolSuffix:"個單字",
+        wordLength:"單字長度",decreaseLength:"縮短長度",increaseLength:"增加長度",
+        letters:"字母",lengthHelp:"支援 2～18 個字母",dictionaries:"考試詞表",
+        dictionariesHelp:"可選擇一個或多個詞表；重複項目會自動移除",enterClues:"輸入顏色線索",
+        grayLegend:"灰 · 單字中不存在",yellowLegend:"黃 · 位置錯誤",greenLegend:"綠 · 位置正確",
+        boardHelp:"可輸入完整單字，也可點擊格子逐一輸入字母。新字母預設為灰色；點擊已填寫格子可按灰 → 黃 → 綠 → 灰循環。",
+        addRow:"+ 新增線索列",quickExclusions:"快速排除",
+        quickExclusionsHelp:"點擊答案中不存在的字母",
+        duplicateHelp:"如果同一字母有一個彩色格和一個灰色格，篩選器會依該線索推斷出的精確重複次數處理。",
+        clearClues:"清除線索",findWords:"尋找剩餘單字",candidates:"個候選",byline:"作者：2002WYT",
+        statusUnset:"未設定",statusAbsent:"單字中不存在",statusPresent:"單字中存在但位置錯誤",
+        statusCorrect:"字母和位置皆正確",allSources:"全部",guessAria:"猜測 {0}",
+        guessPlaceholder:"輸入 {0} 個字母",removeClue:"刪除此線索",
+        clueLetterAria:"線索 {0}，第 {1} 個字母：{2}",
+        initialResultTitle:"候選單字會出現在這裡",
+        initialResultHelp:"新增顏色線索，或立即搜尋目前範圍內的全部單字。",
+        noMatchesTitle:"找不到符合的單字",
+        noMatchesHelp:"部分線索可能衝突，請檢查灰色重複字母、綠色位置和快速排除。",
+        matchingTitle:"這些單字仍然符合",shown:"已顯示 {0} / {1}",
+        showMore:"繼續顯示 ↓",copied:"已複製",locale:"zh-TW"
+      }
+    };
+    function normalizeTraceLanguage(value){return value==="zh-CN"||value==="zh-TW"?value:"en"}
+    function detectTraceLanguage(){
+      try{
+        if(window.TraceApp&&typeof window.TraceApp.getLanguage==="function"){
+          var nativeLanguage=window.TraceApp.getLanguage();
+          if(nativeLanguage)return normalizeTraceLanguage(nativeLanguage);
+        }
+      }catch(error){}
+      try{
+        var savedLanguage=localStorage.getItem("trace_language");
+        if(savedLanguage)return normalizeTraceLanguage(savedLanguage);
+      }catch(error){}
+      var browserLanguage=String(navigator.language||"").toLowerCase();
+      if(/^zh-(tw|hk|mo|hant)/.test(browserLanguage))return"zh-TW";
+      if(/^zh/.test(browserLanguage))return"zh-CN";
+      return"en";
+    }
+    var currentLanguage=detectTraceLanguage();
+    function detectTraceTheme(){
+      try{
+        if(window.TraceApp&&typeof window.TraceApp.getTheme==="function"){
+          var nativeTheme=window.TraceApp.getTheme();
+          if(nativeTheme)return nativeTheme==="light"||nativeTheme==="dark"?nativeTheme:"system";
+        }
+      }catch(error){}
+      try{
+        var savedTheme=localStorage.getItem("trace_theme");
+        if(savedTheme)return savedTheme==="light"||savedTheme==="dark"?savedTheme:"system";
+      }catch(error){}
+      return"system";
+    }
+    var currentThemeMode=detectTraceTheme();
+    var traceThemeQuery=window.matchMedia?window.matchMedia("(prefers-color-scheme: dark)"):null;
+    function applyTraceTheme(){
+      var resolvedTheme=currentThemeMode==="dark"||currentThemeMode==="light"
+        ?currentThemeMode:(traceThemeQuery&&traceThemeQuery.matches?"dark":"light");
+      document.documentElement.dataset.theme=resolvedTheme;
+      document.documentElement.style.colorScheme=resolvedTheme;
+    }
+    applyTraceTheme();
+    if(traceThemeQuery){
+      var handleTraceThemeChange=function(){if(currentThemeMode==="system")applyTraceTheme()};
+      if(typeof traceThemeQuery.addEventListener==="function")traceThemeQuery.addEventListener("change",handleTraceThemeChange);
+      else if(typeof traceThemeQuery.addListener==="function")traceThemeQuery.addListener(handleTraceThemeChange);
+    }
+    function t(key){
+      var text=(WORD_I18N[currentLanguage]&&WORD_I18N[currentLanguage][key])||WORD_I18N.en[key]||key;
+      for(var index=1;index<arguments.length;index++)text=text.replace("{"+(index-1)+"}",arguments[index]);
+      return text;
+    }
+    function applyStaticLanguage(){
+      document.documentElement.lang=currentLanguage;
+      document.title=t("pageTitle");
+      var description=document.querySelector('meta[name="description"]');
+      if(description)description.setAttribute("content",t("metaDescription"));
+      document.querySelectorAll("[data-i18n]").forEach(function(node){node.textContent=t(node.dataset.i18n)});
+      document.querySelectorAll("[data-i18n-html]").forEach(function(node){node.innerHTML=t(node.dataset.i18nHtml)});
+      document.querySelectorAll("[data-i18n-aria]").forEach(function(node){node.setAttribute("aria-label",t(node.dataset.i18nAria))});
+    }
+    applyStaticLanguage();
     function traceReturnHome(){
       try{
         if(window.TraceApp&&typeof window.TraceApp.performHaptic==="function") window.TraceApp.performHaptic();
@@ -158,7 +426,7 @@
       {id:"gmat",label:"GMAT",bit:16},{id:"tem8",label:"TEM8",bit:32}
     ];
     var STATUS = ["unset","absent","present","correct"];
-    var STATUS_LABELS = {unset:"Not set",absent:"Not in the word",present:"In the word, wrong position",correct:"Correct letter and position"};
+    var STATUS_LABELS = {unset:t("statusUnset"),absent:t("statusAbsent"),present:t("statusPresent"),correct:t("statusCorrect")};
     var lengthValue=5, sourceMask=63, rowId=1, rows=[makeRow()], excluded=new Set(), results=[], shown=120, searched=false;
     var keyboardRows=["QWERTYUIOP","ASDFGHJKL","ZXCVBNM"];
     function makeRow(){return{id:rowId++,letters:Array(lengthValue).fill(""),statuses:Array(lengthValue).fill("unset")}}
@@ -166,25 +434,25 @@
     function pool(){return(WORDS[lengthValue]||[]).filter(function(item){return item[1]&sourceMask})}
     function resetForLength(next){lengthValue=Math.max(2,Math.min(18,Number(next)||5));rows=[makeRow()];excluded=new Set();searched=false;results=[];document.getElementById("lengthInput").value=lengthValue;renderAll()}
     function renderSources(){
-      var html='<button data-bit="63" class="'+(sourceMask===63?"active":"")+'">All</button>';
+      var html='<button data-bit="63" class="'+(sourceMask===63?"active":"")+'">'+t("allSources")+'</button>';
       EXAMS.forEach(function(e){html+='<button data-bit="'+e.bit+'" class="'+(sourceMask&e.bit?"active":"")+'">'+e.label+"</button>"});
       var box=document.getElementById("sources");box.innerHTML=html;
       box.querySelectorAll("button").forEach(function(btn){btn.onclick=function(){var bit=Number(btn.dataset.bit);if(bit===63)sourceMask=63;else{var next=sourceMask&bit?sourceMask&~bit:sourceMask|bit;sourceMask=next||bit}searched=false;renderSources();updatePool()}});
     }
-    function updatePool(){document.getElementById("poolCount").textContent=pool().length.toLocaleString("en-US")}
+    function updatePool(){document.getElementById("poolCount").textContent=pool().length.toLocaleString(t("locale"))}
     function renderClues(){
       var box=document.getElementById("clues");box.innerHTML="";
       rows.forEach(function(row,index){
         var clue=document.createElement("div");clue.className="clue";
         var top=document.createElement("div");top.className="clue-top";
-        top.innerHTML='<span class="clue-num">'+String(index+1).padStart(2,"0")+'</span><input class="guess" maxlength="'+lengthValue+'" aria-label="Guess '+(index+1)+'" placeholder="Enter '+lengthValue+' letters" value="'+row.letters.join("").toUpperCase()+'"><button class="remove" aria-label="Remove this clue">×</button>';
+        top.innerHTML='<span class="clue-num">'+String(index+1).padStart(2,"0")+'</span><input class="guess" maxlength="'+lengthValue+'" aria-label="'+t("guessAria",index+1)+'" placeholder="'+t("guessPlaceholder",lengthValue)+'" value="'+row.letters.join("").toUpperCase()+'"><button class="remove" aria-label="'+t("removeClue")+'">×</button>';
         var input=top.querySelector("input");input.oninput=function(){updateGuess(row.id,input.value,clue)};
         top.querySelector(".remove").onclick=function(){rows=rows.length===1?[makeRow()]:rows.filter(function(r){return r.id!==row.id});searched=false;renderClues();renderKeyboard()};
         var tiles=document.createElement("div");tiles.className="tiles";tiles.style.setProperty("--len",lengthValue);tiles.style.setProperty("--mobile-cols",lengthValue<=9?lengthValue:Math.ceil(lengthValue/2));
         row.letters.forEach(function(letter,i){
           var btn=document.createElement("input");btn.type="text";btn.maxLength=1;btn.autocomplete="off";btn.spellcheck=false;btn.inputMode="text";
           btn.className="tile "+row.statuses[i];btn.value=letter.toUpperCase();btn.title=STATUS_LABELS[row.statuses[i]];
-          btn.setAttribute("aria-label","Clue "+(index+1)+", letter "+(i+1)+": "+STATUS_LABELS[row.statuses[i]]);
+          btn.setAttribute("aria-label",t("clueLetterAria",index+1,i+1,STATUS_LABELS[row.statuses[i]]));
           btn.oninput=function(){updateTileLetter(row.id,i,btn.value,btn)};
           btn.onclick=function(){if(row.letters[i])cycleTile(row.id,i,btn);btn.select()};
           btn.onkeydown=function(event){
@@ -215,7 +483,7 @@
       var clean=value.replace(/[^a-zA-Z]/g,"").slice(-1).toLowerCase();
       row.letters[index]=clean;row.statuses[index]=clean?"absent":"unset";
       tileNode.value=clean.toUpperCase();tileNode.className="tile "+row.statuses[index];tileNode.title=STATUS_LABELS[row.statuses[index]];
-      tileNode.setAttribute("aria-label","Clue "+(rows.indexOf(row)+1)+", letter "+(index+1)+": "+STATUS_LABELS[row.statuses[index]]);
+      tileNode.setAttribute("aria-label",t("clueLetterAria",rows.indexOf(row)+1,index+1,STATUS_LABELS[row.statuses[index]]));
       var clue=tileNode.closest(".clue");if(clue)clue.querySelector(".guess").value=row.letters.join("").toUpperCase();
       searched=false;renderKeyboard();
     }
@@ -225,7 +493,7 @@
       var next=current<0?"absent":cycle[(current+1)%cycle.length];row.statuses[index]=next;
       if(next==="present"||next==="correct")excluded.delete(row.letters[index]);
       searched=false;
-      if(tileNode){tileNode.className="tile "+next;tileNode.title=STATUS_LABELS[next];tileNode.setAttribute("aria-label","Clue "+(rows.indexOf(row)+1)+", letter "+(index+1)+": "+STATUS_LABELS[next])}
+      if(tileNode){tileNode.className="tile "+next;tileNode.title=STATUS_LABELS[next];tileNode.setAttribute("aria-label",t("clueLetterAria",rows.indexOf(row)+1,index+1,STATUS_LABELS[next]))}
       else renderClues();
       renderKeyboard();
     }
@@ -267,18 +535,18 @@
       return EXAMS.filter(function(e){return mask&e.bit}).map(function(e){var c=e.id==="tem8"?"tem":(e.id==="gmat"||e.id==="toefl"||e.id==="ielts"?"advanced":"");return'<span class="tag '+c+'">'+e.label+"</span>"}).join("");
     }
     function copyWord(word,button){
-      function done(){var old=button.querySelector("strong").textContent;button.querySelector("strong").textContent="Copied";setTimeout(function(){button.querySelector("strong").textContent=old},700)}
+      function done(){var old=button.querySelector("strong").textContent;button.querySelector("strong").textContent=t("copied");setTimeout(function(){button.querySelector("strong").textContent=old},700)}
       if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(word).then(done).catch(function(){fallbackCopy(word);done()})}else{fallbackCopy(word);done()}
     }
     function fallbackCopy(text){var area=document.createElement("textarea");area.value=text;area.style.position="fixed";area.style.opacity="0";document.body.appendChild(area);area.select();try{document.execCommand("copy")}catch(e){}area.remove()}
     function renderResults(){
       var title=document.getElementById("resultTitle"),totalBox=document.getElementById("totalBox"),content=document.getElementById("resultContent");
-      if(!searched){title.textContent="Possible words will appear here";totalBox.hidden=true;content.className="placeholder";content.textContent="Add color clues, or search now to view every word in the current range.";return}
-      totalBox.hidden=false;document.getElementById("total").textContent=results.length.toLocaleString("en-US");
-      if(!results.length){title.textContent="No matching words found";content.className="empty";content.textContent="Some clues may conflict. Check gray duplicate letters, green positions, and quick exclusions.";return}
-      title.textContent="These words still match";content.className="";var html='<div class="result-grid">';
+      if(!searched){title.textContent=t("initialResultTitle");totalBox.hidden=true;content.className="placeholder";content.textContent=t("initialResultHelp");return}
+      totalBox.hidden=false;document.getElementById("total").textContent=results.length.toLocaleString(t("locale"));
+      if(!results.length){title.textContent=t("noMatchesTitle");content.className="empty";content.textContent=t("noMatchesHelp");return}
+      title.textContent=t("matchingTitle");content.className="";var html='<div class="result-grid">';
       results.slice(0,shown).forEach(function(item,index){html+='<button class="word" data-word="'+item[0]+'"><span class="rank">'+String(index+1).padStart(2,"0")+'</span><strong>'+item[0]+'</strong><span class="tags">'+sourceTags(item[1]&sourceMask)+"</span></button>"});
-      html+='</div><div class="more-row"><span>Showing '+Math.min(shown,results.length)+" / "+results.length+"</span>"+(shown<results.length?'<button id="more">Show more ↓</button>':"")+"</div>";content.innerHTML=html;
+      html+='</div><div class="more-row"><span>'+t("shown",Math.min(shown,results.length),results.length)+"</span>"+(shown<results.length?'<button id="more">'+t("showMore")+'</button>':"")+"</div>";content.innerHTML=html;
       content.querySelectorAll(".word").forEach(function(btn){btn.onclick=function(){copyWord(btn.dataset.word,btn)}});
       var more=document.getElementById("more");if(more)more.onclick=function(){shown+=120;renderResults()};
     }

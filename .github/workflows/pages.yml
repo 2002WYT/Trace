@@ -1,4 +1,4 @@
-name: Deploy GitHub Pages
+name: Deploy GitHub Pages / 部署 GitHub Pages
 
 on:
   push:
@@ -17,33 +17,34 @@ concurrency:
 
 jobs:
   deploy:
-    name: Publish online demo
+    name: Publish online demo / 发布在线版
     runs-on: ubuntu-latest
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
 
     steps:
-      - name: Check out repository
+      - name: Check out repository / 检出仓库
         uses: actions/checkout@v7
 
-      - name: Prepare static site
+      - name: Prepare static site / 准备静态站点
         shell: bash
         run: |
           mkdir -p _site
           cp android/app/src/main/assets/index.html _site/index.html
           cp android/app/src/main/assets/idiom-trace-offline.html _site/idiom-trace-offline.html
           cp android/app/src/main/assets/word-trace-offline-en.html _site/word-trace-offline-en.html
+          cp android/app/src/main/assets/equation-trace-offline.html _site/equation-trace-offline.html
           touch _site/.nojekyll
 
-      - name: Configure GitHub Pages
+      - name: Configure GitHub Pages / 配置 GitHub Pages
         uses: actions/configure-pages@v6
 
-      - name: Upload site files
+      - name: Upload site files / 上传站点文件
         uses: actions/upload-pages-artifact@v5
         with:
           path: _site
 
-      - name: Deploy GitHub Pages
+      - name: Deploy GitHub Pages / 部署 GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v5
