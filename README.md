@@ -24,7 +24,7 @@ Solve four-character Chinese idioms or filter English words from gray, yellow, a
 
 <br>
 
-<img src="./docs/images/trace-mobile-home-v1.1.3.png" width="320" alt="Trace 1.1.3 Android home screen">
+<img src="./docs/images/trace-mobile-home-v1.1.3.png" width="200" alt="Trace 1.1.3 Android home screen">
 
 </div>
 
