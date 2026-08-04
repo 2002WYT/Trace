@@ -1,6 +1,6 @@
 <div align="center">
 
-# Trace · 词迹
+# Trace Puzzle Toolkit · 词迹
 
 ### Three fully offline puzzle-solving tools in one app
 
@@ -17,8 +17,6 @@ Solve four-character Chinese idioms, filter English words, or find arithmetic ex
 [**Download Android APK**](https://github.com/2002WYT/Trace/releases/download/v1.2.1/Trace-v1.2.1.apk)
 ·
 [**Changelog**](./CHANGELOG.md)
-·
-[**How to publish an update**](./GIT_UPLOAD_GUIDE.md)
 
 **by 2002WYT**
 
@@ -85,8 +83,6 @@ android/app/build/outputs/apk/debug/app-debug.apk
 
 If those tools are not installed locally, run **Build Android APK / 构建 Android APK** in GitHub Actions; version tags trigger it automatically.
 
-For the exact commit, push, tag, release, APK upload, checksum, GitHub Pages, and repository About steps, see [GIT_UPLOAD_GUIDE.md](./GIT_UPLOAD_GUIDE.md).
-
 ## Repository layout
 
 ```text
@@ -99,7 +95,7 @@ Trace/
 ├─ docs/releases/        bilingual release notes
 ├─ docs/images/          project screenshots
 ├─ CHANGELOG.md          complete version history
-├─ GIT_UPLOAD_GUIDE.md   update and release instructions
+├─ docs/maintainer-guide.md  update and release instructions
 ├─ LICENSE               MIT License
 └─ README.md             project overview
 ```
@@ -127,7 +123,7 @@ Trace is released under the [MIT License](./LICENSE).
 
 ---
 
-# 词迹 · Trace
+# 词迹 · Trace Puzzle Toolkit
 
 ### 一个应用，三款完全离线的解谜辅助工具
 
@@ -138,8 +134,6 @@ Trace is released under the [MIT License](./LICENSE).
 [**下载 Android APK**](https://github.com/2002WYT/Trace/releases/download/v1.2.1/Trace-v1.2.1.apk)
 ·
 [**查看更新日志**](./CHANGELOG.md)
-·
-[**学习如何上传更新**](./GIT_UPLOAD_GUIDE.md#中文指南)
 
 ## 在线版
 
@@ -195,8 +189,6 @@ android/app/build/outputs/apk/debug/app-debug.apk
 
 如果本机没有这些工具，可在 GitHub Actions 中运行 **Build Android APK / 构建 Android APK**；推送版本标签时也会自动触发。
 
-提交、推送、打标签、创建 Release、上传 APK、生成校验值、检查 GitHub Pages 和修改仓库 About 的完整流程，请阅读 [GIT_UPLOAD_GUIDE.md](./GIT_UPLOAD_GUIDE.md#中文指南)。
-
 ## 仓库结构
 
 ```text
@@ -209,7 +201,7 @@ Trace/
 ├─ docs/releases/        中英双语发布说明
 ├─ docs/images/          项目截图
 ├─ CHANGELOG.md          完整版本记录
-├─ GIT_UPLOAD_GUIDE.md   更新与发布指南
+├─ docs/maintainer-guide.md  更新与发布指南
 ├─ LICENSE               MIT 许可证
 └─ README.md             项目总览
 ```

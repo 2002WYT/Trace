@@ -67,7 +67,7 @@ Return to the repository root, review the exact files, and commit intentionally:
 
 ```powershell
 git status --short
-git add README.md CHANGELOG.md GIT_UPLOAD_GUIDE.md android equation-trace docs
+git add README.md CHANGELOG.md docs/maintainer-guide.md android equation-trace docs
 git diff --cached --check
 git diff --cached
 git commit -m "v1.2.1"
@@ -171,7 +171,7 @@ Get-FileHash -Algorithm SHA256 "..\Trace-v1.2.1.apk"
 
 ```powershell
 git status --short
-git add README.md CHANGELOG.md GIT_UPLOAD_GUIDE.md android equation-trace docs
+git add README.md CHANGELOG.md docs/maintainer-guide.md android equation-trace docs
 git diff --cached --check
 git diff --cached
 git commit -m "v1.2.1"
